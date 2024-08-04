@@ -40,7 +40,7 @@ func (c *Client) Create(
 ) error {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -76,27 +76,31 @@ func (c *Client) Create(
 }
 
 // Read an invoice object by Id
-// Method : POST
 func (c *Client) Readbyid(
 	ctx context.Context,
 	companyid string,
+	invoiceId string,
 	request *api.InvoiceReadbyidRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.Invoice, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := core.EncodeURL(baseURL+"/v3/company/%v/invoice/147", companyid)
+	endpointURL := core.EncodeURL(
+		baseURL+"/v3/company/%v/invoice/%v",
+		companyid,
+		invoiceId,
+	)
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
@@ -104,6 +108,7 @@ func (c *Client) Readbyid(
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.Invoice
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -112,9 +117,10 @@ func (c *Client) Readbyid(
 			MaxAttempts: options.MaxAttempts,
 			Headers:     headers,
 			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }

@@ -6,11 +6,476 @@ import (
 	json "encoding/json"
 	fmt "fmt"
 	core "github.com/wepala/quickbooks-go/api/core"
+	time "time"
 )
 
 type BatchRequest struct {
 	Minorversion     *string                             `json:"-" url:"minorversion,omitempty"`
 	BatchItemRequest []*BatchRequestBatchItemRequestItem `json:"BatchItemRequest,omitempty" url:"-"`
+}
+
+type Account struct {
+	// Unique identifier for this object. Sort order is ASC by default.
+	Id *string `json:"Id,omitempty" url:"Id,omitempty"`
+	// User recognizable name for the Account. Account.Name attribute must not contain double quotes (") or colon (:).
+	Name *string `json:"Name,omitempty" url:"Name,omitempty"`
+	// Version number of the object. It is used to lock an object for use by one app at a time. - As soon as an application modifies an object, its SyncToken is incremented. - Attempts to modify an object specifying an older SyncToken fails. - Only the latest version of the object is maintained by QuickBooks Online.
+	SyncToken *string `json:"SyncToken,omitempty" url:"SyncToken,omitempty"`
+	// User-defined account number to help the user in identifying the account within the chart-of-accounts and in deciding what should be posted to the account. The Account.AcctNum attribute must not contain colon (:). _ Name must be unique. _ For French Locales - - Length must be between 6 and 20 characters - Must start with the account number from the master category list. - Name limited to alpha-numeric characters. \* Max length for Account.AcctNum - - AU & CA- 20 characters. - US, UK & IN- 7 characters
+	AcctNum *string `json:"AcctNum,omitempty" url:"AcctNum,omitempty"`
+	// Reference to the currency in which this account holds amounts.
+	CurrencyRef *CurrencyRefType `json:"CurrencyRef,omitempty" url:"CurrencyRef,omitempty"`
+	// Specifies the Parent AccountId if this represents a SubAccount.
+	ParentRef *AccountParentRef `json:"ParentRef,omitempty" url:"ParentRef,omitempty"`
+	// User entered description for the account, which may include user entered information to guide bookkeepers/accountants in deciding what journal entries to post to the account.
+	Description *string `json:"Description,omitempty" url:"Description,omitempty"`
+	// Whether or not active inactive accounts may be hidden from most display purposes and may not be posted to.
+	Active *bool `json:"Active,omitempty" url:"Active,omitempty"`
+	// Descriptive information about the object. The MetaData values are set by Data Services and are read only for all applications.
+	MetaData *ModificationMetaData `json:"MetaData,omitempty" url:"MetaData,omitempty"`
+	// Specifies whether this object represents a parent (false) or subaccount (true). - Note that accounts of these types - OpeningBalanceEquity, UndepositedFunds, RetainedEarnings, CashReceiptIncome, CashExpenditureExpense, ExchangeGainOrLoss cannot have a sub account and cannot be a sub account of another account.
+	SubAccount *bool `json:"SubAccount,omitempty" url:"SubAccount,omitempty"`
+	// The classification of an account. Not supported for non-posting accounts. - Valid values include- Asset, Equity, Expense, Liability, Revenue
+	Classification *string `json:"Classification,omitempty" url:"Classification,omitempty"`
+	// Fully qualified name of the object; derived from Name and ParentRef. - The fully qualified name prepends the topmost parent, followed by each subaccount separated by colons and takes the form of Parent:Account1:SubAccount1:SubAccount2. System generated. Limited to 5 levels.
+	FullyQualifiedName *string `json:"FullyQualifiedName,omitempty" url:"FullyQualifiedName,omitempty"`
+	// The account location. _ Valid values include - WithinFrance - FranceOverseas - OutsideFranceWithEU - OutsideEU _ For France locales, only.
+	TxnLocationType *string `json:"TxnLocationType,omitempty" url:"TxnLocationType,omitempty"`
+	// A detailed account classification that specifies the use of this account. The type is based on the Classification.
+	AccountType *string `json:"AccountType,omitempty" url:"AccountType,omitempty"`
+	// Specifies the cumulative balance amount for the current Account and all its sub-accounts.
+	CurrentBalanceWithSubAccounts *float64 `json:"CurrentBalanceWithSubAccounts,omitempty" url:"CurrentBalanceWithSubAccounts,omitempty"`
+	// A user friendly name for the account. - It must be unique across all account categories. - For example, if an account is created under category 211 with AccountAlias of Terrains, then the system does not allow creation of an account with same AccountAlias of Terrains for any other category except 211. - In other words, 211001 and 215001 accounts cannot have same AccountAlias because both belong to different account category. - For France locales, only.
+	AccountAlias *string `json:"AccountAlias,omitempty" url:"AccountAlias,omitempty"`
+	// Reference to the default tax code used by this account. Tax codes are referenced by the TaxCode. - Id in the TaxCode object. - Available when endpoint is invoked with the minorversion=3 query parameter. For global locales, only.
+	TaxCodeRef *ReferenceType `json:"TaxCodeRef,omitempty" url:"TaxCodeRef,omitempty"`
+	// The account sub-type classification and is based on the AccountType value.
+	AccountSubType *string `json:"AccountSubType,omitempty" url:"AccountSubType,omitempty"`
+	// Specifies the balance amount for the current Account. Valid for Balance Sheet accounts.
+	CurrentBalance *float64 `json:"CurrentBalance,omitempty" url:"CurrentBalance,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (a *Account) GetExtraProperties() map[string]interface{} {
+	return a.extraProperties
+}
+
+func (a *Account) UnmarshalJSON(data []byte) error {
+	type unmarshaler Account
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = Account(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+
+	a._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *Account) String() string {
+	if len(a._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+type AccountBasedExpenseLine struct {
+	// The Id of the line item. Its use in requests is as folllows - - If Id is greater than zero and exists for the company, the request is considered an update operation for a line item. - If no Id is provided, the Idprovided is less than or equal to zero, or the Idprovided is greater than zero and does not exist for the company then the request is considered a create operation for a line item. - Available in all objects that use lines and support the update operation.
+	Id *string `json:"Id,omitempty" url:"Id,omitempty"`
+	// The amount of the line item.
+	Amount *float64 `json:"Amount,omitempty" url:"Amount,omitempty"`
+	// Set to AccountBasedExpenseLineDetailfor this type of line.
+	DetailType                    *string                        `json:"DetailType,omitempty" url:"DetailType,omitempty"`
+	AccountBasedExpenseLineDetail *AccountBasedExpenseLineDetail `json:"AccountBasedExpenseLineDetail,omitempty" url:"AccountBasedExpenseLineDetail,omitempty"`
+	// Zero or more PurchaseOrder transactions linked to this Bill object. The LinkedTxn.TxnType should always be set to PurchaseOrder. Use LinkedTxn.TxnId as the ID of the PurchaseOrder. When updating an existing Bill to link to a PurchaseOrder a new Line must be created. This behavior matches the QuickBooks UI as it does not allow the linking of an existing line, but rather a new line must be added to link the PurchaseOrder. Over the API this is achieved by simply updating the Bill Line.Id to something new. This will ensure old bill line is deleted and the new line is linked to the PurchaseOrder.
+	LinkedTxn []*LinkedTxn `json:"LinkedTxn,omitempty" url:"LinkedTxn,omitempty"`
+	// Free form text description of the line item that appears in the printed record.
+	Description *string `json:"Description,omitempty" url:"Description,omitempty"`
+	// Specifies the position of the line in the collection of transaction lines. Positive Integer.
+	LineNum *float64 `json:"LineNum,omitempty" url:"LineNum,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (a *AccountBasedExpenseLine) GetExtraProperties() map[string]interface{} {
+	return a.extraProperties
+}
+
+func (a *AccountBasedExpenseLine) UnmarshalJSON(data []byte) error {
+	type unmarshaler AccountBasedExpenseLine
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AccountBasedExpenseLine(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+
+	a._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AccountBasedExpenseLine) String() string {
+	if len(a._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+// ItemBasedExpenseLineDetail
+type AccountBasedExpenseLineDetail struct {
+	// The total amount of the line item including tax. Constraints- Available when endpoint is evoked with the minorversion=1query parameter.
+	TaxInclusiveAmt *float64 `json:"TaxInclusiveAmt,omitempty" url:"TaxInclusiveAmt,omitempty"`
+	// Sales tax paid as part of the expense.
+	TaxAmount *float64 `json:"TaxAmount,omitempty" url:"TaxAmount,omitempty"`
+	// Reference to the Account. Query the Account name list resource to determine the appropriate Account object for this reference. Use Account.Id and Account.Name from that object for AccountRef.value and AccountRef.name, respectively.
+	AccountRef *ReferenceType `json:"AccountRef,omitempty" url:"AccountRef,omitempty"`
+	// Reference to a customer or job. Query the Customer name list resource to determine the appropriate Customer object for this reference. Use Customer.Id and Customer.DisplayName from that object for CustomerRef.value and CustomerRef.name, respectively.
+	CustomerRef *ReferenceType `json:"CustomerRef,omitempty" url:"CustomerRef,omitempty"`
+	// Reference to the PriceLevel of the service or item for the line. Support for this element will be available in the coming months.
+	PriceLevelRef *ReferenceType `json:"PriceLevelRef,omitempty" url:"PriceLevelRef,omitempty"`
+	// Reference to the Class associated with the expense. Available if Preferences.AccountingInfoPrefs.ClassTrackingPerLine is set to true. Query the Class name list resource to determine the appropriate Class object for this reference. Use Class.Id and Class.Name from that object for ClassRef.value and ClassRef.name, respectively.
+	ClassRef *ReferenceType `json:"ClassRef,omitempty" url:"ClassRef,omitempty"`
+	// Reference to the TaxCodefor this item. Query the TaxCode name list resource to determine the appropriate TaxCode object for this reference. Use TaxCode.Id and TaxCode.Name from that object for TaxCodeRef.value and TaxCodeRef.name, respectively.
+	TaxCodeRef *ReferenceType `json:"TaxCodeRef,omitempty" url:"TaxCodeRef,omitempty"`
+	// Reference to the TaxCodefor this item. Query the TaxCode name list resource to determine the appropriate TaxCode object for this reference. Use TaxCode.Id and TaxCode.Name from that object for TaxCodeRef.value and TaxCodeRef.name, respectively.
+	MarkupInfo map[string]interface{} `json:"MarkupInfo,omitempty" url:"MarkupInfo,omitempty"`
+	// The billable status of the expense. Valid values- Billable, NotBillable, HasBeenBilled
+	BillableStatus *string `json:"BillableStatus,omitempty" url:"BillableStatus,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (a *AccountBasedExpenseLineDetail) GetExtraProperties() map[string]interface{} {
+	return a.extraProperties
+}
+
+func (a *AccountBasedExpenseLineDetail) UnmarshalJSON(data []byte) error {
+	type unmarshaler AccountBasedExpenseLineDetail
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AccountBasedExpenseLineDetail(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+
+	a._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AccountBasedExpenseLineDetail) String() string {
+	if len(a._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+type AccountCreateObject struct {
+	// User recognizable name for the Account. Account.Name attribute must not contain double quotes (") or colon (:).
+	Name string `json:"Name" url:"Name"`
+	// User-defined account number to help the user in identifying the account within the chart-of-accounts and in deciding what should be posted to the account. The Account.AcctNum attribute must not contain colon (:). For France locales:Name must be unique. Length must be between 6 and 20 characters. Must start with the account number from the master category list. Name limited to alpha-numeric characters. Required for France locales.
+	AcctNum *string `json:"AcctNum,omitempty" url:"AcctNum,omitempty"`
+	// Reference to the default tax code used by this account. Tax codes are referenced by the TaxCode. Id in the TaxCode object. Available when endpoint is invoked with the minorversion=3 query parameter. For global locales, only. Required for France locales
+	TaxCodeRef *string `json:"TaxCodeRef,omitempty" url:"TaxCodeRef,omitempty"`
+	// A detailed account classification that specifies the use of this account. The type is based on the Classification.
+	AccountType *string `json:"AccountType,omitempty" url:"AccountType,omitempty"`
+	// The account sub-type classification and is based on the AccountType value.
+	AccountSubType *string `json:"AccountSubType,omitempty" url:"AccountSubType,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (a *AccountCreateObject) GetExtraProperties() map[string]interface{} {
+	return a.extraProperties
+}
+
+func (a *AccountCreateObject) UnmarshalJSON(data []byte) error {
+	type unmarshaler AccountCreateObject
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AccountCreateObject(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+
+	a._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AccountCreateObject) String() string {
+	if len(a._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+// Specifies the Parent AccountId if this represents a SubAccount.
+type AccountParentRef struct {
+	// The ID for the referenced object as found in the Id field of the object payload. - The context is set by the type of reference and is specific to the QuickBooks company file.
+	Value *string `json:"value,omitempty" url:"value,omitempty"`
+	// An identifying name for the object being referenced by value and is derived from the field that holds the common name of that object. - This varies by context and specific type of object referenced. - For example, references to a Customer object use Customer.DisplayName to populate this field. - Optionally returned in responses, implementation dependent.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (a *AccountParentRef) GetExtraProperties() map[string]interface{} {
+	return a.extraProperties
+}
+
+func (a *AccountParentRef) UnmarshalJSON(data []byte) error {
+	type unmarshaler AccountParentRef
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AccountParentRef(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+
+	a._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AccountParentRef) String() string {
+	if len(a._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+type AccountResponse struct {
+	Account *Account `json:"Account,omitempty" url:"Account,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (a *AccountResponse) GetExtraProperties() map[string]interface{} {
+	return a.extraProperties
+}
+
+func (a *AccountResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler AccountResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AccountResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+
+	a._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AccountResponse) String() string {
+	if len(a._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
+
+type BalanceSheet struct {
+	// Start date of the balance sheet.
+	StartDate *string `json:"startDate,omitempty" url:"startDate,omitempty"`
+	// End date of the balance sheet.
+	EndDate *string `json:"endDate,omitempty" url:"endDate,omitempty"`
+	// Date and time when the balance sheet was created.
+	CreateDate    *string           `json:"createDate,omitempty" url:"createDate,omitempty"`
+	CurrentAssets *BalanceSheetItem `json:"currentAssets,omitempty" url:"currentAssets,omitempty"`
+	FixedAssets   *BalanceSheetItem `json:"fixedAssets,omitempty" url:"fixedAssets,omitempty"`
+	Liabilities   *BalanceSheetItem `json:"liabilities,omitempty" url:"liabilities,omitempty"`
+	Equity        *BalanceSheetItem `json:"equity,omitempty" url:"equity,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (b *BalanceSheet) GetExtraProperties() map[string]interface{} {
+	return b.extraProperties
+}
+
+func (b *BalanceSheet) UnmarshalJSON(data []byte) error {
+	type unmarshaler BalanceSheet
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*b = BalanceSheet(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *b)
+	if err != nil {
+		return err
+	}
+	b.extraProperties = extraProperties
+
+	b._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (b *BalanceSheet) String() string {
+	if len(b._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(b._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(b); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", b)
+}
+
+type BalanceSheetItem struct {
+	// Total amount of the balance sheet item.
+	Total *float64 `json:"total,omitempty" url:"total,omitempty"`
+	// List of accounts in the balance sheet item.
+	Accounts []*BalanceSheetItemAccount `json:"accounts,omitempty" url:"accounts,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (b *BalanceSheetItem) GetExtraProperties() map[string]interface{} {
+	return b.extraProperties
+}
+
+func (b *BalanceSheetItem) UnmarshalJSON(data []byte) error {
+	type unmarshaler BalanceSheetItem
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*b = BalanceSheetItem(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *b)
+	if err != nil {
+		return err
+	}
+	b.extraProperties = extraProperties
+
+	b._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (b *BalanceSheetItem) String() string {
+	if len(b._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(b._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(b); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", b)
+}
+
+type BalanceSheetItemAccount struct {
+	// Name of the account.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// Balance of the account.
+	Total *float64 `json:"total,omitempty" url:"total,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (b *BalanceSheetItemAccount) GetExtraProperties() map[string]interface{} {
+	return b.extraProperties
+}
+
+func (b *BalanceSheetItemAccount) UnmarshalJSON(data []byte) error {
+	type unmarshaler BalanceSheetItemAccount
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*b = BalanceSheetItemAccount(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *b)
+	if err != nil {
+		return err
+	}
+	b.extraProperties = extraProperties
+
+	b._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (b *BalanceSheetItemAccount) String() string {
+	if len(b._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(b._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(b); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", b)
 }
 
 type BatchRequestBatchItemRequestItem struct {
@@ -185,6 +650,3762 @@ func (b *BatchRequestBatchItemRequestItemVendor) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", b)
+}
+
+type Bill struct {
+	// Unique identifier for this object. Sort order is ASC by default.
+	Id *string `json:"Id,omitempty" url:"Id,omitempty"`
+	// Reference to the vendor for this transaction. Query the Vendor name list resource to determine the appropriate Vendor object for this reference. Use Vendor.Id and Vendor.Name from that object for VendorRef.value and VendorRef.name, respectively.
+	VendorRef *ReferenceType `json:"VendorRef,omitempty" url:"VendorRef,omitempty"`
+	// Individual line items of a transaction. Valid Line types include- ItemBasedExpenseLine and AccountBasedExpenseLine
+	Line []*AccountBasedExpenseLine `json:"Line,omitempty" url:"Line,omitempty"`
+	// Version number of the object. It is used to lock an object for use by one app at a time. - As soon as an application modifies an object, its SyncToken is incremented. - Attempts to modify an object specifying an older SyncToken fails. - Only the latest version of the object is maintained by QuickBooks Online.
+	SyncToken *string `json:"SyncToken,omitempty" url:"SyncToken,omitempty"`
+	// Reference to the currency in which all amounts on the associated transaction are expressed. - This must be defined if multicurrency is enabled for the company. - Multicurrency is enabled for the company if Preferences.MultiCurrencyEnabled is set to true. - Read more about multicurrency support here. Required if multicurrency is enabled for the company.
+	CurrencyRef *CurrencyRefType `json:"CurrencyRef,omitempty" url:"CurrencyRef,omitempty"`
+	// The date entered by the user when this transaction occurred. - For posting transactions, this is the posting date that affects the financial statements. - If the date is not supplied, the current date on the server is used. - Sort order is ASC by default.
+	TxnDate *string `json:"TxnDate,omitempty" url:"TxnDate,omitempty"`
+	// Specifies to which AP account the bill is credited. Query the Account name list resource to determine the appropriate Account object for this reference. - Use Account.Id and Account.Name from that object for APAccountRef.value and APAccountRef.name, respectively. - The specified account must have Account.Classification set to Liability and Account.AccountSubType set to AccountsPayable. - If the company has a single AP account, the account is implied. However, it is recommended that the AP Account be explicitly specified in all cases to prevent unexpected errors when relating transactions to each other.
+	ApAccountRef *ReferenceType `json:"APAccountRef,omitempty" url:"APAccountRef,omitempty"`
+	// Reference to the Term associated with the transaction. - Query the Term name list resource to determine the appropriate Term object for this reference. - Use Term.Id and Term.Name from that object for SalesTermRef.value and SalesTermRef.name, respectively.
+	SalesTermRef *ReferenceType `json:"SalesTermRef,omitempty" url:"SalesTermRef,omitempty"`
+	// Zero or more transactions linked to this Bill object. The LinkedTxn.TxnType can be set to PurchaseOrder, BillPaymentCheck or if using Minor Version 55 and above ReimburseCharge. Use LinkedTxn.TxnId as the ID of the transaction.
+	LinkedTxn []*LinkedTxn `json:"LinkedTxn,omitempty" url:"LinkedTxn,omitempty"`
+	// Method in which tax is applied. Allowed values are- TaxExcluded, TaxInclusive, and NotApplicable.
+	GlobalTaxCalculation *string `json:"GlobalTaxCalculation,omitempty" url:"GlobalTaxCalculation,omitempty"`
+	// Indicates the total amount of the transaction. This includes the total of all the charges, allowances, and taxes. Calculated by QuickBooks business logic; any value you supply is over-written by QuickBooks.
+	TotalAmt *float64 `json:"TotalAmt,omitempty" url:"TotalAmt,omitempty"`
+	// The account location. Valid values include- - WithinFrance - FranceOverseas - OutsideFranceWithEU - OutsideEU \* For France locales, only.
+	TransactionLocationType *string `json:"TransactionLocationType,omitempty" url:"TransactionLocationType,omitempty"`
+	// Date when the payment of the transaction is due. If date is not provided, the number of days specified in SalesTermRef added the transaction date will be used.
+	DueDate *string `json:"DueDate,omitempty" url:"DueDate,omitempty"`
+	// Descriptive information about the object. The MetaData values are set by Data Services and are read only for all applications.
+	MetaData *ModificationMetaData `json:"MetaData,omitempty" url:"MetaData,omitempty"`
+	// Reference number for the transaction. If not explicitly provided at create time, a custom value can be provided. - If no value is supplied, the resulting DocNumber is null. Throws an error when duplicate DocNumber is sent in the request. - Recommended best practice- check the setting of Preferences:OtherPrefs before setting DocNumber. - If a duplicate DocNumber needs to be supplied, add the query parameter name/value pair, include=allowduplicatedocnum to the URI. - Sort order is ASC by default.
+	DocNumber *string `json:"DocNumber,omitempty" url:"DocNumber,omitempty"`
+	// User entered, organization-private note about the transaction. This note does not appear on the invoice to the customer. This field maps to the Memo field on the Invoice form.
+	PrivateNote *string `json:"PrivateNote,omitempty" url:"PrivateNote,omitempty"`
+	// This data type provides information for taxes charged on the transaction as a whole. - It captures the details of all taxes calculated for the transaction based on the tax codes referenced by the transaction. - This can be calculated by QuickBooks business logic or you may supply it when adding a transaction. - If sales tax is disabled (Preferences.TaxPrefs.UsingSalesTax is set to false) then TxnTaxDetail is ignored and not stored.
+	TxnTaxDetail map[string]interface{} `json:"TxnTaxDetail,omitempty" url:"TxnTaxDetail,omitempty"`
+	// The number of home currency units it takes to equal one unit of currency specified by CurrencyRef. Applicable if multicurrency is enabled for the company.
+	ExchangeRate *float64 `json:"ExchangeRate,omitempty" url:"ExchangeRate,omitempty"`
+	// A reference to a Department object specifying the location of the transaction, as defined using location tracking in QuickBooks Online. Query the Department name list resource to determine the appropriate department object for this reference. Use Department.Id and Department.Name from that object for DepartmentRef.value and DepartmentRef.name, respectively.
+	DepartmentRef *ReferenceType `json:"DepartmentRef,omitempty" url:"DepartmentRef,omitempty"`
+	// Include the supplier in the annual TPAR. TPAR stands for Taxable Payments Annual Report. The TPAR is mandated by ATO to get the details payments that businesses make to contractors for providing services. Some government entities also need to report the grants they have paid in a TPAR.
+	IncludeInAnnualTpar *bool `json:"IncludeInAnnualTPAR,omitempty" url:"IncludeInAnnualTPAR,omitempty"`
+	// Convenience field containing the amount in Balance expressed in terms of the home currency. Calculated by QuickBooks business logic. Value is valid only when CurrencyRef is specified and available when endpoint is evoked with the minorversion=3 query parameter. Applicable if multicurrency is enabled for the company.
+	HomeBalance *float64 `json:"HomeBalance,omitempty" url:"HomeBalance,omitempty"`
+	// A reference to the Recurring Transaction. It captures what recurring transaction template the Bill was created from.
+	RecurDataRef *ReferenceType `json:"RecurDataRef,omitempty" url:"RecurDataRef,omitempty"`
+	// The balance reflecting any payments made against the transaction. Initially set to the value of TotalAmt. A Balance of 0 indicates the bill is fully paid. Calculated by QuickBooks business logic; any value you supply is over-written by QuickBooks.
+	Balance *float64 `json:"Balance,omitempty" url:"Balance,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (b *Bill) GetExtraProperties() map[string]interface{} {
+	return b.extraProperties
+}
+
+func (b *Bill) UnmarshalJSON(data []byte) error {
+	type unmarshaler Bill
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*b = Bill(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *b)
+	if err != nil {
+		return err
+	}
+	b.extraProperties = extraProperties
+
+	b._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (b *Bill) String() string {
+	if len(b._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(b._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(b); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", b)
+}
+
+type BillCreateObject struct {
+	// Reference to the vendor for this transaction. Query the Vendor name list resource to determine the appropriate Vendor object for this reference. Use Vendor.Id and Vendor.Name from that object for VendorRef.value and VendorRef.name, respectively.
+	VendorRef *BillCreateObjectVendorRef `json:"VendorRef,omitempty" url:"VendorRef,omitempty"`
+	// Individual line items of a transaction. Valid Line types include- ItemBasedExpenseLine and AccountBasedExpenseLine
+	Line []*BillCreateObjectLineItem `json:"Line,omitempty" url:"Line,omitempty"`
+	// Reference to the currency in which all amounts on the associated transaction are expressed. - This must be defined if multicurrency is enabled for the company. - Multicurrency is enabled for the company if Preferences.MultiCurrencyEnabled is set to true. - Read more about multicurrency support here. Required if multicurrency is enabled for the company.
+	CurrencyRef *CurrencyRefType `json:"CurrencyRef,omitempty" url:"CurrencyRef,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (b *BillCreateObject) GetExtraProperties() map[string]interface{} {
+	return b.extraProperties
+}
+
+func (b *BillCreateObject) UnmarshalJSON(data []byte) error {
+	type unmarshaler BillCreateObject
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*b = BillCreateObject(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *b)
+	if err != nil {
+		return err
+	}
+	b.extraProperties = extraProperties
+
+	b._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (b *BillCreateObject) String() string {
+	if len(b._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(b._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(b); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", b)
+}
+
+type BillCreateObjectLineItem struct {
+	ItemBasedExpenseLine    *ItemBasedExpenseLine
+	AccountBasedExpenseLine *AccountBasedExpenseLine
+}
+
+func NewBillCreateObjectLineItemFromItemBasedExpenseLine(value *ItemBasedExpenseLine) *BillCreateObjectLineItem {
+	return &BillCreateObjectLineItem{ItemBasedExpenseLine: value}
+}
+
+func NewBillCreateObjectLineItemFromAccountBasedExpenseLine(value *AccountBasedExpenseLine) *BillCreateObjectLineItem {
+	return &BillCreateObjectLineItem{AccountBasedExpenseLine: value}
+}
+
+func (b *BillCreateObjectLineItem) UnmarshalJSON(data []byte) error {
+	valueItemBasedExpenseLine := new(ItemBasedExpenseLine)
+	if err := json.Unmarshal(data, &valueItemBasedExpenseLine); err == nil {
+		b.ItemBasedExpenseLine = valueItemBasedExpenseLine
+		return nil
+	}
+	valueAccountBasedExpenseLine := new(AccountBasedExpenseLine)
+	if err := json.Unmarshal(data, &valueAccountBasedExpenseLine); err == nil {
+		b.AccountBasedExpenseLine = valueAccountBasedExpenseLine
+		return nil
+	}
+	return fmt.Errorf("%s cannot be deserialized as a %T", data, b)
+}
+
+func (b BillCreateObjectLineItem) MarshalJSON() ([]byte, error) {
+	if b.ItemBasedExpenseLine != nil {
+		return json.Marshal(b.ItemBasedExpenseLine)
+	}
+	if b.AccountBasedExpenseLine != nil {
+		return json.Marshal(b.AccountBasedExpenseLine)
+	}
+	return nil, fmt.Errorf("type %T does not include a non-empty union type", b)
+}
+
+type BillCreateObjectLineItemVisitor interface {
+	VisitItemBasedExpenseLine(*ItemBasedExpenseLine) error
+	VisitAccountBasedExpenseLine(*AccountBasedExpenseLine) error
+}
+
+func (b *BillCreateObjectLineItem) Accept(visitor BillCreateObjectLineItemVisitor) error {
+	if b.ItemBasedExpenseLine != nil {
+		return visitor.VisitItemBasedExpenseLine(b.ItemBasedExpenseLine)
+	}
+	if b.AccountBasedExpenseLine != nil {
+		return visitor.VisitAccountBasedExpenseLine(b.AccountBasedExpenseLine)
+	}
+	return fmt.Errorf("type %T does not include a non-empty union type", b)
+}
+
+// Reference to the vendor for this transaction. Query the Vendor name list resource to determine the appropriate Vendor object for this reference. Use Vendor.Id and Vendor.Name from that object for VendorRef.value and VendorRef.name, respectively.
+type BillCreateObjectVendorRef struct {
+	// The ID for the referenced object as found in the Id field of the object payload. The context is set by the type of reference and is specific to the QuickBooks company file.
+	Value *string `json:"value,omitempty" url:"value,omitempty"`
+	// An identifying name for the object being referenced by value and is derived from the field that holds the common name of that object. This varies by context and specific type of object referenced. For example, references to a Customer object use Customer.DisplayName to populate this field. Optionally returned in responses, implementation dependent.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (b *BillCreateObjectVendorRef) GetExtraProperties() map[string]interface{} {
+	return b.extraProperties
+}
+
+func (b *BillCreateObjectVendorRef) UnmarshalJSON(data []byte) error {
+	type unmarshaler BillCreateObjectVendorRef
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*b = BillCreateObjectVendorRef(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *b)
+	if err != nil {
+		return err
+	}
+	b.extraProperties = extraProperties
+
+	b._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (b *BillCreateObjectVendorRef) String() string {
+	if len(b._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(b._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(b); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", b)
+}
+
+type BillResponse struct {
+	Bill *Bill `json:"Bill,omitempty" url:"Bill,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (b *BillResponse) GetExtraProperties() map[string]interface{} {
+	return b.extraProperties
+}
+
+func (b *BillResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler BillResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*b = BillResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *b)
+	if err != nil {
+		return err
+	}
+	b.extraProperties = extraProperties
+
+	b._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (b *BillResponse) String() string {
+	if len(b._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(b._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(b); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", b)
+}
+
+type Class struct {
+	// Unique identifier for this object. Sort order is ASC by default.
+	Id *string `json:"Id,omitempty" url:"Id,omitempty"`
+	// Name of the class.
+	Name *string `json:"Name,omitempty" url:"Name,omitempty"`
+	// Subclass of the class.
+	SubClass *string `json:"SubClass,omitempty" url:"SubClass,omitempty"`
+	// Fully qualified name of the class.
+	FullyQualifiedName *string `json:"FullyQualifiedName,omitempty" url:"FullyQualifiedName,omitempty"`
+	// Whether the class is active.
+	Active *bool `json:"Active,omitempty" url:"Active,omitempty"`
+	// Domain of the class.
+	Domain *string `json:"domain,omitempty" url:"domain,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *Class) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *Class) UnmarshalJSON(data []byte) error {
+	type unmarshaler Class
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = Class(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *Class) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Currency reference type
+type CurrencyRefType struct {
+	// A three letter string representing the ISO 4217 code for the currency. For example, USD, AUD, EUR, and so on.
+	Value *string `json:"value,omitempty" url:"value,omitempty"`
+	// The full name of the currency.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CurrencyRefType) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CurrencyRefType) UnmarshalJSON(data []byte) error {
+	type unmarshaler CurrencyRefType
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CurrencyRefType(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CurrencyRefType) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+type Customer struct {
+	// Unique identifier for this object. Sort order is ASC by default.
+	Id *string `json:"Id,omitempty" url:"Id,omitempty"`
+	// Version number of the object. It is used to lock an object for use by one app at a time. As soon as an application modifies an object, its SyncToken is incremented. Attempts to modify an object specifying an older SyncToken fails. Only the latest version of the object is maintained by QuickBooks Online.
+	SyncToken *string `json:"SyncToken,omitempty" url:"SyncToken,omitempty"`
+	// The name of the person or organization as displayed. Must be unique across all Customer, Vendor, and Employee objects. Cannot be removed with sparse update. If not supplied, the system generates DisplayName by concatenating customer name components supplied in the request from the following list- Title, GivenName, MiddleName, FamilyName, and Suffix.
+	DisplayName *string `json:"DisplayName,omitempty" url:"DisplayName,omitempty"`
+	// Title of the person. This tag supports i18n, all locales. The DisplayName attribute or at least one of Title, GivenName, MiddleName, FamilyName, or Suffix attributes is required.
+	Title *string `json:"Title,omitempty" url:"Title,omitempty"`
+	// Given name or first name of a person. The DisplayName attribute or at least one of Title, GivenName, MiddleName, FamilyName, or Suffix attributes is required.
+	GivenName *string `json:"GivenName,omitempty" url:"GivenName,omitempty"`
+	// Middle name of the person. The person can have zero or more middle names. The DisplayName attribute or at least one of Title, GivenName, MiddleName, FamilyName, or Suffix attributes is required.
+	MiddleName *string `json:"MiddleName,omitempty" url:"MiddleName,omitempty"`
+	// Suffix of the name. For example, Jr. The DisplayName attribute or at least one of Title, GivenName, MiddleName, FamilyName, or Suffix attributes is required.
+	Suffix *string `json:"Suffix,omitempty" url:"Suffix,omitempty"`
+	// Family name or the last name of the person. The DisplayName attribute or at least one of Title, GivenName, MiddleName, FamilyName, or Suffix attributes is required.
+	FamilyName *string `json:"FamilyName,omitempty" url:"FamilyName,omitempty"`
+	// Primary email address.
+	PrimaryEmailAddr *EmailAddress `json:"PrimaryEmailAddr,omitempty" url:"PrimaryEmailAddr,omitempty"`
+	// Resale number or some additional info about the customer.
+	ResaleNum *string `json:"ResaleNum,omitempty" url:"ResaleNum,omitempty"`
+	// Also called UTR No. in ( UK ) , CST Reg No. ( IN ) also represents the tax registration number of the Person or Organization. This value is masked in responses, exposing only last five characters. For example, the ID of 123-45-6789 is returned as XXXXXX56789.
+	SecondaryTaxIdentifier *string `json:"SecondaryTaxIdentifier,omitempty" url:"SecondaryTaxIdentifier,omitempty"`
+	// Identifies the accounts receivable account to be used for this customer. Each customer must have his own AR account. Applicable for France companies, only. Available when endpoint is evoked with the minorversion=3 query parameter. Query the Account name list resource to determine the appropriate Account object for this reference, where Account.AccountType=Accounts Receivable. Use Account.Id and Account.Name from that object for ARAccountRef.value and ARAccountRef.name, respectively.
+	ArAccountRef *ReferenceType `json:"ARAccountRef,omitempty" url:"ARAccountRef,omitempty"`
+	// Reference to a default tax code associated with this Customer object. Reference is valid if Customer.Taxable is set to true; otherwise, it is ignored. If automated sales tax is enabled (Preferences.TaxPrefs.PartnerTaxEnabled is set to true) the default tax code is set by the system and can not be overridden. Query the TaxCode name list resource to determine the appropriate TaxCode object for this reference. Use TaxCode.Id and TaxCode.Name from that object for DefaultTaxCodeRef.value and DefaultTaxCodeRef.name, respectively.
+	DefaultTaxCodeRef *ReferenceType `json:"DefaultTaxCodeRef,omitempty" url:"DefaultTaxCodeRef,omitempty"`
+	// Preferred delivery method. Values are Print, Email, or None.
+	PreferredDeliveryMethod *string `json:"PreferredDeliveryMethod,omitempty" url:"PreferredDeliveryMethod,omitempty"`
+	// GSTIN is an identification number assigned to every GST registered business.
+	Gstin *string `json:"GSTIN,omitempty" url:"GSTIN,omitempty"`
+	// Reference to a SalesTerm associated with this Customer object. Query the Term name list resource to determine the appropriate Term object for this reference. Use Term.Id and Term.Name from that object for SalesTermRef.value and SalesTermRef.name, respectively.
+	SalesTermRef    *ReferenceType       `json:"SalesTermRef,omitempty" url:"SalesTermRef,omitempty"`
+	CustomerTypeRef *CustomerTypeRefType `json:"CustomerTypeRef,omitempty" url:"CustomerTypeRef,omitempty"`
+	// Fax number.
+	Fax *TelephoneNumber `json:"Fax,omitempty" url:"Fax,omitempty"`
+	// If true, this Customer object is billed with its parent. If false, or null the customer is not to be billed with its parent. This attribute is valid only if this entity is a Job or sub Customer.
+	BillWithParent *bool `json:"BillWithParent,omitempty" url:"BillWithParent,omitempty"`
+	// Primary phone number.
+	Mobile *TelephoneNumber `json:"Mobile,omitempty" url:"Mobile,omitempty"`
+	// Mobile phone number.
+	PrimaryPhone *TelephoneNumber `json:"PrimaryPhone,omitempty" url:"PrimaryPhone,omitempty"`
+	// Alternate phone number.
+	AlternatePhone *TelephoneNumber `json:"AlternatePhone,omitempty" url:"AlternatePhone,omitempty"`
+	// Descriptive information about the entity. The MetaData values are set by Data Services and are read only for all applications.
+	MetaData *ModificationMetaData `json:"MetaData,omitempty" url:"MetaData,omitempty"`
+	// A reference to a Customer object that is the immediate parent of the Sub-Customer/Job in the hierarchical Customer:Job list. Required for the create operation if this object is a sub-customer or Job. Query the Customer name list resource to determine the appropriate Customer object for this reference. Use Customer.Id and Customer.DisplayName from that object for ParentRef.value and ParentRef.name, respectively.
+	ParentRef *ReferenceType `json:"ParentRef,omitempty" url:"ParentRef,omitempty"`
+	// Website address.
+	WebAddr *WebSiteAddress `json:"WebAddr,omitempty" url:"WebAddr,omitempty"`
+	// Default shipping address. If a physical address is updated from within the transaction object, the QuickBooks Online API flows individual address components differently into the Line elements of the transaction response then when the transaction was first created- Line1 and Line2 elements are populated with the customer name and company name. Original Line1 through Line 5 contents, City, SubDivisionCode, and PostalCode flow into Line3 through Line5as a free format strings.
+	ShipAddr *PhysicalAddress `json:"ShipAddr,omitempty" url:"ShipAddr,omitempty"`
+	// Reference to a PaymentMethod associated with this Customer object. Query the PaymentMethod name list resource to determine the appropriate PaymentMethod object for this reference. Use PaymentMethod.Id and PaymentMethod.Name from that object for PaymentMethodRef.value and PaymentMethodRef.name, respectively.
+	PaymentMethodRef *ReferenceType `json:"PaymentMethodRef,omitempty" url:"PaymentMethodRef,omitempty"`
+	// Default billing address. If a physical address is updated from within the transaction object, the QuickBooks Online API flows individual address components differently into the Line elements of the transaction response then when the transaction was first created- Line1 and Line2 elements are populated with the customer name and company name. Original Line1 through Line 5 contents, City, SubDivisionCode, and PostalCode flow into Line3 through Line5as a free format strings.
+	BillAddr *PhysicalAddress `json:"BillAddr,omitempty" url:"BillAddr,omitempty"`
+	// If true, this is a Job or sub-customer. If false or null, this is a top level customer, not a Job or sub-customer.
+	Job *bool `json:"Job,omitempty" url:"Job,omitempty"`
+	// Cumulative open balance amount for the Customer (or Job) and all its sub-jobs. Cannot be written to QuickBooks.
+	BalanceWithJobs *float64 `json:"BalanceWithJobs,omitempty" url:"BalanceWithJobs,omitempty"`
+	// Date of the Open Balance for the create operation. Write-on-create.
+	OpenBalanceDate *string `json:"OpenBalanceDate,omitempty" url:"OpenBalanceDate,omitempty"`
+	// If true, transactions for this customer are taxable. Default behavior with minor version 10 and above- true, if DefaultTaxCodeRef is defined or false if TaxExemptionReasonId is set.
+	Taxable *bool `json:"Taxable,omitempty" url:"Taxable,omitempty"`
+	// Free form text describing the Customer.
+	Notes *string `json:"Notes,omitempty" url:"Notes,omitempty"`
+	// If true, this entity is currently enabled for use by QuickBooks. If there is an amount in Customer.Balance when setting this Customer object to inactive through the QuickBooks UI, a CreditMemo balancing transaction is created for the amount.
+	Active *bool `json:"Active,omitempty" url:"Active,omitempty"`
+	// The name of the company associated with the person or organization.
+	CompanyName *string `json:"CompanyName,omitempty" url:"CompanyName,omitempty"`
+	// Specifies the open balance amount or the amount unpaid by the customer. For the create operation, this represents the opening balance for the customer. When returned in response to the query request it represents the current open balance (unpaid amount) for that customer. Write-on-create.
+	Balance *float64 `json:"Balance,omitempty" url:"Balance,omitempty"`
+	// If true, indicates this is a Project.
+	IsProject *bool `json:"IsProject,omitempty" url:"IsProject,omitempty"`
+	// The Source type of the transactions created by QuickBooks Commerce. Valid values include QBCommerce
+	Source *string `json:"Source,omitempty" url:"Source,omitempty"`
+	// Also called Tax Reg. No in ( UK ) , ( CA ) , ( IN ) , ( AU ) represents the tax ID of the Person or Organization. This value is masked in responses, exposing only last five characters. For example, the ID of 123-45-6789 is returned as XXXXXX56789.
+	PrimaryTaxIdentifier *string `json:"PrimaryTaxIdentifier,omitempty" url:"PrimaryTaxIdentifier,omitempty"`
+	// For the filing of GSTR, transactions need to be classified depending on the type of customer to whom the sale is done. To facilitate this, we have introduced a new field as 'GST registration type'. Possible values are listed below- GST_REG_REG GST registered- Regular. Customer who has a business which is registered under GST and has a GSTIN (doesn’t include customers registered under composition scheme, as an SEZ or as EOU's, STP's EHTP's etc.). GST_REG_COMP GST registered-Composition. Customer who has a business which is registered under the composition scheme of GST and has a GSTIN. GST_UNREG GST unregistered. Customer who has a business which is not registered under GST and does not have a GSTIN. CONSUMER Consumer. Customer who is not registered under GST and is the final consumer of the service or product sold. OVERSEAS Overseas. Customer who has a business which is located out of India. SEZ SEZ. Customer who has a business which is registered under GST, has a GSTIN and is located in a SEZ or is a SEZ Developer. DEEMED Deemed exports- EOU's, STP's EHTP's etc. Customer who has a business which is registered under GST and falls in the category of companies (EOU's, STP's EHTP's etc.), to which supplies are made they are termed as deemed exports.
+	GstRegistrationType *string `json:"GSTRegistrationType,omitempty" url:"GSTRegistrationType,omitempty"`
+	// Name of the person or organization as printed on a check. If not provided, this is populated from DisplayName. Constraints- Cannot be removed with sparse update.
+	PrintOnCheckName *string `json:"PrintOnCheckName,omitempty" url:"PrintOnCheckName,omitempty"`
+	// Fully qualified name of the object. The fully qualified name prepends the topmost parent, followed by each sub element separated by colons. Takes the form of Customer:Job:Sub-job. System generated. Limited to 5 levels.
+	FullyQualifiedName *string `json:"FullyQualifiedName,omitempty" url:"FullyQualifiedName,omitempty"`
+	// Specifies the level of the hierarchy in which the entity is located. Zero specifies the top level of the hierarchy; anything above will be level with respect to the parent. Constraints:up to 5 levels
+	Level *int `json:"Level,omitempty" url:"Level,omitempty"`
+	// The tax exemption reason associated with this customer object. Applicable if automated sales tax is enabled (Preferences.TaxPrefs.PartnerTaxEnabled is set to true) for the company. Set TaxExemptionReasonId to one of the following- - Id Reason 1. Federal government 2. State government 3. Local government 4. Tribal government 5. Charitable organization 6. Religious organization 7. Educational organization 8. Hospital 9. Resale 10. Direct pay permit 11. Multiple points of use 12. Direct mail 13. Agricultural production 14. Industrial production / manufacturing 15. Foreign diplomat
+	TaxExemptionReasonId *string `json:"TaxExemptionReasonId,omitempty" url:"TaxExemptionReasonId,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *Customer) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *Customer) UnmarshalJSON(data []byte) error {
+	type unmarshaler Customer
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = Customer(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *Customer) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+type CustomerCreateObject struct {
+	// Unique identifier for this object. Sort order is ASC by default.
+	Id *string `json:"Id,omitempty" url:"Id,omitempty"`
+	// Version number of the object. It is used to lock an object for use by one app at a time. As soon as an application modifies an object, its SyncToken is incremented. Attempts to modify an object specifying an older SyncToken fails. Only the latest version of the object is maintained by QuickBooks Online.
+	SyncToken *string `json:"SyncToken,omitempty" url:"SyncToken,omitempty"`
+	// The name of the person or organization as displayed. Must be unique across all Customer, Vendor, and Employee objects. Cannot be removed with sparse update. If not supplied, the system generates DisplayName by concatenating customer name components supplied in the request from the following list- Title, GivenName, MiddleName, FamilyName, and Suffix.
+	DisplayName *string `json:"DisplayName,omitempty" url:"DisplayName,omitempty"`
+	// Title of the person. This tag supports i18n, all locales. The DisplayName attribute or at least one of Title, GivenName, MiddleName, FamilyName, or Suffix attributes is required.
+	Title *string `json:"Title,omitempty" url:"Title,omitempty"`
+	// Given name or first name of a person. The DisplayName attribute or at least one of Title, GivenName, MiddleName, FamilyName, or Suffix attributes is required.
+	GivenName *string `json:"GivenName,omitempty" url:"GivenName,omitempty"`
+	// Middle name of the person. The person can have zero or more middle names. The DisplayName attribute or at least one of Title, GivenName, MiddleName, FamilyName, or Suffix attributes is required.
+	MiddleName *string `json:"MiddleName,omitempty" url:"MiddleName,omitempty"`
+	// Suffix of the name. For example, Jr. The DisplayName attribute or at least one of Title, GivenName, MiddleName, FamilyName, or Suffix attributes is required.
+	Suffix *string `json:"Suffix,omitempty" url:"Suffix,omitempty"`
+	// Family name or the last name of the person. The DisplayName attribute or at least one of Title, GivenName, MiddleName, FamilyName, or Suffix attributes is required.
+	FamilyName *string `json:"FamilyName,omitempty" url:"FamilyName,omitempty"`
+	// Primary email address.
+	PrimaryEmailAddr *EmailAddress `json:"PrimaryEmailAddr,omitempty" url:"PrimaryEmailAddr,omitempty"`
+	// Resale number or some additional info about the customer.
+	ResaleNum *string `json:"ResaleNum,omitempty" url:"ResaleNum,omitempty"`
+	// Also called UTR No. in ( UK ) , CST Reg No. ( IN ) also represents the tax registration number of the Person or Organization. This value is masked in responses, exposing only last five characters. For example, the ID of 123-45-6789 is returned as XXXXXX56789.
+	SecondaryTaxIdentifier *string `json:"SecondaryTaxIdentifier,omitempty" url:"SecondaryTaxIdentifier,omitempty"`
+	// Identifies the accounts receivable account to be used for this customer. Each customer must have his own AR account. Applicable for France companies, only. Available when endpoint is evoked with the minorversion=3 query parameter. Query the Account name list resource to determine the appropriate Account object for this reference, where Account.AccountType=Accounts Receivable. Use Account.Id and Account.Name from that object for ARAccountRef.value and ARAccountRef.name, respectively.
+	ArAccountRef *ReferenceType `json:"ARAccountRef,omitempty" url:"ARAccountRef,omitempty"`
+	// Reference to a default tax code associated with this Customer object. Reference is valid if Customer.Taxable is set to true; otherwise, it is ignored. If automated sales tax is enabled (Preferences.TaxPrefs.PartnerTaxEnabled is set to true) the default tax code is set by the system and can not be overridden. Query the TaxCode name list resource to determine the appropriate TaxCode object for this reference. Use TaxCode.Id and TaxCode.Name from that object for DefaultTaxCodeRef.value and DefaultTaxCodeRef.name, respectively.
+	DefaultTaxCodeRef *ReferenceType `json:"DefaultTaxCodeRef,omitempty" url:"DefaultTaxCodeRef,omitempty"`
+	// Preferred delivery method. Values are Print, Email, or None.
+	PreferredDeliveryMethod *string `json:"PreferredDeliveryMethod,omitempty" url:"PreferredDeliveryMethod,omitempty"`
+	// GSTIN is an identification number assigned to every GST registered business.
+	Gstin *string `json:"GSTIN,omitempty" url:"GSTIN,omitempty"`
+	// Reference to a SalesTerm associated with this Customer object. Query the Term name list resource to determine the appropriate Term object for this reference. Use Term.Id and Term.Name from that object for SalesTermRef.value and SalesTermRef.name, respectively.
+	SalesTermRef    *ReferenceType       `json:"SalesTermRef,omitempty" url:"SalesTermRef,omitempty"`
+	CustomerTypeRef *CustomerTypeRefType `json:"CustomerTypeRef,omitempty" url:"CustomerTypeRef,omitempty"`
+	// Fax number.
+	Fax *TelephoneNumber `json:"Fax,omitempty" url:"Fax,omitempty"`
+	// If true, this Customer object is billed with its parent. If false, or null the customer is not to be billed with its parent. This attribute is valid only if this entity is a Job or sub Customer.
+	BillWithParent *bool `json:"BillWithParent,omitempty" url:"BillWithParent,omitempty"`
+	// Primary phone number.
+	Mobile *TelephoneNumber `json:"Mobile,omitempty" url:"Mobile,omitempty"`
+	// Mobile phone number.
+	PrimaryPhone *TelephoneNumber `json:"PrimaryPhone,omitempty" url:"PrimaryPhone,omitempty"`
+	// Alternate phone number.
+	AlternatePhone *TelephoneNumber `json:"AlternatePhone,omitempty" url:"AlternatePhone,omitempty"`
+	// Descriptive information about the entity. The MetaData values are set by Data Services and are read only for all applications.
+	MetaData *ModificationMetaData `json:"MetaData,omitempty" url:"MetaData,omitempty"`
+	// A reference to a Customer object that is the immediate parent of the Sub-Customer/Job in the hierarchical Customer:Job list. Required for the create operation if this object is a sub-customer or Job. Query the Customer name list resource to determine the appropriate Customer object for this reference. Use Customer.Id and Customer.DisplayName from that object for ParentRef.value and ParentRef.name, respectively.
+	ParentRef *ReferenceType `json:"ParentRef,omitempty" url:"ParentRef,omitempty"`
+	// Website address.
+	WebAddr *WebSiteAddress `json:"WebAddr,omitempty" url:"WebAddr,omitempty"`
+	// Default shipping address. If a physical address is updated from within the transaction object, the QuickBooks Online API flows individual address components differently into the Line elements of the transaction response then when the transaction was first created- Line1 and Line2 elements are populated with the customer name and company name. Original Line1 through Line 5 contents, City, SubDivisionCode, and PostalCode flow into Line3 through Line5as a free format strings.
+	ShipAddr *PhysicalAddress `json:"ShipAddr,omitempty" url:"ShipAddr,omitempty"`
+	// Reference to a PaymentMethod associated with this Customer object. Query the PaymentMethod name list resource to determine the appropriate PaymentMethod object for this reference. Use PaymentMethod.Id and PaymentMethod.Name from that object for PaymentMethodRef.value and PaymentMethodRef.name, respectively.
+	PaymentMethodRef *ReferenceType `json:"PaymentMethodRef,omitempty" url:"PaymentMethodRef,omitempty"`
+	// Default billing address. If a physical address is updated from within the transaction object, the QuickBooks Online API flows individual address components differently into the Line elements of the transaction response then when the transaction was first created- Line1 and Line2 elements are populated with the customer name and company name. Original Line1 through Line 5 contents, City, SubDivisionCode, and PostalCode flow into Line3 through Line5as a free format strings.
+	BillAddr *PhysicalAddress `json:"BillAddr,omitempty" url:"BillAddr,omitempty"`
+	// If true, this is a Job or sub-customer. If false or null, this is a top level customer, not a Job or sub-customer.
+	Job *bool `json:"Job,omitempty" url:"Job,omitempty"`
+	// Cumulative open balance amount for the Customer (or Job) and all its sub-jobs. Cannot be written to QuickBooks.
+	BalanceWithJobs *float64 `json:"BalanceWithJobs,omitempty" url:"BalanceWithJobs,omitempty"`
+	// Date of the Open Balance for the create operation. Write-on-create.
+	OpenBalanceDate *string `json:"OpenBalanceDate,omitempty" url:"OpenBalanceDate,omitempty"`
+	// If true, transactions for this customer are taxable. Default behavior with minor version 10 and above- true, if DefaultTaxCodeRef is defined or false if TaxExemptionReasonId is set.
+	Taxable *bool `json:"Taxable,omitempty" url:"Taxable,omitempty"`
+	// Free form text describing the Customer.
+	Notes *string `json:"Notes,omitempty" url:"Notes,omitempty"`
+	// If true, this entity is currently enabled for use by QuickBooks. If there is an amount in Customer.Balance when setting this Customer object to inactive through the QuickBooks UI, a CreditMemo balancing transaction is created for the amount.
+	Active *bool `json:"Active,omitempty" url:"Active,omitempty"`
+	// The name of the company associated with the person or organization.
+	CompanyName *string `json:"CompanyName,omitempty" url:"CompanyName,omitempty"`
+	// Specifies the open balance amount or the amount unpaid by the customer. For the create operation, this represents the opening balance for the customer. When returned in response to the query request it represents the current open balance (unpaid amount) for that customer. Write-on-create.
+	Balance *float64 `json:"Balance,omitempty" url:"Balance,omitempty"`
+	// The Source type of the transactions created by QuickBooks Commerce. Valid values include QBCommerce
+	Source *string `json:"Source,omitempty" url:"Source,omitempty"`
+	// Also called Tax Reg. No in ( UK ) , ( CA ) , ( IN ) , ( AU ) represents the tax ID of the Person or Organization. This value is masked in responses, exposing only last five characters. For example, the ID of 123-45-6789 is returned as XXXXXX56789.
+	PrimaryTaxIdentifier *string `json:"PrimaryTaxIdentifier,omitempty" url:"PrimaryTaxIdentifier,omitempty"`
+	// For the filing of GSTR, transactions need to be classified depending on the type of customer to whom the sale is done. To facilitate this, we have introduced a new field as 'GST registration type'. Possible values are listed below- GST_REG_REG GST registered- Regular. Customer who has a business which is registered under GST and has a GSTIN (doesn’t include customers registered under composition scheme, as an SEZ or as EOU's, STP's EHTP's etc.). GST_REG_COMP GST registered-Composition. Customer who has a business which is registered under the composition scheme of GST and has a GSTIN. GST_UNREG GST unregistered. Customer who has a business which is not registered under GST and does not have a GSTIN. CONSUMER Consumer. Customer who is not registered under GST and is the final consumer of the service or product sold. OVERSEAS Overseas. Customer who has a business which is located out of India. SEZ SEZ. Customer who has a business which is registered under GST, has a GSTIN and is located in a SEZ or is a SEZ Developer. DEEMED Deemed exports- EOU's, STP's EHTP's etc. Customer who has a business which is registered under GST and falls in the category of companies (EOU's, STP's EHTP's etc.), to which supplies are made they are termed as deemed exports.
+	GstRegistrationType *string `json:"GSTRegistrationType,omitempty" url:"GSTRegistrationType,omitempty"`
+	// Name of the person or organization as printed on a check. If not provided, this is populated from DisplayName. Constraints- Cannot be removed with sparse update.
+	PrintOnCheckName *string `json:"PrintOnCheckName,omitempty" url:"PrintOnCheckName,omitempty"`
+	// Specifies the level of the hierarchy in which the entity is located. Zero specifies the top level of the hierarchy; anything above will be level with respect to the parent. Constraints:up to 5 levels
+	Level *int `json:"Level,omitempty" url:"Level,omitempty"`
+	// The tax exemption reason associated with this customer object. Applicable if automated sales tax is enabled (Preferences.TaxPrefs.PartnerTaxEnabled is set to true) for the company. Set TaxExemptionReasonId to one of the following- - Id Reason 1. Federal government 2. State government 3. Local government 4. Tribal government 5. Charitable organization 6. Religious organization 7. Educational organization 8. Hospital 9. Resale 10. Direct pay permit 11. Multiple points of use 12. Direct mail 13. Agricultural production 14. Industrial production / manufacturing 15. Foreign diplomat
+	TaxExemptionReasonId *string `json:"TaxExemptionReasonId,omitempty" url:"TaxExemptionReasonId,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CustomerCreateObject) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CustomerCreateObject) UnmarshalJSON(data []byte) error {
+	type unmarshaler CustomerCreateObject
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CustomerCreateObject(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CustomerCreateObject) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+type CustomerResponse struct {
+	Customer *Customer `json:"Customer,omitempty" url:"Customer,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CustomerResponse) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CustomerResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler CustomerResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CustomerResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CustomerResponse) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Reference to the customer type assigned to a customer. This field is only returned if the customer is assigned a customer type.
+type CustomerTypeRefType struct {
+	// The unique numeric Id of the customer type. This maps to the CustomerType entity- CustomerType.Id.
+	Value *string `json:"value,omitempty" url:"value,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CustomerTypeRefType) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CustomerTypeRefType) UnmarshalJSON(data []byte) error {
+	type unmarshaler CustomerTypeRefType
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CustomerTypeRefType(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CustomerTypeRefType) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Email address
+type EmailAddress struct {
+	// An email address. The address format must follow the RFC 822 standard.
+	Address *string `json:"Address,omitempty" url:"Address,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (e *EmailAddress) GetExtraProperties() map[string]interface{} {
+	return e.extraProperties
+}
+
+func (e *EmailAddress) UnmarshalJSON(data []byte) error {
+	type unmarshaler EmailAddress
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = EmailAddress(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+
+	e._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *EmailAddress) String() string {
+	if len(e._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(e._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
+type Estimate struct {
+	// Unique identifier for this object. Sort order is ASC by default.
+	Id *string `json:"Id,omitempty" url:"Id,omitempty"`
+	// Reference to a customer or job. Query the Customer name list resource to determine the appropriate Customer object for this reference. Use Customer.Id and Customer.DisplayName from that object for CustomerRef.value and CustomerRef.name, respectively.
+	CustomerRef *ReferenceType `json:"CustomerRef,omitempty" url:"CustomerRef,omitempty"`
+	// Version number of the object. It is used to lock an object for use by one app at a time. As soon as an application modifies an object, its SyncToken is incremented. Attempts to modify an object specifying an older SyncToken fails. Only the latest version of the object is maintained by QuickBooks Online.
+	SyncToken *string `json:"SyncToken,omitempty" url:"SyncToken,omitempty"`
+	// Reference to the currency in which all amounts on the associated transaction are expressed. This must be defined if multicurrency is enabled for the company. Multicurrency is enabled for the company if Preferences.MultiCurrencyEnabled is set to true. Read more about multicurrency support here. Required if multicurrency is enabled for the company.
+	CurrencyRef *CurrencyRefType `json:"CurrencyRef,omitempty" url:"CurrencyRef,omitempty"`
+	// Identifies the e-mail address where the estimate is sent. If EmailStatus=NeedToSend, BillEmailis a required input.
+	BillEmail *EmailAddress `json:"BillEmail,omitempty" url:"BillEmail,omitempty"`
+	// The date entered by the user when this transaction occurred. For posting transactions, this is the posting date that affects the financial statements. If the date is not supplied, the current date on the server is used. Sort order is ASC by default.
+	TxnDate *string `json:"TxnDate,omitempty" url:"TxnDate,omitempty"`
+	// Identifies the address where the goods are shipped from. For transactions without shipping, it represents the address where the sale took place. For international addresses - countries should be passed as 3 ISO alpha-3 characters or the full name of the country. If a physical address is updated from within the transaction object, the QuickBooks Online API flows individual address components differently into the Line elements of the transaction response then when the transaction was first created- Line1 and Line2 elements are populated with the customer name and company name. Original Line1 through Line 5 contents, City, SubDivisionCode, and PostalCode flow into Line3 through Line5as a free format strings.
+	ShipFromAddr *PhysicalAddress `json:"ShipFromAddr,omitempty" url:"ShipFromAddr,omitempty"`
+	// Date for delivery of goods or services.
+	ShipDate *string `json:"ShipDate,omitempty" url:"ShipDate,omitempty"`
+	// Reference to the Class associated with the transaction. Available if Preferences.AccountingInfoPrefs.ClassTrackingPerTxn is set to true. Query the Class name list resource to determine the appropriate Class object for this reference. Use Class.Id and Class.Name from that object for ClassRef.value and ClassRef.name, respectively.
+	ClassRef *ReferenceType `json:"ClassRef,omitempty" url:"ClassRef,omitempty"`
+	// Printing status of the invoice. Valid values- NotSet, NeedToPrint, PrintComplete .
+	PrintStatus *string `json:"PrintStatus,omitempty" url:"PrintStatus,omitempty"`
+	// One of, up to three custom fields for the transaction. Available for custom fields so configured for the company. Check Preferences.SalesFormsPrefs.CustomField and Preferences.VendorAndPurchasesPrefs.POCustomField for custom fields currenly configured. Click here to learn about managing custom fields.
+	CustomField map[string]interface{} `json:"CustomField,omitempty" url:"CustomField,omitempty"`
+	// Reference to the sales term associated with the transaction. Query the Term name list resource to determine the appropriate Term object for this reference. Use Term.Id and Term.Name from that object for SalesTermRef.value and SalesTermRef.name, respectively.
+	SalesTermRef *ReferenceType `json:"SalesTermRef,omitempty" url:"SalesTermRef,omitempty"`
+	// One of the following status settings- Accepted, Closed, Pending, Rejected, Converted
+	TxnStatus *string `json:"TxnStatus,omitempty" url:"TxnStatus,omitempty"`
+	// Zero or more Invoice objects related to this transaction. Use LinkedTxn.TxnId as the ID in a separate Invoice read request to retrieve details of the linked object.
+	LinkedTxn []*LinkedTxn `json:"LinkedTxn,omitempty" url:"LinkedTxn,omitempty"`
+	// TaxExcluded Method in which tax is applied. Allowed values are- TaxExcluded, TaxInclusive, and NotApplicable.
+	GlobalTaxCalculation *string `json:"GlobalTaxCalculation,omitempty" url:"GlobalTaxCalculation,omitempty"`
+	// Date estimate was accepted.
+	AcceptedDate *string `json:"AcceptedDate,omitempty" url:"AcceptedDate,omitempty"`
+	// Date by which estimate must be accepted before invalidation.
+	ExpirationDate *string `json:"ExpirationDate,omitempty" url:"ExpirationDate,omitempty"`
+	// The account location. Valid values include- - WithinFrance - FranceOverseas - OutsideFranceWithEU - OutsideEU - For France locales, only.
+	TransactionLocationType *string `json:"TransactionLocationType,omitempty" url:"TransactionLocationType,omitempty"`
+	// Date when the payment of the transaction is due. If date is not provided, the number of days specified in SalesTermRef added the transaction date will be used.
+	DueDate *string `json:"DueDate,omitempty" url:"DueDate,omitempty"`
+	// Descriptive information about the object. The MetaData values are set by Data Services and are read only for all applications.
+	MetaData *ModificationMetaData `json:"MetaData,omitempty" url:"MetaData,omitempty"`
+	// Reference number for the transaction. If not explicitly provided at create time, this field is populated based on the setting of Preferences:CustomTxnNumber as follows- If Preferences:CustomTxnNumber is true a custom value can be provided. If no value is supplied, the resulting DocNumber is null. If Preferences:CustomTxnNumber is false, resulting DocNumber is system generated by incrementing the last number by 1. If Preferences:CustomTxnNumber is false then do not send a value as it can lead to unwanted duplicates. If a DocNumber value is sent for an Update operation, then it just updates that particular invoice and does not alter the internal system DocNumber. Note- DocNumber is an optional field for all locales except France. For France locale if Preferences:CustomTxnNumber is enabled it will not be automatically generated and is a required field.
+	DocNumber *string `json:"DocNumber,omitempty" url:"DocNumber,omitempty"`
+	// User entered, organization-private note about the transaction. This note does not appear on the invoice to the customer. This field maps to the Memo field on the Invoice form.
+	PrivateNote *string `json:"PrivateNote,omitempty" url:"PrivateNote,omitempty"`
+	// Individual line items of a transaction. Valid Line types include- SalesItemLine, GroupLine, DescriptionOnlyLine (also used for inline Subtotal lines), DiscountLine and SubTotalLine (used for the overall transaction)
+	Line []interface{} `json:"Line,omitempty" url:"Line,omitempty"`
+	// User-entered message to the customer; this message is visible to end user on their transactions.
+	CustomerMemo *MemoRef `json:"CustomerMemo,omitempty" url:"CustomerMemo,omitempty"`
+	// Email status of the invoice. Valid values- NotSet, NeedToSend, EmailSent
+	EmailStatus *string `json:"EmailStatus,omitempty" url:"EmailStatus,omitempty"`
+	// This data type provides information for taxes charged on the transaction as a whole. It captures the details sales taxes calculated for the transaction based on the tax codes referenced by the transaction. This can be calculated by QuickBooks business logic or you may supply it when adding a transaction. See Global tax model for more information about this element. If sales tax is disabled (Preferences.TaxPrefs.UsingSalesTax is set to false) then TxnTaxDetail is ignored and not stored.
+	TxnTaxDetail map[string]interface{} `json:"TxnTaxDetail,omitempty" url:"TxnTaxDetail,omitempty"`
+	// Name of customer who accepted the estimate.
+	AcceptedBy *string `json:"AcceptedBy,omitempty" url:"AcceptedBy,omitempty"`
+	// The number of home currency units it takes to equal one unit of currency specified by CurrencyRef. Applicable if multicurrency is enabled for the company.
+	ExchangeRate *float64 `json:"ExchangeRate,omitempty" url:"ExchangeRate,omitempty"`
+	// Identifies the address where the goods must be shipped. If ShipAddris not specified, and a default Customer:ShippingAddr is specified in QuickBooks for this customer, the default ship-to address will be used by QuickBooks. For international addresses - countries should be passed as 3 ISO alpha-3 characters or the full name of the country. If a physical address is updated from within the transaction object, the QuickBooks Online API flows individual address components differently into the Line elements of the transaction response then when the transaction was first created- Line1 and Line2 elements are populated with the customer name and company name. Original Line1 through Line 5 contents, City, SubDivisionCode, and PostalCode flow into Line3 through Line5as a free format strings.
+	ShipAddr *PhysicalAddress `json:"ShipAddr,omitempty" url:"ShipAddr,omitempty"`
+	// A reference to a Department object specifying the location of the transaction. Available if Preferences.AccountingInfoPrefs.TrackDepartments is set to true. Query the Department name list resource to determine the appropriate department object for this reference. Use Department.Id and Department.Name from that object for DepartmentRef.value and DepartmentRef.name, respectively.
+	DepartmentRef *ReferenceType `json:"DepartmentRef,omitempty" url:"DepartmentRef,omitempty"`
+	// Reference to the ShipMethod associated with the transaction. There is no shipping method list. Reference resolves to a string. Reference to the ShipMethod associated with the transaction. There is no shipping method list. Reference resolves to a string.
+	ShipMethodRef *ReferenceType `json:"ShipMethodRef,omitempty" url:"ShipMethodRef,omitempty"`
+	// Bill-to address of the Invoice. If BillAddris not specified, and a default Customer:BillingAddr is specified in QuickBooks for this customer, the default bill-to address is used by QuickBooks. For international addresses - countries should be passed as 3 ISO alpha-3 characters or the full name of the country. If a physical address is updated from within the transaction object, the QuickBooks Online API flows individual address components differently into the Line elements of the transaction response then when the transaction was first created- Line1 and Line2 elements are populated with the customer name and company name. Original Line1 through Line 5 contents, City, SubDivisionCode, and PostalCode flow into Line3 through Line5as a free format strings.
+	BillAddr *PhysicalAddress `json:"BillAddr,omitempty" url:"BillAddr,omitempty"`
+	// If false or null, calculate the sales tax first, and then apply the discount. If true, subtract the discount first and then calculate the sales tax.
+	ApplyTaxAfterDiscount *bool `json:"ApplyTaxAfterDiscount,omitempty" url:"ApplyTaxAfterDiscount,omitempty"`
+	// Indicates the total amount of the transaction. This includes the total of all the charges, allowances, and taxes. Calculated by QuickBooks business logic; any value you supply is over-written by QuickBooks.
+	TotalAmt *float64 `json:"TotalAmt,omitempty" url:"TotalAmt,omitempty"`
+	// A reference to the Recurring Transaction. It captures what recurring transaction template the Estimate was created from.
+	RecurDataRef *ReferenceType `json:"RecurDataRef,omitempty" url:"RecurDataRef,omitempty"`
+	// Reference to the TaxExepmtion ID associated with this object. Available for companies that have automated sales tax enabled. TaxExemptionRef.Name- The Tax Exemption Id for the customer to which this object is associated. This Id is typically issued by the state. TaxExemptionRef.value- The system-generated Id of the exemption type.
+	TaxExemptionRef *ReferenceType `json:"TaxExemptionRef,omitempty" url:"TaxExemptionRef,omitempty"`
+	// Total amount of the transaction in the home currency. Includes the total of all the charges, allowances and taxes. Calculated by QuickBooks business logic. Value is valid only when CurrencyRef is specified. Applicable if multicurrency is enabled for the company.
+	HomeTotalAmt *float64 `json:"HomeTotalAmt,omitempty" url:"HomeTotalAmt,omitempty"`
+	// Denotes how ShipAddr is stored- formatted or unformatted. The value of this flag is system defined based on format of shipping address at object create time. If set to false, shipping address is returned in a formatted style using City, Country, CountrySubDivisionCode, Postal code. If set to true, shipping address is returned in an unformatted style using Line1 through Line5 attributes.
+	FreeFormAddress *bool `json:"FreeFormAddress,omitempty" url:"FreeFormAddress,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (e *Estimate) GetExtraProperties() map[string]interface{} {
+	return e.extraProperties
+}
+
+func (e *Estimate) UnmarshalJSON(data []byte) error {
+	type unmarshaler Estimate
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = Estimate(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+
+	e._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *Estimate) String() string {
+	if len(e._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(e._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
+type EstimateCreateObject struct {
+	// Unique identifier for this object. Sort order is ASC by default.
+	Id *string `json:"Id,omitempty" url:"Id,omitempty"`
+	// Reference to a customer or job. Query the Customer name list resource to determine the appropriate Customer object for this reference. Use Customer.Id and Customer.DisplayName from that object for CustomerRef.value and CustomerRef.name, respectively.
+	CustomerRef *ReferenceType `json:"CustomerRef,omitempty" url:"CustomerRef,omitempty"`
+	// Version number of the object. It is used to lock an object for use by one app at a time. As soon as an application modifies an object, its SyncToken is incremented. Attempts to modify an object specifying an older SyncToken fails. Only the latest version of the object is maintained by QuickBooks Online.
+	SyncToken *string `json:"SyncToken,omitempty" url:"SyncToken,omitempty"`
+	// Reference to the currency in which all amounts on the associated transaction are expressed. This must be defined if multicurrency is enabled for the company. Multicurrency is enabled for the company if Preferences.MultiCurrencyEnabled is set to true. Read more about multicurrency support here. Required if multicurrency is enabled for the company.
+	CurrencyRef *CurrencyRefType `json:"CurrencyRef,omitempty" url:"CurrencyRef,omitempty"`
+	// Identifies the e-mail address where the estimate is sent. If EmailStatus=NeedToSend, BillEmailis a required input.
+	BillEmail *EmailAddress `json:"BillEmail,omitempty" url:"BillEmail,omitempty"`
+	// The date entered by the user when this transaction occurred. For posting transactions, this is the posting date that affects the financial statements. If the date is not supplied, the current date on the server is used. Sort order is ASC by default.
+	TxnDate *string `json:"TxnDate,omitempty" url:"TxnDate,omitempty"`
+	// Identifies the address where the goods are shipped from. For transactions without shipping, it represents the address where the sale took place. For international addresses - countries should be passed as 3 ISO alpha-3 characters or the full name of the country. If a physical address is updated from within the transaction object, the QuickBooks Online API flows individual address components differently into the Line elements of the transaction response then when the transaction was first created- Line1 and Line2 elements are populated with the customer name and company name. Original Line1 through Line 5 contents, City, SubDivisionCode, and PostalCode flow into Line3 through Line5as a free format strings.
+	ShipFromAddr *PhysicalAddress `json:"ShipFromAddr,omitempty" url:"ShipFromAddr,omitempty"`
+	// Date for delivery of goods or services.
+	ShipDate *string `json:"ShipDate,omitempty" url:"ShipDate,omitempty"`
+	// Reference to the Class associated with the transaction. Available if Preferences.AccountingInfoPrefs.ClassTrackingPerTxn is set to true. Query the Class name list resource to determine the appropriate Class object for this reference. Use Class.Id and Class.Name from that object for ClassRef.value and ClassRef.name, respectively.
+	ClassRef *ReferenceType `json:"ClassRef,omitempty" url:"ClassRef,omitempty"`
+	// Printing status of the invoice. Valid values- NotSet, NeedToPrint, PrintComplete .
+	PrintStatus *string `json:"PrintStatus,omitempty" url:"PrintStatus,omitempty"`
+	// One of, up to three custom fields for the transaction. Available for custom fields so configured for the company. Check Preferences.SalesFormsPrefs.CustomField and Preferences.VendorAndPurchasesPrefs.POCustomField for custom fields currenly configured. Click here to learn about managing custom fields.
+	CustomField map[string]interface{} `json:"CustomField,omitempty" url:"CustomField,omitempty"`
+	// Reference to the sales term associated with the transaction. Query the Term name list resource to determine the appropriate Term object for this reference. Use Term.Id and Term.Name from that object for SalesTermRef.value and SalesTermRef.name, respectively.
+	SalesTermRef *ReferenceType `json:"SalesTermRef,omitempty" url:"SalesTermRef,omitempty"`
+	// One of the following status settings- Accepted, Closed, Pending, Rejected, Converted
+	TxnStatus *string `json:"TxnStatus,omitempty" url:"TxnStatus,omitempty"`
+	// Zero or more Invoice objects related to this transaction. Use LinkedTxn.TxnId as the ID in a separate Invoice read request to retrieve details of the linked object.
+	LinkedTxn []*LinkedTxn `json:"LinkedTxn,omitempty" url:"LinkedTxn,omitempty"`
+	// TaxExcluded Method in which tax is applied. Allowed values are- TaxExcluded, TaxInclusive, and NotApplicable.
+	GlobalTaxCalculation *string `json:"GlobalTaxCalculation,omitempty" url:"GlobalTaxCalculation,omitempty"`
+	// Date estimate was accepted.
+	AcceptedDate *string `json:"AcceptedDate,omitempty" url:"AcceptedDate,omitempty"`
+	// Date by which estimate must be accepted before invalidation.
+	ExpirationDate *string `json:"ExpirationDate,omitempty" url:"ExpirationDate,omitempty"`
+	// The account location. Valid values include- - WithinFrance - FranceOverseas - OutsideFranceWithEU - OutsideEU - For France locales, only.
+	TransactionLocationType *string `json:"TransactionLocationType,omitempty" url:"TransactionLocationType,omitempty"`
+	// Date when the payment of the transaction is due. If date is not provided, the number of days specified in SalesTermRef added the transaction date will be used.
+	DueDate *string `json:"DueDate,omitempty" url:"DueDate,omitempty"`
+	// Descriptive information about the object. The MetaData values are set by Data Services and are read only for all applications.
+	MetaData *ModificationMetaData `json:"MetaData,omitempty" url:"MetaData,omitempty"`
+	// Reference number for the transaction. If not explicitly provided at create time, this field is populated based on the setting of Preferences:CustomTxnNumber as follows- If Preferences:CustomTxnNumber is true a custom value can be provided. If no value is supplied, the resulting DocNumber is null. If Preferences:CustomTxnNumber is false, resulting DocNumber is system generated by incrementing the last number by 1. If Preferences:CustomTxnNumber is false then do not send a value as it can lead to unwanted duplicates. If a DocNumber value is sent for an Update operation, then it just updates that particular invoice and does not alter the internal system DocNumber. Note- DocNumber is an optional field for all locales except France. For France locale if Preferences:CustomTxnNumber is enabled it will not be automatically generated and is a required field.
+	DocNumber *string `json:"DocNumber,omitempty" url:"DocNumber,omitempty"`
+	// User entered, organization-private note about the transaction. This note does not appear on the invoice to the customer. This field maps to the Memo field on the Invoice form.
+	PrivateNote *string `json:"PrivateNote,omitempty" url:"PrivateNote,omitempty"`
+	// Individual line items of a transaction. Valid Line types include- SalesItemLine, GroupLine, DescriptionOnlyLine (also used for inline Subtotal lines), DiscountLine and SubTotalLine (used for the overall transaction)
+	Line []interface{} `json:"Line,omitempty" url:"Line,omitempty"`
+	// User-entered message to the customer; this message is visible to end user on their transactions.
+	CustomerMemo *MemoRef `json:"CustomerMemo,omitempty" url:"CustomerMemo,omitempty"`
+	// Email status of the invoice. Valid values- NotSet, NeedToSend, EmailSent
+	EmailStatus *string `json:"EmailStatus,omitempty" url:"EmailStatus,omitempty"`
+	// This data type provides information for taxes charged on the transaction as a whole. It captures the details sales taxes calculated for the transaction based on the tax codes referenced by the transaction. This can be calculated by QuickBooks business logic or you may supply it when adding a transaction. See Global tax model for more information about this element. If sales tax is disabled (Preferences.TaxPrefs.UsingSalesTax is set to false) then TxnTaxDetail is ignored and not stored.
+	TxnTaxDetail map[string]interface{} `json:"TxnTaxDetail,omitempty" url:"TxnTaxDetail,omitempty"`
+	// Name of customer who accepted the estimate.
+	AcceptedBy *string `json:"AcceptedBy,omitempty" url:"AcceptedBy,omitempty"`
+	// The number of home currency units it takes to equal one unit of currency specified by CurrencyRef. Applicable if multicurrency is enabled for the company.
+	ExchangeRate *float64 `json:"ExchangeRate,omitempty" url:"ExchangeRate,omitempty"`
+	// Identifies the address where the goods must be shipped. If ShipAddris not specified, and a default Customer:ShippingAddr is specified in QuickBooks for this customer, the default ship-to address will be used by QuickBooks. For international addresses - countries should be passed as 3 ISO alpha-3 characters or the full name of the country. If a physical address is updated from within the transaction object, the QuickBooks Online API flows individual address components differently into the Line elements of the transaction response then when the transaction was first created- Line1 and Line2 elements are populated with the customer name and company name. Original Line1 through Line 5 contents, City, SubDivisionCode, and PostalCode flow into Line3 through Line5as a free format strings.
+	ShipAddr *PhysicalAddress `json:"ShipAddr,omitempty" url:"ShipAddr,omitempty"`
+	// A reference to a Department object specifying the location of the transaction. Available if Preferences.AccountingInfoPrefs.TrackDepartments is set to true. Query the Department name list resource to determine the appropriate department object for this reference. Use Department.Id and Department.Name from that object for DepartmentRef.value and DepartmentRef.name, respectively.
+	DepartmentRef *ReferenceType `json:"DepartmentRef,omitempty" url:"DepartmentRef,omitempty"`
+	// Reference to the ShipMethod associated with the transaction. There is no shipping method list. Reference resolves to a string. Reference to the ShipMethod associated with the transaction. There is no shipping method list. Reference resolves to a string.
+	ShipMethodRef *ReferenceType `json:"ShipMethodRef,omitempty" url:"ShipMethodRef,omitempty"`
+	// Bill-to address of the Invoice. If BillAddris not specified, and a default Customer:BillingAddr is specified in QuickBooks for this customer, the default bill-to address is used by QuickBooks. For international addresses - countries should be passed as 3 ISO alpha-3 characters or the full name of the country. If a physical address is updated from within the transaction object, the QuickBooks Online API flows individual address components differently into the Line elements of the transaction response then when the transaction was first created- Line1 and Line2 elements are populated with the customer name and company name. Original Line1 through Line 5 contents, City, SubDivisionCode, and PostalCode flow into Line3 through Line5as a free format strings.
+	BillAddr *PhysicalAddress `json:"BillAddr,omitempty" url:"BillAddr,omitempty"`
+	// If false or null, calculate the sales tax first, and then apply the discount. If true, subtract the discount first and then calculate the sales tax.
+	ApplyTaxAfterDiscount *bool `json:"ApplyTaxAfterDiscount,omitempty" url:"ApplyTaxAfterDiscount,omitempty"`
+	// Denotes how ShipAddr is stored- formatted or unformatted. The value of this flag is system defined based on format of shipping address at object create time. If set to false, shipping address is returned in a formatted style using City, Country, CountrySubDivisionCode, Postal code. If set to true, shipping address is returned in an unformatted style using Line1 through Line5 attributes.
+	FreeFormAddress *bool `json:"FreeFormAddress,omitempty" url:"FreeFormAddress,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (e *EstimateCreateObject) GetExtraProperties() map[string]interface{} {
+	return e.extraProperties
+}
+
+func (e *EstimateCreateObject) UnmarshalJSON(data []byte) error {
+	type unmarshaler EstimateCreateObject
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = EstimateCreateObject(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+
+	e._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *EstimateCreateObject) String() string {
+	if len(e._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(e._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
+type EstimateResponse struct {
+	Estimate *Estimate `json:"Estimate,omitempty" url:"Estimate,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (e *EstimateResponse) GetExtraProperties() map[string]interface{} {
+	return e.extraProperties
+}
+
+func (e *EstimateResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler EstimateResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = EstimateResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+
+	e._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *EstimateResponse) String() string {
+	if len(e._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(e._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
+type Invoice struct {
+	// Unique identifier for this object. Sort order is ASC by default.
+	Id *string `json:"Id,omitempty" url:"Id,omitempty"`
+	// Individual line items of a transaction. Valid Line types include SalesItemLine, GroupLine, DescriptionOnlyLine (also used for inline Subtotal lines), DiscountLine and SubTotalLine (used for the overall transaction)
+	Line []*InvoiceLineItem `json:"Line,omitempty" url:"Line,omitempty"`
+	// Reference to a customer or job. Query the Customer name list resource to determine the appropriate Customer object for this reference. Use Customer.Id and Customer.DisplayName from that object for CustomerRef.value and CustomerRef.name, respectively.
+	CustomerRef *ReferenceType `json:"CustomerRef,omitempty" url:"CustomerRef,omitempty"`
+	// Version number of the object. It is used to lock an object for use by one app at a time. As soon as an application modifies an object, its SyncToken is incremented. Attempts to modify an object specifying an older SyncToken fails. Only the latest version of the object is maintained by QuickBooks Online.
+	SyncToken *string `json:"SyncToken,omitempty" url:"SyncToken,omitempty"`
+	// Reference to the currency in which all amounts on the associated transaction are expressed. This must be defined if multicurrency is enabled for the company. Multicurrency is enabled for the company if Preferences.MultiCurrencyEnabled is set to true. Read more about multicurrency support here. Applicable if multicurrency is enabled for the company.
+	CurrencyRef *CurrencyRefType `json:"CurrencyRef,omitempty" url:"CurrencyRef,omitempty"`
+	// Reference number for the transaction. If not explicitly provided at create time, this field is populated based on the setting of Preferences:CustomTxnNumber as follows- If Preferences:CustomTxnNumber is true a custom value can be provided. If no value is supplied, the resulting DocNumber is null. If Preferences:CustomTxnNumber is false, resulting DocNumber is system generated by incrementing the last number by 1. If Preferences:CustomTxnNumber is false then do not send a value as it can lead to unwanted duplicates. If a DocNumber value is sent for an Update operation, then it just updates that particular invoice and does not alter the internal system DocNumber. Note- DocNumber is an optional field for all locales except France. For France locale if Preferences:CustomTxnNumber is enabled it will not be automatically generated and is a required field. If a duplicate DocNumber needs to be supplied, add the query parameter name/value pair, include=allowduplicatedocnum to the URI.
+	DocNumber *string `json:"DocNumber,omitempty" url:"DocNumber,omitempty"`
+	// Identifies the e-mail address where the invoice is sent. If EmailStatus=NeedToSend, BillEmailis a required input.
+	BillEmail *EmailAddress `json:"BillEmail,omitempty" url:"BillEmail,omitempty"`
+	// The date entered by the user when this transaction occurred. yyyy/MM/dd is the valid date format. For posting transactions, this is the posting date that affects the financial statements. If the date is not supplied, the current date on the server is used. Sort order is ASC by default.
+	TxnDate *string `json:"TxnDate,omitempty" url:"TxnDate,omitempty"`
+	// Identifies the address where the goods are shipped from. For transactions without shipping, it represents the address where the sale took place. For international addresses - countries should be passed as 3 ISO alpha-3 characters or the full name of the country. If a physical address is updated from within the transaction object, the QuickBooks Online API flows individual address components differently into the Line elements of the transaction response then when the transaction was first created- Line1 and Line2 elements are populated with the customer name and company name. Original Line1 through Line 5 contents, City, SubDivisionCode, and PostalCode flow into Line3 through Line5as a free format strings.
+	ShipFromAddr *PhysicalAddress `json:"ShipFromAddr,omitempty" url:"ShipFromAddr,omitempty"`
+	// Date for delivery of goods or services.
+	ShipDate *string `json:"ShipDate,omitempty" url:"ShipDate,omitempty"`
+	// Shipping provider's tracking number for the delivery of the goods associated with the transaction.
+	TrackingNum *string `json:"TrackingNum,omitempty" url:"TrackingNum,omitempty"`
+	// Reference to the Class associated with the transaction. Available if Preferences.AccountingInfoPrefs.ClassTrackingPerTxn is set to true. Query the Class name list resource to determine the appropriate Class object for this reference. Use Class.Id and Class.Name from that object for ClassRef.value and ClassRef.name, respectively.
+	ClassRef *ReferenceType `json:"ClassRef,omitempty" url:"ClassRef,omitempty"`
+	// Printing status of the invoice. Valid values- NotSet, NeedToPrint, PrintComplete .
+	PrintStatus *string `json:"PrintStatus,omitempty" url:"PrintStatus,omitempty"`
+	// Reference to the sales term associated with the transaction. Query the Term name list resource to determine the appropriate Term object for this reference. Use Term.Id and Term.Name from that object for SalesTermRef.value and SalesTermRef.name, respectively.
+	SalesTermRef *ReferenceType `json:"SalesTermRef,omitempty" url:"SalesTermRef,omitempty"`
+	// Used internally to specify originating source of a credit card transaction.
+	TxnSource *string `json:"TxnSource,omitempty" url:"TxnSource,omitempty"`
+	// Zero or more related transactions to this Invoice object. The following linked relationships are supported- Links to Estimate and TimeActivity objects can be established directly to this Invoice object with UI or with the API. Create, Read, Update, and Query operations are avaialble at the API level for these types of links. Only one link can be made to an Estimate. Progress Invoicing is not supported via the API. Links to expenses incurred on behalf of the customer are returned in the response with LinkedTxn.TxnType set to ReimburseCharge, ChargeCredit or StatementCharge corresponding to billable customer expenses of type Cash, Delayed Credit, and Delayed Charge, respectively. Links to these types of transactions are established within the QuickBooks UI, only, and are available as read-only at the API level. Links to payments applied to an Invoice object are returned in the response with LinkedTxn.TxnType set to Payment. Links to Payment transactions are established within the QuickBooks UI, only, and are available as read-only at the API level. Use LinkedTxn.TxnId as the ID in a separate read request for the specific resource to retrieve details of the linked object.
+	LinkedTxn []interface{} `json:"LinkedTxn,omitempty" url:"LinkedTxn,omitempty"`
+	// Account to which money is deposited. Query the Account name list resource to determine the appropriate Account object for this reference, where Account.AccountType is Other Current Asset or Bank. Use Account.Id and Account.Name from that object for DepositToAccountRef.value and DepositToAccountRef.name, respectively. Before you can use this field ensure that the company allows deposits in their invoices first. This can be found by querying the Preferences endpoint. SalesFormsPrefs.AllowDeposit must be equal to true. If you do not specify this account the payment is applied to the Undeposited Funds account.
+	DepositToAccountRef *ReferenceType `json:"DepositToAccountRef,omitempty" url:"DepositToAccountRef,omitempty"`
+	// Method in which tax is applied. Allowed values are- TaxExcluded, TaxInclusive, and NotApplicable.
+	GlobalTaxCalculation *string `json:"GlobalTaxCalculation,omitempty" url:"GlobalTaxCalculation,omitempty"`
+	// Specifies if this invoice can be paid with online bank transfers and corresponds to the Free bank transfer online payment check box on the QuickBooks UI. Active when Preferences.SalesFormsPrefs.ETransactionPaymentEnabled is set to true. If set to true, allow invoice to be paid with online bank transfers. The Free bank transfer online payment check box is checked on the QuickBooks UI for this invoice. If set to false, online bank transfers are not allowed. The Free bank transfer online payment check box is not checked on the QuickBooks UI for this invoice.
+	AllowOnlineAchPayment *bool `json:"AllowOnlineACHPayment,omitempty" url:"AllowOnlineACHPayment,omitempty"`
+	// The account location. For France locale valid values include- WithinFrance FranceOverseas OutsideFranceWithEU OutsideEU For UAE, valid values include ABUDHABI AJMAN SHARJAH DUBAI FUJAIRAH RAS_AL_KHAIMAH UMM_AL_QUWAIN OTHER_GCC
+	TransactionLocationType *string `json:"TransactionLocationType,omitempty" url:"TransactionLocationType,omitempty"`
+	// Date when the payment of the transaction is due. If date is not provided, the number of days specified in SalesTermRef added the transaction date will be used.
+	DueDate *string `json:"DueDate,omitempty" url:"DueDate,omitempty"`
+	// Descriptive information about the object. The MetaData values are set by Data Services and are read only for all applications.
+	MetaData *ModificationMetaData `json:"MetaData,omitempty" url:"MetaData,omitempty"`
+	// User entered, organization-private note about the transaction. This note does not appear on the invoice to the customer. This field maps to the Statement Memo field on the Invoice form in the QuickBooks Online UI.
+	PrivateNote *string `json:"PrivateNote,omitempty" url:"PrivateNote,omitempty"`
+	// Identifies the carbon copy e-mail address where the invoice is sent. If not specified, this field is populated from that defined in Preferences.SalesFormsPrefs.SalesEmailCc. If this email address is invalid, carbon copy email is not sent.
+	BillEmailCc *EmailAddress `json:"BillEmailCc,omitempty" url:"BillEmailCc,omitempty"`
+	// User-entered message to the customer; this message is visible to end user on their transactions.
+	CustomerMemo *MemoRef `json:"CustomerMemo,omitempty" url:"CustomerMemo,omitempty"`
+	// Email status of the invoice. Valid values- NotSet, NeedToSend, EmailSent
+	EmailStatus *string `json:"EmailStatus,omitempty" url:"EmailStatus,omitempty"`
+	// The number of home currency units it takes to equal one unit of currency specified by CurrencyRef. Applicable if multicurrency is enabled for the company.
+	ExchangeRate *float64 `json:"ExchangeRate,omitempty" url:"ExchangeRate,omitempty"`
+	// The deposit made towards this invoice.
+	Deposit *float64 `json:"Deposit,omitempty" url:"Deposit,omitempty"`
+	// This data type provides information for taxes charged on the transaction as a whole. It captures the details sales taxes calculated for the transaction based on the tax codes referenced by the transaction. This can be calculated by QuickBooks business logic or you may supply it when adding a transaction. See Global tax model for more information about this element. If sales tax is disabled (Preferences.TaxPrefs.UsingSalesTax is set to false) then TxnTaxDetail is ignored and not stored.
+	TxnTaxDetail map[string]interface{} `json:"TxnTaxDetail,omitempty" url:"TxnTaxDetail,omitempty"`
+	// Specifies if online credit card payments are allowed for this invoice and corresponds to the Cards online payment check box on the QuickBooks UI. Active when Preferences.SalesFormsPrefs.ETransactionPaymentEnabled is set to true. If set to true, allow invoice to be paid with online credit card payments. The Cards online payment check box is checked on the QuickBooks UI. If set to false, online credit card payments are not allowed. The Cards online payment check box is not checked on the QuickBooks UI.
+	AllowOnlineCreditCardPayment *bool `json:"AllowOnlineCreditCardPayment,omitempty" url:"AllowOnlineCreditCardPayment,omitempty"`
+	// One of, up to three custom fields for the transaction. Available for custom fields so configured for the company. Check Preferences.SalesFormsPrefs.CustomField and Preferences.VendorAndPurchasesPrefs.POCustomField for custom fields currenly configured. Click here to learn about managing custom fields.
+	CustomField []interface{} `json:"CustomField,omitempty" url:"CustomField,omitempty"`
+	// Identifies the address where the goods must be shipped. If ShipAddris not specified, and a default Customer:ShippingAddr is specified in QuickBooks for this customer, the default ship-to address will be used by QuickBooks. For international addresses - countries should be passed as 3 ISO alpha-3 characters or the full name of the country. If a physical address is updated from within the transaction object, the QuickBooks Online API flows individual address components differently into the Line elements of the transaction response then when the transaction was first created- Line1 and Line2 elements are populated with the customer name and company name. Original Line1 through Line 5 contents, City, SubDivisionCode, and PostalCode flow into Line3 through Line5as a free format strings.
+	ShipAddr *PhysicalAddress `json:"ShipAddr,omitempty" url:"ShipAddr,omitempty"`
+	// A reference to a Department object specifying the location of the transaction. Available if Preferences.AccountingInfoPrefs.TrackDepartments is set to true. Query the Department name list resource to determine the appropriate department object for this reference. Use Department.Id and Department.Name from that object for DepartmentRef.value and DepartmentRef.name, respectively.
+	DepartmentRef *ReferenceType `json:"DepartmentRef,omitempty" url:"DepartmentRef,omitempty"`
+	// Identifies the blind carbon copy e-mail address where the invoice is sent. If not specified, this field is populated from that defined in Preferences.SalesFormsPrefs.SalesEmailBcc. If this email address is invalid, blind carbon copy email is not sent.
+	BillEmailBcc *EmailAddress `json:"BillEmailBcc,omitempty" url:"BillEmailBcc,omitempty"`
+	// Reference to the ShipMethod associated with the transaction. There is no shipping method list. Reference resolves to a string. Reference to the ShipMethod associated with the transaction. There is no shipping method list. Reference resolves to a string.
+	ShipMethodRef *ReferenceType `json:"ShipMethodRef,omitempty" url:"ShipMethodRef,omitempty"`
+	// Bill-to address of the Invoice. If BillAddris not specified, and a default Customer:BillingAddr is specified in QuickBooks for this customer, the default bill-to address is used by QuickBooks. For international addresses - countries should be passed as 3 ISO alpha-3 characters or the full name of the country. If a physical address is updated from within the transaction object, the QuickBooks Online API flows individual address components differently into the Line elements of the transaction response then when the transaction was first created- Line1 and Line2 elements are populated with the customer name and company name. Original Line1 through Line 5 contents, City, SubDivisionCode, and PostalCode flow into Line3 through Line5as a free format strings. Starting minorversion=54 if you update the CustomerRef, the address passed using BillAddr will be honored.
+	BillAddr *PhysicalAddress `json:"BillAddr,omitempty" url:"BillAddr,omitempty"`
+	// If false or null, calculate the sales tax first, and then apply the discount. If true, subtract the discount first and then calculate the sales tax.
+	ApplyTaxAfterDiscount *bool `json:"ApplyTaxAfterDiscount,omitempty" url:"ApplyTaxAfterDiscount,omitempty"`
+	// Convenience field containing the amount in Balance expressed in terms of the home currency. Calculated by QuickBooks business logic. Value is valid only when CurrencyRef is specified and available when endpoint is evoked with the minorversion=3 query parameter. Applicable if multicurrency is enabled for the company
+	HomeBalance *float64 `json:"HomeBalance,omitempty" url:"HomeBalance,omitempty"`
+	// Email delivery information. Returned when a request has been made to deliver email with the send operation.
+	DeliveryInfo map[string]interface{} `json:"DeliveryInfo,omitempty" url:"DeliveryInfo,omitempty"`
+	// Indicates the total amount of the transaction. This includes the total of all the charges, allowances, and taxes. Calculated by QuickBooks business logic; any value you supply is over-written by QuickBooks.
+	TotalAmt *float64 `json:"TotalAmt,omitempty" url:"TotalAmt,omitempty"`
+	// Sharable link for the invoice sent to external customers. The link is generated only for invoices with online payment enabled and having a valid customer email address. Include query param `include=invoiceLink` to get the link back on query response.
+	InvoiceLink *string `json:"InvoiceLink,omitempty" url:"InvoiceLink,omitempty"`
+	// A reference to the Recurring Transaction. It captures what recurring transaction template the Invoice was created from.
+	RecurDataRef *ReferenceType `json:"RecurDataRef,omitempty" url:"RecurDataRef,omitempty"`
+	// Reference to the TaxExepmtion ID associated with this object. Available for companies that have automated sales tax enabled. TaxExemptionRef.Name- The Tax Exemption Id for the customer to which this object is associated. This Id is typically issued by the state. TaxExemptionRef.value- The system-generated Id of the exemption type.
+	TaxExemptionRef *ReferenceType `json:"TaxExemptionRef,omitempty" url:"TaxExemptionRef,omitempty"`
+	// The balance reflecting any payments made against the transaction. Initially set to the value of TotalAmt. A Balance of 0 indicates the invoice is fully paid. Calculated by QuickBooks business logic; any value you supply is over-written by QuickBooks.
+	Balance *float64 `json:"Balance,omitempty" url:"Balance,omitempty"`
+	// Total amount of the transaction in the home currency. Includes the total of all the charges, allowances and taxes. Calculated by QuickBooks business logic. Value is valid only when CurrencyRef is specified. Applicable if multicurrency is enabled for the company.
+	HomeTotalAmt *float64 `json:"HomeTotalAmt,omitempty" url:"HomeTotalAmt,omitempty"`
+	// Denotes how ShipAddr is stored- formatted or unformatted. The value of this flag is system defined based on format of shipping address at object create time. If set to false, shipping address is returned in a formatted style using City, Country, CountrySubDivisionCode, Postal code. If set to true, shipping address is returned in an unformatted style using Line1 through Line5 attributes.
+	FreeFormAddress *bool `json:"FreeFormAddress,omitempty" url:"FreeFormAddress,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (i *Invoice) GetExtraProperties() map[string]interface{} {
+	return i.extraProperties
+}
+
+func (i *Invoice) UnmarshalJSON(data []byte) error {
+	type unmarshaler Invoice
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*i = Invoice(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *i)
+	if err != nil {
+		return err
+	}
+	i.extraProperties = extraProperties
+
+	i._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (i *Invoice) String() string {
+	if len(i._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(i._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(i); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", i)
+}
+
+type InvoiceCreateObject struct {
+	// Unique identifier for this object. Sort order is ASC by default.
+	Id *string `json:"Id,omitempty" url:"Id,omitempty"`
+	// Individual line items of a transaction. Valid Line types include SalesItemLine, GroupLine, DescriptionOnlyLine (also used for inline Subtotal lines), DiscountLine and SubTotalLine (used for the overall transaction)
+	Line []interface{} `json:"Line,omitempty" url:"Line,omitempty"`
+	// Reference to a customer or job. Query the Customer name list resource to determine the appropriate Customer object for this reference. Use Customer.Id and Customer.DisplayName from that object for CustomerRef.value and CustomerRef.name, respectively.
+	CustomerRef *ReferenceType `json:"CustomerRef,omitempty" url:"CustomerRef,omitempty"`
+	// Version number of the object. It is used to lock an object for use by one app at a time. As soon as an application modifies an object, its SyncToken is incremented. Attempts to modify an object specifying an older SyncToken fails. Only the latest version of the object is maintained by QuickBooks Online.
+	SyncToken *string `json:"SyncToken,omitempty" url:"SyncToken,omitempty"`
+	// Reference to the currency in which all amounts on the associated transaction are expressed. This must be defined if multicurrency is enabled for the company. Multicurrency is enabled for the company if Preferences.MultiCurrencyEnabled is set to true. Read more about multicurrency support here. Applicable if multicurrency is enabled for the company.
+	CurrencyRef *CurrencyRefType `json:"CurrencyRef,omitempty" url:"CurrencyRef,omitempty"`
+	// Reference number for the transaction. If not explicitly provided at create time, this field is populated based on the setting of Preferences:CustomTxnNumber as follows- If Preferences:CustomTxnNumber is true a custom value can be provided. If no value is supplied, the resulting DocNumber is null. If Preferences:CustomTxnNumber is false, resulting DocNumber is system generated by incrementing the last number by 1. If Preferences:CustomTxnNumber is false then do not send a value as it can lead to unwanted duplicates. If a DocNumber value is sent for an Update operation, then it just updates that particular invoice and does not alter the internal system DocNumber. Note- DocNumber is an optional field for all locales except France. For France locale if Preferences:CustomTxnNumber is enabled it will not be automatically generated and is a required field. If a duplicate DocNumber needs to be supplied, add the query parameter name/value pair, include=allowduplicatedocnum to the URI.
+	DocNumber *string `json:"DocNumber,omitempty" url:"DocNumber,omitempty"`
+	// Identifies the e-mail address where the invoice is sent. If EmailStatus=NeedToSend, BillEmailis a required input.
+	BillEmail *EmailAddress `json:"BillEmail,omitempty" url:"BillEmail,omitempty"`
+	// The date entered by the user when this transaction occurred. yyyy/MM/dd is the valid date format. For posting transactions, this is the posting date that affects the financial statements. If the date is not supplied, the current date on the server is used. Sort order is ASC by default.
+	TxnDate *string `json:"TxnDate,omitempty" url:"TxnDate,omitempty"`
+	// Identifies the address where the goods are shipped from. For transactions without shipping, it represents the address where the sale took place. For international addresses - countries should be passed as 3 ISO alpha-3 characters or the full name of the country. If a physical address is updated from within the transaction object, the QuickBooks Online API flows individual address components differently into the Line elements of the transaction response then when the transaction was first created- Line1 and Line2 elements are populated with the customer name and company name. Original Line1 through Line 5 contents, City, SubDivisionCode, and PostalCode flow into Line3 through Line5as a free format strings.
+	ShipFromAddr *PhysicalAddress `json:"ShipFromAddr,omitempty" url:"ShipFromAddr,omitempty"`
+	// Date for delivery of goods or services.
+	ShipDate *string `json:"ShipDate,omitempty" url:"ShipDate,omitempty"`
+	// Shipping provider's tracking number for the delivery of the goods associated with the transaction.
+	TrackingNum *string `json:"TrackingNum,omitempty" url:"TrackingNum,omitempty"`
+	// Reference to the Class associated with the transaction. Available if Preferences.AccountingInfoPrefs.ClassTrackingPerTxn is set to true. Query the Class name list resource to determine the appropriate Class object for this reference. Use Class.Id and Class.Name from that object for ClassRef.value and ClassRef.name, respectively.
+	ClassRef *ReferenceType `json:"ClassRef,omitempty" url:"ClassRef,omitempty"`
+	// Printing status of the invoice. Valid values- NotSet, NeedToPrint, PrintComplete .
+	PrintStatus *string `json:"PrintStatus,omitempty" url:"PrintStatus,omitempty"`
+	// Reference to the sales term associated with the transaction. Query the Term name list resource to determine the appropriate Term object for this reference. Use Term.Id and Term.Name from that object for SalesTermRef.value and SalesTermRef.name, respectively.
+	SalesTermRef *ReferenceType `json:"SalesTermRef,omitempty" url:"SalesTermRef,omitempty"`
+	// Used internally to specify originating source of a credit card transaction.
+	TxnSource *string `json:"TxnSource,omitempty" url:"TxnSource,omitempty"`
+	// Zero or more related transactions to this Invoice object. The following linked relationships are supported- Links to Estimate and TimeActivity objects can be established directly to this Invoice object with UI or with the API. Create, Read, Update, and Query operations are avaialble at the API level for these types of links. Only one link can be made to an Estimate. Progress Invoicing is not supported via the API. Links to expenses incurred on behalf of the customer are returned in the response with LinkedTxn.TxnType set to ReimburseCharge, ChargeCredit or StatementCharge corresponding to billable customer expenses of type Cash, Delayed Credit, and Delayed Charge, respectively. Links to these types of transactions are established within the QuickBooks UI, only, and are available as read-only at the API level. Links to payments applied to an Invoice object are returned in the response with LinkedTxn.TxnType set to Payment. Links to Payment transactions are established within the QuickBooks UI, only, and are available as read-only at the API level. Use LinkedTxn.TxnId as the ID in a separate read request for the specific resource to retrieve details of the linked object.
+	LinkedTxn []interface{} `json:"LinkedTxn,omitempty" url:"LinkedTxn,omitempty"`
+	// Account to which money is deposited. Query the Account name list resource to determine the appropriate Account object for this reference, where Account.AccountType is Other Current Asset or Bank. Use Account.Id and Account.Name from that object for DepositToAccountRef.value and DepositToAccountRef.name, respectively. Before you can use this field ensure that the company allows deposits in their invoices first. This can be found by querying the Preferences endpoint. SalesFormsPrefs.AllowDeposit must be equal to true. If you do not specify this account the payment is applied to the Undeposited Funds account.
+	DepositToAccountRef *ReferenceType `json:"DepositToAccountRef,omitempty" url:"DepositToAccountRef,omitempty"`
+	// Method in which tax is applied. Allowed values are- TaxExcluded, TaxInclusive, and NotApplicable.
+	GlobalTaxCalculation *string `json:"GlobalTaxCalculation,omitempty" url:"GlobalTaxCalculation,omitempty"`
+	// Specifies if this invoice can be paid with online bank transfers and corresponds to the Free bank transfer online payment check box on the QuickBooks UI. Active when Preferences.SalesFormsPrefs.ETransactionPaymentEnabled is set to true. If set to true, allow invoice to be paid with online bank transfers. The Free bank transfer online payment check box is checked on the QuickBooks UI for this invoice. If set to false, online bank transfers are not allowed. The Free bank transfer online payment check box is not checked on the QuickBooks UI for this invoice.
+	AllowOnlineAchPayment *bool `json:"AllowOnlineACHPayment,omitempty" url:"AllowOnlineACHPayment,omitempty"`
+	// The account location. For France locale valid values include- WithinFrance FranceOverseas OutsideFranceWithEU OutsideEU For UAE, valid values include ABUDHABI AJMAN SHARJAH DUBAI FUJAIRAH RAS_AL_KHAIMAH UMM_AL_QUWAIN OTHER_GCC
+	TransactionLocationType *string `json:"TransactionLocationType,omitempty" url:"TransactionLocationType,omitempty"`
+	// Date when the payment of the transaction is due. If date is not provided, the number of days specified in SalesTermRef added the transaction date will be used.
+	DueDate *string `json:"DueDate,omitempty" url:"DueDate,omitempty"`
+	// Descriptive information about the object. The MetaData values are set by Data Services and are read only for all applications.
+	MetaData *ModificationMetaData `json:"MetaData,omitempty" url:"MetaData,omitempty"`
+	// User entered, organization-private note about the transaction. This note does not appear on the invoice to the customer. This field maps to the Statement Memo field on the Invoice form in the QuickBooks Online UI.
+	PrivateNote *string `json:"PrivateNote,omitempty" url:"PrivateNote,omitempty"`
+	// Identifies the carbon copy e-mail address where the invoice is sent. If not specified, this field is populated from that defined in Preferences.SalesFormsPrefs.SalesEmailCc. If this email address is invalid, carbon copy email is not sent.
+	BillEmailCc *EmailAddress `json:"BillEmailCc,omitempty" url:"BillEmailCc,omitempty"`
+	// User-entered message to the customer; this message is visible to end user on their transactions.
+	CustomerMemo *MemoRef `json:"CustomerMemo,omitempty" url:"CustomerMemo,omitempty"`
+	// Email status of the invoice. Valid values- NotSet, NeedToSend, EmailSent
+	EmailStatus *string `json:"EmailStatus,omitempty" url:"EmailStatus,omitempty"`
+	// The number of home currency units it takes to equal one unit of currency specified by CurrencyRef. Applicable if multicurrency is enabled for the company.
+	ExchangeRate *float64 `json:"ExchangeRate,omitempty" url:"ExchangeRate,omitempty"`
+	// The deposit made towards this invoice.
+	Deposit *float64 `json:"Deposit,omitempty" url:"Deposit,omitempty"`
+	// This data type provides information for taxes charged on the transaction as a whole. It captures the details sales taxes calculated for the transaction based on the tax codes referenced by the transaction. This can be calculated by QuickBooks business logic or you may supply it when adding a transaction. See Global tax model for more information about this element. If sales tax is disabled (Preferences.TaxPrefs.UsingSalesTax is set to false) then TxnTaxDetail is ignored and not stored.
+	TxnTaxDetail map[string]interface{} `json:"TxnTaxDetail,omitempty" url:"TxnTaxDetail,omitempty"`
+	// Specifies if online credit card payments are allowed for this invoice and corresponds to the Cards online payment check box on the QuickBooks UI. Active when Preferences.SalesFormsPrefs.ETransactionPaymentEnabled is set to true. If set to true, allow invoice to be paid with online credit card payments. The Cards online payment check box is checked on the QuickBooks UI. If set to false, online credit card payments are not allowed. The Cards online payment check box is not checked on the QuickBooks UI.
+	AllowOnlineCreditCardPayment *bool `json:"AllowOnlineCreditCardPayment,omitempty" url:"AllowOnlineCreditCardPayment,omitempty"`
+	// One of, up to three custom fields for the transaction. Available for custom fields so configured for the company. Check Preferences.SalesFormsPrefs.CustomField and Preferences.VendorAndPurchasesPrefs.POCustomField for custom fields currenly configured. Click here to learn about managing custom fields.
+	CustomField map[string]interface{} `json:"CustomField,omitempty" url:"CustomField,omitempty"`
+	// Identifies the address where the goods must be shipped. If ShipAddris not specified, and a default Customer:ShippingAddr is specified in QuickBooks for this customer, the default ship-to address will be used by QuickBooks. For international addresses - countries should be passed as 3 ISO alpha-3 characters or the full name of the country. If a physical address is updated from within the transaction object, the QuickBooks Online API flows individual address components differently into the Line elements of the transaction response then when the transaction was first created- Line1 and Line2 elements are populated with the customer name and company name. Original Line1 through Line 5 contents, City, SubDivisionCode, and PostalCode flow into Line3 through Line5as a free format strings.
+	ShipAddr *PhysicalAddress `json:"ShipAddr,omitempty" url:"ShipAddr,omitempty"`
+	// A reference to a Department object specifying the location of the transaction. Available if Preferences.AccountingInfoPrefs.TrackDepartments is set to true. Query the Department name list resource to determine the appropriate department object for this reference. Use Department.Id and Department.Name from that object for DepartmentRef.value and DepartmentRef.name, respectively.
+	DepartmentRef *ReferenceType `json:"DepartmentRef,omitempty" url:"DepartmentRef,omitempty"`
+	// Identifies the blind carbon copy e-mail address where the invoice is sent. If not specified, this field is populated from that defined in Preferences.SalesFormsPrefs.SalesEmailBcc. If this email address is invalid, blind carbon copy email is not sent.
+	BillEmailBcc *EmailAddress `json:"BillEmailBcc,omitempty" url:"BillEmailBcc,omitempty"`
+	// Reference to the ShipMethod associated with the transaction. There is no shipping method list. Reference resolves to a string. Reference to the ShipMethod associated with the transaction. There is no shipping method list. Reference resolves to a string.
+	ShipMethodRef *ReferenceType `json:"ShipMethodRef,omitempty" url:"ShipMethodRef,omitempty"`
+	// Bill-to address of the Invoice. If BillAddris not specified, and a default Customer:BillingAddr is specified in QuickBooks for this customer, the default bill-to address is used by QuickBooks. For international addresses - countries should be passed as 3 ISO alpha-3 characters or the full name of the country. If a physical address is updated from within the transaction object, the QuickBooks Online API flows individual address components differently into the Line elements of the transaction response then when the transaction was first created- Line1 and Line2 elements are populated with the customer name and company name. Original Line1 through Line 5 contents, City, SubDivisionCode, and PostalCode flow into Line3 through Line5as a free format strings. Starting minorversion=54 if you update the CustomerRef, the address passed using BillAddr will be honored.
+	BillAddr *PhysicalAddress `json:"BillAddr,omitempty" url:"BillAddr,omitempty"`
+	// If false or null, calculate the sales tax first, and then apply the discount. If true, subtract the discount first and then calculate the sales tax.
+	ApplyTaxAfterDiscount *bool `json:"ApplyTaxAfterDiscount,omitempty" url:"ApplyTaxAfterDiscount,omitempty"`
+	// Denotes how ShipAddr is stored- formatted or unformatted. The value of this flag is system defined based on format of shipping address at object create time. If set to false, shipping address is returned in a formatted style using City, Country, CountrySubDivisionCode, Postal code. If set to true, shipping address is returned in an unformatted style using Line1 through Line5 attributes.
+	FreeFormAddress *bool `json:"FreeFormAddress,omitempty" url:"FreeFormAddress,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (i *InvoiceCreateObject) GetExtraProperties() map[string]interface{} {
+	return i.extraProperties
+}
+
+func (i *InvoiceCreateObject) UnmarshalJSON(data []byte) error {
+	type unmarshaler InvoiceCreateObject
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*i = InvoiceCreateObject(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *i)
+	if err != nil {
+		return err
+	}
+	i.extraProperties = extraProperties
+
+	i._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (i *InvoiceCreateObject) String() string {
+	if len(i._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(i._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(i); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", i)
+}
+
+// Reference type
+type InvoiceLineItem struct {
+	// Unique identifier for this object. Sort order is ASC by default.
+	Id *string `json:"Id,omitempty" url:"Id,omitempty"`
+	// The total amount of the line item. This is the quantity multiplied by the unit price.
+	Amount *float64 `json:"Amount,omitempty" url:"Amount,omitempty"`
+	// A description of the line item.
+	Description         *string              `json:"Description,omitempty" url:"Description,omitempty"`
+	SalesItemLineDetail *SalesItemLineDetail `json:"SalesItemLineDetail,omitempty" url:"SalesItemLineDetail,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (i *InvoiceLineItem) GetExtraProperties() map[string]interface{} {
+	return i.extraProperties
+}
+
+func (i *InvoiceLineItem) UnmarshalJSON(data []byte) error {
+	type unmarshaler InvoiceLineItem
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*i = InvoiceLineItem(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *i)
+	if err != nil {
+		return err
+	}
+	i.extraProperties = extraProperties
+
+	i._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (i *InvoiceLineItem) String() string {
+	if len(i._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(i._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(i); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", i)
+}
+
+type InvoiceResponse struct {
+	Invoice *Invoice `json:"Invoice,omitempty" url:"Invoice,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (i *InvoiceResponse) GetExtraProperties() map[string]interface{} {
+	return i.extraProperties
+}
+
+func (i *InvoiceResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler InvoiceResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*i = InvoiceResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *i)
+	if err != nil {
+		return err
+	}
+	i.extraProperties = extraProperties
+
+	i._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (i *InvoiceResponse) String() string {
+	if len(i._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(i._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(i); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", i)
+}
+
+type Item struct {
+	// SKU of the item.
+	Sku *string `json:"Sku,omitempty" url:"Sku,omitempty"`
+	// Fully qualified name of the item.
+	FullyQualifiedName *string `json:"FullyQualifiedName,omitempty" url:"FullyQualifiedName,omitempty"`
+	// Name of the item.
+	Name *string `json:"Name,omitempty" url:"Name,omitempty"`
+	// Description of the item.
+	Description *string `json:"Description,omitempty" url:"Description,omitempty"`
+	// Whether the item is active.
+	Active *bool `json:"Active,omitempty" url:"Active,omitempty"`
+	// Domain of the item.
+	Domain *string `json:"domain,omitempty" url:"domain,omitempty"`
+	// Whether to track quantity on hand.
+	TrackQtyOnHand *bool `json:"TrackQtyOnHand,omitempty" url:"TrackQtyOnHand,omitempty"`
+	// Unit price of the item.
+	UnitPrice *float64 `json:"UnitPrice,omitempty" url:"UnitPrice,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (i *Item) GetExtraProperties() map[string]interface{} {
+	return i.extraProperties
+}
+
+func (i *Item) UnmarshalJSON(data []byte) error {
+	type unmarshaler Item
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*i = Item(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *i)
+	if err != nil {
+		return err
+	}
+	i.extraProperties = extraProperties
+
+	i._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (i *Item) String() string {
+	if len(i._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(i._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(i); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", i)
+}
+
+type ItemBasedExpenseLine struct {
+	// The Id of the line item. Its use in requests is as folllows - - If Id is greater than zero and exists for the company, the request is considered an update operation for a line item. - If no Id is provided, the Idprovided is less than or equal to zero, or the Idprovided is greater than zero and does not exist for the company then the request is considered a create operation for a line item. - Available in all objects that use lines and support the update operation.
+	Id *string `json:"Id,omitempty" url:"Id,omitempty"`
+	// The amount of the line item.
+	Amount *float64 `json:"Amount,omitempty" url:"Amount,omitempty"`
+	// Set to ItemBasedExpenseLineDetail for this type of line.
+	DetailType                 *string                     `json:"DetailType,omitempty" url:"DetailType,omitempty"`
+	ItemBasedExpenseLineDetail *ItemBasedExpenseLineDetail `json:"ItemBasedExpenseLineDetail,omitempty" url:"ItemBasedExpenseLineDetail,omitempty"`
+	// Zero or more PurchaseOrder transactions linked to this Bill object. The LinkedTxn.TxnType should always be set to PurchaseOrder. Use LinkedTxn.TxnId as the ID of the PurchaseOrder. When updating an existing Bill to link to a PurchaseOrder a new Line must be created. This behavior matches the QuickBooks UI as it does not allow the linking of an existing line, but rather a new line must be added to link the PurchaseOrder. Over the API this is achieved by simply updating the Bill Line.Id to something new. This will ensure old bill line is deleted and the new line is linked to the PurchaseOrder.
+	LinkedTxn []*LinkedTxn `json:"LinkedTxn,omitempty" url:"LinkedTxn,omitempty"`
+	// Free form text description of the line item that appears in the printed record.
+	Description *string `json:"Description,omitempty" url:"Description,omitempty"`
+	// Specifies the position of the line in the collection of transaction lines. Positive Integer.
+	LineNum *float64 `json:"LineNum,omitempty" url:"LineNum,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (i *ItemBasedExpenseLine) GetExtraProperties() map[string]interface{} {
+	return i.extraProperties
+}
+
+func (i *ItemBasedExpenseLine) UnmarshalJSON(data []byte) error {
+	type unmarshaler ItemBasedExpenseLine
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*i = ItemBasedExpenseLine(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *i)
+	if err != nil {
+		return err
+	}
+	i.extraProperties = extraProperties
+
+	i._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (i *ItemBasedExpenseLine) String() string {
+	if len(i._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(i._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(i); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", i)
+}
+
+// Item Based Expense Line Detail
+type ItemBasedExpenseLineDetail struct {
+	// The total amount of the line item including tax. Constraints- Available when endpoint is evoked with the minorversion=1query parameter.
+	TaxInclusiveAmt *float64 `json:"TaxInclusiveAmt,omitempty" url:"TaxInclusiveAmt,omitempty"`
+	// Reference to the Item. Query the Item name list resource to determine the appropriate Item object for this reference. - Use Item.Id and Item.Name from that object for ItemRef.value and ItemRef.name, respectively. - When a line lacks an ItemRef it is treated as documentation and the Line.Amount attribute is ignored. - For France locales- The account associated with the referenced Item object is looked up in the account category list. - If this account has same location as specified in the transaction by the TransactionLocationType attribute and the same VAT as in the line item TaxCodeRef attribute, then the item account is used. - If there is a mismatch, then the account from the account category list that matches the transaction location and VAT is used. - If this account is not present in the account category list, then a new account is created with the new location, new VAT code, and all other attributes as in the default account.
+	ItemRef *ReferenceType `json:"ItemRef,omitempty" url:"ItemRef,omitempty"`
+	// Reference to a customer or job. Query the Customer name list resource to determine the appropriate Customer object for this reference. Use Customer.Id and Customer.DisplayName from that object for CustomerRef.value and CustomerRef.name, respectively.
+	CustomerRef *ReferenceType `json:"CustomerRef,omitempty" url:"CustomerRef,omitempty"`
+	// Reference to the PriceLevel of the service or item for the line. Support for this element will be available in the coming months.
+	PriceLevelRef *ReferenceType `json:"PriceLevelRef,omitempty" url:"PriceLevelRef,omitempty"`
+	// Reference to the Class associated with the expense. Available if Preferences.AccountingInfoPrefs.ClassTrackingPerLine is set to true. Query the Class name list resource to determine the appropriate Class object for this reference. Use Class.Id and Class.Name from that object for ClassRef.value and ClassRef.name, respectively.
+	ClassRef *ReferenceType `json:"ClassRef,omitempty" url:"ClassRef,omitempty"`
+	// Reference to the TaxCodefor this item. Query the TaxCode name list resource to determine the appropriate TaxCode object for this reference. Use TaxCode.Id and TaxCode.Name from that object for TaxCodeRef.value and TaxCodeRef.name, respectively.
+	TaxCodeRef *ReferenceType `json:"TaxCodeRef,omitempty" url:"TaxCodeRef,omitempty"`
+	// Reference to the TaxCodefor this item. Query the TaxCode name list resource to determine the appropriate TaxCode object for this reference. Use TaxCode.Id and TaxCode.Name from that object for TaxCodeRef.value and TaxCodeRef.name, respectively.
+	MarkupInfo map[string]interface{} `json:"MarkupInfo,omitempty" url:"MarkupInfo,omitempty"`
+	// The billable status of the expense. Valid values- Billable, NotBillable, HasBeenBilled
+	BillableStatus *string `json:"BillableStatus,omitempty" url:"BillableStatus,omitempty"`
+	// Number of items for the line.
+	Qty *float64 `json:"Qty,omitempty" url:"Qty,omitempty"`
+	// Unit price of the subject item as referenced by ItemRef. Corresponds to the Rate column on the QuickBooks Online UI to specify either unit price, a discount, or a tax rate for item. If used for unit price, the monetary value of the service or product, as expressed in the home currency. If used for a discount or tax rate, express the percentage as a fraction. For example, specify 0.4 for 40% tax.
+	UnitPrice *float64 `json:"UnitPrice,omitempty" url:"UnitPrice,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (i *ItemBasedExpenseLineDetail) GetExtraProperties() map[string]interface{} {
+	return i.extraProperties
+}
+
+func (i *ItemBasedExpenseLineDetail) UnmarshalJSON(data []byte) error {
+	type unmarshaler ItemBasedExpenseLineDetail
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*i = ItemBasedExpenseLineDetail(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *i)
+	if err != nil {
+		return err
+	}
+	i.extraProperties = extraProperties
+
+	i._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (i *ItemBasedExpenseLineDetail) String() string {
+	if len(i._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(i._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(i); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", i)
+}
+
+type JournalEntry struct {
+	// Unique identifier for this object. Sort order is ASC by default.
+	Id *string `json:"Id,omitempty" url:"Id,omitempty"`
+	// Date and time when the journal entry was created.
+	CreateDate *string `json:"createDate,omitempty" url:"createDate,omitempty"`
+	// List of line items in the journal entry.
+	Line []*JournalEntryLineItem `json:"Line,omitempty" url:"Line,omitempty"`
+	// Descriptive information about the object. The MetaData values are set by Data Services and are read only for all applications.
+	MetaData *JournalEntryMetaData `json:"MetaData,omitempty" url:"MetaData,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (j *JournalEntry) GetExtraProperties() map[string]interface{} {
+	return j.extraProperties
+}
+
+func (j *JournalEntry) UnmarshalJSON(data []byte) error {
+	type unmarshaler JournalEntry
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*j = JournalEntry(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *j)
+	if err != nil {
+		return err
+	}
+	j.extraProperties = extraProperties
+
+	j._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (j *JournalEntry) String() string {
+	if len(j._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(j._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(j); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", j)
+}
+
+type JournalEntryLineItem struct {
+	// Unique identifier for this object. Sort order is ASC by default.
+	Id *string `json:"Id,omitempty" url:"Id,omitempty"`
+	// Description of the line item.
+	Description *string `json:"Description,omitempty" url:"Description,omitempty"`
+	// Total amount of the line item.
+	Amount *float64 `json:"Amount,omitempty" url:"Amount,omitempty"`
+	// Detail type of the line item.
+	DetailType             *string                     `json:"DetailType,omitempty" url:"DetailType,omitempty"`
+	JournalEntryLineDetail *JournalEntryLineItemDetail `json:"JournalEntryLineDetail,omitempty" url:"JournalEntryLineDetail,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (j *JournalEntryLineItem) GetExtraProperties() map[string]interface{} {
+	return j.extraProperties
+}
+
+func (j *JournalEntryLineItem) UnmarshalJSON(data []byte) error {
+	type unmarshaler JournalEntryLineItem
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*j = JournalEntryLineItem(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *j)
+	if err != nil {
+		return err
+	}
+	j.extraProperties = extraProperties
+
+	j._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (j *JournalEntryLineItem) String() string {
+	if len(j._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(j._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(j); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", j)
+}
+
+type JournalEntryLineItemDetail struct {
+	// Posting type
+	PostingType *string        `json:"PostingType,omitempty" url:"PostingType,omitempty"`
+	AccountRef  *ReferenceType `json:"AccountRef,omitempty" url:"AccountRef,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (j *JournalEntryLineItemDetail) GetExtraProperties() map[string]interface{} {
+	return j.extraProperties
+}
+
+func (j *JournalEntryLineItemDetail) UnmarshalJSON(data []byte) error {
+	type unmarshaler JournalEntryLineItemDetail
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*j = JournalEntryLineItemDetail(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *j)
+	if err != nil {
+		return err
+	}
+	j.extraProperties = extraProperties
+
+	j._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (j *JournalEntryLineItemDetail) String() string {
+	if len(j._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(j._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(j); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", j)
+}
+
+// Descriptive information about the object. The MetaData values are set by Data Services and are read only for all applications.
+type JournalEntryMetaData struct {
+	// Date and time when the journal entry was created.
+	CreateTime *string `json:"CreateTime,omitempty" url:"CreateTime,omitempty"`
+	// Date and time when the journal entry was last updated.
+	LastUpdatedTime *string `json:"LastUpdatedTime,omitempty" url:"LastUpdatedTime,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (j *JournalEntryMetaData) GetExtraProperties() map[string]interface{} {
+	return j.extraProperties
+}
+
+func (j *JournalEntryMetaData) UnmarshalJSON(data []byte) error {
+	type unmarshaler JournalEntryMetaData
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*j = JournalEntryMetaData(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *j)
+	if err != nil {
+		return err
+	}
+	j.extraProperties = extraProperties
+
+	j._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (j *JournalEntryMetaData) String() string {
+	if len(j._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(j._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(j); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", j)
+}
+
+type LinkedTxn struct {
+	// Transaction Id of the related transaction.
+	TxnId *string `json:"TxnId,omitempty" url:"TxnId,omitempty"`
+	// Transaction type of the linked object.
+	TxnType *string `json:"TxnType,omitempty" url:"TxnType,omitempty"`
+	// Required for Deposit and Bill entities. -The line number of a specific line of the linked transaction. - If supplied, the TxnId and TxnType attributes of the linked transaction must also be populated.
+	TxnLineId *string `json:"TxnLineId,omitempty" url:"TxnLineId,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (l *LinkedTxn) GetExtraProperties() map[string]interface{} {
+	return l.extraProperties
+}
+
+func (l *LinkedTxn) UnmarshalJSON(data []byte) error {
+	type unmarshaler LinkedTxn
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*l = LinkedTxn(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *l)
+	if err != nil {
+		return err
+	}
+	l.extraProperties = extraProperties
+
+	l._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (l *LinkedTxn) String() string {
+	if len(l._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(l._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(l); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", l)
+}
+
+type MemoRef struct {
+	// User-entered message to the customer; this message is visible to the end user on their transactions.
+	Value *string `json:"value,omitempty" url:"value,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (m *MemoRef) GetExtraProperties() map[string]interface{} {
+	return m.extraProperties
+}
+
+func (m *MemoRef) UnmarshalJSON(data []byte) error {
+	type unmarshaler MemoRef
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*m = MemoRef(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *m)
+	if err != nil {
+		return err
+	}
+	m.extraProperties = extraProperties
+
+	m._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (m *MemoRef) String() string {
+	if len(m._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(m._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(m); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", m)
+}
+
+// Modification metadata
+type ModificationMetaData struct {
+	// Time the entity was created in the source domain.
+	CreateTime *string `json:"CreateTime,omitempty" url:"CreateTime,omitempty"`
+	// Time the entity was last updated in the source domain.
+	LastUpdatedTime *string `json:"LastUpdatedTime,omitempty" url:"LastUpdatedTime,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (m *ModificationMetaData) GetExtraProperties() map[string]interface{} {
+	return m.extraProperties
+}
+
+func (m *ModificationMetaData) UnmarshalJSON(data []byte) error {
+	type unmarshaler ModificationMetaData
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*m = ModificationMetaData(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *m)
+	if err != nil {
+		return err
+	}
+	m.extraProperties = extraProperties
+
+	m._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (m *ModificationMetaData) String() string {
+	if len(m._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(m._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(m); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", m)
+}
+
+type Payment struct {
+	// Unique identifier for this object. Sort order is ASC by default.
+	Id *string `json:"Id,omitempty" url:"Id,omitempty"`
+	// Indicates the total amount of the transaction. This includes the total of all the charges, allowances, and taxes.
+	TotalAmt *float64 `json:"TotalAmt,omitempty" url:"TotalAmt,omitempty"`
+	// Reference to a customer or job. Query the Customer name list resource to determine the appropriate Customer object for this reference. Use Customer.Id and Customer.DisplayName from that object for CustomerRef.value and CustomerRef.name, respectively.
+	CustomerRef *ReferenceType `json:"CustomerRef,omitempty" url:"CustomerRef,omitempty"`
+	// Version number of the object. It is used to lock an object for use by one app at a time. As soon as an application modifies an object, its SyncToken is incremented. Attempts to modify an object specifying an older SyncToken fails. Only the latest version of the object is maintained by QuickBooks Online.
+	SyncToken *string `json:"SyncToken,omitempty" url:"SyncToken,omitempty"`
+	// Reference to the currency in which all amounts on the associated transaction are expressed. This must be defined if multicurrency is enabled for the company. Multicurrency is enabled for the company if Preferences.MultiCurrencyEnabled is set to true. Read more about multicurrency support here. Required if multicurrency is enabled for the company.
+	CurrencyRef *CurrencyRefType `json:"CurrencyRef,omitempty" url:"CurrencyRef,omitempty"`
+	// User entered, organization-private note about the transaction.
+	PrivateNote *string `json:"PrivateNote,omitempty" url:"PrivateNote,omitempty"`
+	// Reference to a PaymentMethod associated with this transaction. Query the PaymentMethod name list resource to determine the appropriate PaymentMethod object for this reference. Use PaymentMethod.Id and PaymentMethod.Name from that object for PaymentMethodRef.value and PaymentMethodRef.name, respectively.
+	PaymentMethodRef *ReferenceType `json:"PaymentMethodRef,omitempty" url:"PaymentMethodRef,omitempty"`
+	// Indicates the amount that has not been applied to pay amounts owed for sales transactions.
+	UnappliedAmt *float64 `json:"UnappliedAmt,omitempty" url:"UnappliedAmt,omitempty"`
+	// Identifies the account to be used for this payment. Query the Account name list resource to determine the appropriate Account object for this reference, where Account.AccountType is Other Current Asset or Bank. Use Account.Id and Account.Name from that object for DepositToAccountRef.value and DepostiToAccountRef.name, respectively. If you do not specify this account, payment is applied to the Undeposited Funds account.
+	DepositToAccountRef map[string]interface{} `json:"DepositToAccountRef,omitempty" url:"DepositToAccountRef,omitempty"`
+	// The number of home currency units it takes to equal one unit of currency specified by CurrencyRef. Applicable if multicurrency is enabled for the company
+	ExchangeRate *float64 `json:"ExchangeRate,omitempty" url:"ExchangeRate,omitempty"`
+	// Zero or more transactions accounting for this payment. Values for Line.LinkedTxn.TxnTypecan be one of the following- - Expense--Payment is reimbursement for expense paid by cash made on behalf of the customer - Check--Payment is reimbursement for expense paid by check made on behalf of the customer - CreditCardCredit--Payment is reimbursement for a credit card credit made on behalf of the customer - JournalEntry--Payment is linked to the representative journal entry - CreditMemo--Payment is linked to the credit memo the customer has with the business - Invoice--The invoice to which payment is applied - Use Line.LinkedTxn.TxnId as the ID in a separate read request for the specific resource to retrieve details of the linked object.
+	Line []*PaymentLineItem `json:"Line,omitempty" url:"Line,omitempty"`
+	// Used internally to specify originating source of a credit card transaction.
+	TxnSource *string `json:"TxnSource,omitempty" url:"TxnSource,omitempty"`
+	// Specifies the accounts receivable account associated with this payment. Query the Account name list resource to determine the appropriate Account object for this reference. Use Account.Id and Account.Name from that object for ARAccountRef.value and ARAccountRef.name, respectively. The specified account must have Account.AccountType set to Accounts Receivable.
+	ArAccountRef *ReferenceType `json:"ARAccountRef,omitempty" url:"ARAccountRef,omitempty"`
+	// The date entered by the user when this transaction occurred. For posting transactions, this is the posting date that affects the financial statements. If the date is not supplied, the current date on the server is used. Sort order is ASC by default.
+	TxnDate *string `json:"TxnDate,omitempty" url:"TxnDate,omitempty"`
+	// Information about a payment received by credit card. Inject with data only if the payment was transacted through Intuit Payments API.
+	CreditCardPayment map[string]interface{} `json:"CreditCardPayment,omitempty" url:"CreditCardPayment,omitempty"`
+	// The account location. Valid values include- WithinFrance FranceOverseas OutsideFranceWithEU OutsideEU For France locales, only.
+	TransactionLocationType *string `json:"TransactionLocationType,omitempty" url:"TransactionLocationType,omitempty"`
+	// Descriptive information about the entity. The MetaData values are set by Data Services and are read only for all applications.
+	MetaData *ModificationMetaData `json:"MetaData,omitempty" url:"MetaData,omitempty"`
+	// The reference number for the payment received. For example, Â Check number for a check, envelope number for a cash donation. Required for France locales.
+	PaymentRefNum *string `json:"PaymentRefNum,omitempty" url:"PaymentRefNum,omitempty"`
+	// Reference to the TaxExepmtion ID associated with this object. Available for companies that have automated sales tax enabled. TaxExemptionRef.Name- The Tax Exemption Id for the customer to which this object is associated. This Id is typically issued by the state. TaxExemptionRef.value- The system-generated Id of the exemption type.
+	TaxExemptionRef *ReferenceType `json:"TaxExemptionRef,omitempty" url:"TaxExemptionRef,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *Payment) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *Payment) UnmarshalJSON(data []byte) error {
+	type unmarshaler Payment
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = Payment(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *Payment) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PaymentCreateObject struct {
+	// Unique identifier for this object. Sort order is ASC by default.
+	Id *string `json:"Id,omitempty" url:"Id,omitempty"`
+	// Indicates the total amount of the transaction. This includes the total of all the charges, allowances, and taxes.
+	TotalAmt float64 `json:"TotalAmt" url:"TotalAmt"`
+	// Reference to a customer or job. Query the Customer name list resource to determine the appropriate Customer object for this reference. Use Customer.Id and Customer.DisplayName from that object for CustomerRef.value and CustomerRef.name, respectively.
+	CustomerRef *ReferenceType `json:"CustomerRef,omitempty" url:"CustomerRef,omitempty"`
+	// Version number of the object. It is used to lock an object for use by one app at a time. As soon as an application modifies an object, its SyncToken is incremented. Attempts to modify an object specifying an older SyncToken fails. Only the latest version of the object is maintained by QuickBooks Online.
+	SyncToken *string `json:"SyncToken,omitempty" url:"SyncToken,omitempty"`
+	// Reference to the currency in which all amounts on the associated transaction are expressed. This must be defined if multicurrency is enabled for the company. Multicurrency is enabled for the company if Preferences.MultiCurrencyEnabled is set to true. Read more about multicurrency support here. Required if multicurrency is enabled for the company.
+	CurrencyRef *CurrencyRefType `json:"CurrencyRef,omitempty" url:"CurrencyRef,omitempty"`
+	// User entered, organization-private note about the transaction.
+	PrivateNote *string `json:"PrivateNote,omitempty" url:"PrivateNote,omitempty"`
+	// Reference to a PaymentMethod associated with this transaction. Query the PaymentMethod name list resource to determine the appropriate PaymentMethod object for this reference. Use PaymentMethod.Id and PaymentMethod.Name from that object for PaymentMethodRef.value and PaymentMethodRef.name, respectively.
+	PaymentMethodRef *ReferenceType `json:"PaymentMethodRef,omitempty" url:"PaymentMethodRef,omitempty"`
+	// Identifies the account to be used for this payment. Query the Account name list resource to determine the appropriate Account object for this reference, where Account.AccountType is Other Current Asset or Bank. Use Account.Id and Account.Name from that object for DepositToAccountRef.value and DepostiToAccountRef.name, respectively. If you do not specify this account, payment is applied to the Undeposited Funds account.
+	DepositToAccountRef map[string]interface{} `json:"DepositToAccountRef,omitempty" url:"DepositToAccountRef,omitempty"`
+	// The number of home currency units it takes to equal one unit of currency specified by CurrencyRef. Applicable if multicurrency is enabled for the company
+	ExchangeRate *float64 `json:"ExchangeRate,omitempty" url:"ExchangeRate,omitempty"`
+	// Zero or more transactions accounting for this payment. Values for Line.LinkedTxn.TxnTypecan be one of the following- - Expense--Payment is reimbursement for expense paid by cash made on behalf of the customer - Check--Payment is reimbursement for expense paid by check made on behalf of the customer - CreditCardCredit--Payment is reimbursement for a credit card credit made on behalf of the customer - JournalEntry--Payment is linked to the representative journal entry - CreditMemo--Payment is linked to the credit memo the customer has with the business - Invoice--The invoice to which payment is applied - Use Line.LinkedTxn.TxnId as the ID in a separate read request for the specific resource to retrieve details of the linked object.
+	Line []*PaymentCreateObjectLineItem `json:"Line,omitempty" url:"Line,omitempty"`
+	// Used internally to specify originating source of a credit card transaction.
+	TxnSource *string `json:"TxnSource,omitempty" url:"TxnSource,omitempty"`
+	// Specifies the accounts receivable account associated with this payment. Query the Account name list resource to determine the appropriate Account object for this reference. Use Account.Id and Account.Name from that object for ARAccountRef.value and ARAccountRef.name, respectively. The specified account must have Account.AccountType set to Accounts Receivable.
+	ArAccountRef *ReferenceType `json:"ARAccountRef,omitempty" url:"ARAccountRef,omitempty"`
+	// The date entered by the user when this transaction occurred. For posting transactions, this is the posting date that affects the financial statements. If the date is not supplied, the current date on the server is used. Sort order is ASC by default.
+	TxnDate *string `json:"TxnDate,omitempty" url:"TxnDate,omitempty"`
+	// Information about a payment received by credit card. Inject with data only if the payment was transacted through Intuit Payments API.
+	CreditCardPayment map[string]interface{} `json:"CreditCardPayment,omitempty" url:"CreditCardPayment,omitempty"`
+	// The account location. Valid values include- WithinFrance FranceOverseas OutsideFranceWithEU OutsideEU For France locales, only.
+	TransactionLocationType *string `json:"TransactionLocationType,omitempty" url:"TransactionLocationType,omitempty"`
+	// Descriptive information about the entity. The MetaData values are set by Data Services and are read only for all applications.
+	MetaData *ModificationMetaData `json:"MetaData,omitempty" url:"MetaData,omitempty"`
+	// The reference number for the payment received. For example, Â Check number for a check, envelope number for a cash donation. Required for France locales.
+	PaymentRefNum *string `json:"PaymentRefNum,omitempty" url:"PaymentRefNum,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PaymentCreateObject) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PaymentCreateObject) UnmarshalJSON(data []byte) error {
+	type unmarshaler PaymentCreateObject
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PaymentCreateObject(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PaymentCreateObject) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PaymentCreateObjectLineItem struct {
+	ItemBasedExpenseLine    *ItemBasedExpenseLine
+	AccountBasedExpenseLine *AccountBasedExpenseLine
+}
+
+func NewPaymentCreateObjectLineItemFromItemBasedExpenseLine(value *ItemBasedExpenseLine) *PaymentCreateObjectLineItem {
+	return &PaymentCreateObjectLineItem{ItemBasedExpenseLine: value}
+}
+
+func NewPaymentCreateObjectLineItemFromAccountBasedExpenseLine(value *AccountBasedExpenseLine) *PaymentCreateObjectLineItem {
+	return &PaymentCreateObjectLineItem{AccountBasedExpenseLine: value}
+}
+
+func (p *PaymentCreateObjectLineItem) UnmarshalJSON(data []byte) error {
+	valueItemBasedExpenseLine := new(ItemBasedExpenseLine)
+	if err := json.Unmarshal(data, &valueItemBasedExpenseLine); err == nil {
+		p.ItemBasedExpenseLine = valueItemBasedExpenseLine
+		return nil
+	}
+	valueAccountBasedExpenseLine := new(AccountBasedExpenseLine)
+	if err := json.Unmarshal(data, &valueAccountBasedExpenseLine); err == nil {
+		p.AccountBasedExpenseLine = valueAccountBasedExpenseLine
+		return nil
+	}
+	return fmt.Errorf("%s cannot be deserialized as a %T", data, p)
+}
+
+func (p PaymentCreateObjectLineItem) MarshalJSON() ([]byte, error) {
+	if p.ItemBasedExpenseLine != nil {
+		return json.Marshal(p.ItemBasedExpenseLine)
+	}
+	if p.AccountBasedExpenseLine != nil {
+		return json.Marshal(p.AccountBasedExpenseLine)
+	}
+	return nil, fmt.Errorf("type %T does not include a non-empty union type", p)
+}
+
+type PaymentCreateObjectLineItemVisitor interface {
+	VisitItemBasedExpenseLine(*ItemBasedExpenseLine) error
+	VisitAccountBasedExpenseLine(*AccountBasedExpenseLine) error
+}
+
+func (p *PaymentCreateObjectLineItem) Accept(visitor PaymentCreateObjectLineItemVisitor) error {
+	if p.ItemBasedExpenseLine != nil {
+		return visitor.VisitItemBasedExpenseLine(p.ItemBasedExpenseLine)
+	}
+	if p.AccountBasedExpenseLine != nil {
+		return visitor.VisitAccountBasedExpenseLine(p.AccountBasedExpenseLine)
+	}
+	return fmt.Errorf("type %T does not include a non-empty union type", p)
+}
+
+type PaymentLineItem struct {
+	ItemBasedExpenseLine    *ItemBasedExpenseLine
+	AccountBasedExpenseLine *AccountBasedExpenseLine
+}
+
+func NewPaymentLineItemFromItemBasedExpenseLine(value *ItemBasedExpenseLine) *PaymentLineItem {
+	return &PaymentLineItem{ItemBasedExpenseLine: value}
+}
+
+func NewPaymentLineItemFromAccountBasedExpenseLine(value *AccountBasedExpenseLine) *PaymentLineItem {
+	return &PaymentLineItem{AccountBasedExpenseLine: value}
+}
+
+func (p *PaymentLineItem) UnmarshalJSON(data []byte) error {
+	valueItemBasedExpenseLine := new(ItemBasedExpenseLine)
+	if err := json.Unmarshal(data, &valueItemBasedExpenseLine); err == nil {
+		p.ItemBasedExpenseLine = valueItemBasedExpenseLine
+		return nil
+	}
+	valueAccountBasedExpenseLine := new(AccountBasedExpenseLine)
+	if err := json.Unmarshal(data, &valueAccountBasedExpenseLine); err == nil {
+		p.AccountBasedExpenseLine = valueAccountBasedExpenseLine
+		return nil
+	}
+	return fmt.Errorf("%s cannot be deserialized as a %T", data, p)
+}
+
+func (p PaymentLineItem) MarshalJSON() ([]byte, error) {
+	if p.ItemBasedExpenseLine != nil {
+		return json.Marshal(p.ItemBasedExpenseLine)
+	}
+	if p.AccountBasedExpenseLine != nil {
+		return json.Marshal(p.AccountBasedExpenseLine)
+	}
+	return nil, fmt.Errorf("type %T does not include a non-empty union type", p)
+}
+
+type PaymentLineItemVisitor interface {
+	VisitItemBasedExpenseLine(*ItemBasedExpenseLine) error
+	VisitAccountBasedExpenseLine(*AccountBasedExpenseLine) error
+}
+
+func (p *PaymentLineItem) Accept(visitor PaymentLineItemVisitor) error {
+	if p.ItemBasedExpenseLine != nil {
+		return visitor.VisitItemBasedExpenseLine(p.ItemBasedExpenseLine)
+	}
+	if p.AccountBasedExpenseLine != nil {
+		return visitor.VisitAccountBasedExpenseLine(p.AccountBasedExpenseLine)
+	}
+	return fmt.Errorf("type %T does not include a non-empty union type", p)
+}
+
+type PaymentResponse struct {
+	Payment *Payment `json:"Payment,omitempty" url:"Payment,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PaymentResponse) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PaymentResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler PaymentResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PaymentResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PaymentResponse) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+// Physical address
+type PhysicalAddress struct {
+	// Unique identifier of the QuickBooks object for the address, used for modifying the address.
+	Id *string `json:"Id,omitempty" url:"Id,omitempty"`
+	// Postal code. For example, zip code for USA and Canada
+	PostalCode *string `json:"PostalCode,omitempty" url:"PostalCode,omitempty"`
+	// City name.
+	City *string `json:"City,omitempty" url:"City,omitempty"`
+	// Country name. For international addresses - countries should be passed as 3 ISO alpha-3 characters or the full name of the country.
+	Country *string `json:"Country,omitempty" url:"Country,omitempty"`
+	// Fifth line of the address.
+	Line5 *string `json:"Line5,omitempty" url:"Line5,omitempty"`
+	// Fourth line of the address.
+	Line4 *string `json:"Line4,omitempty" url:"Line4,omitempty"`
+	// Third line of the address.
+	Line3 *string `json:"Line3,omitempty" url:"Line3,omitempty"`
+	// Second line of the address.
+	Line2 *string `json:"Line2,omitempty" url:"Line2,omitempty"`
+	// First line of the address.
+	Line1 *string `json:"Line1,omitempty" url:"Line1,omitempty"`
+	// Latitude coordinate of Geocode (Geospacial Entity Object Code). INVALIDis returned for invalid addresses.
+	Lat *string `json:"Lat,omitempty" url:"Lat,omitempty"`
+	// Longitude coordinate of Geocode (Geospacial Entity Object Code). INVALIDis returned for invalid addresses.
+	Long *string `json:"Long,omitempty" url:"Long,omitempty"`
+	// Region within a country. For example, state name for USA, province name for Canada.
+	CountrySubDivisionCode *string `json:"CountrySubDivisionCode,omitempty" url:"CountrySubDivisionCode,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PhysicalAddress) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PhysicalAddress) UnmarshalJSON(data []byte) error {
+	type unmarshaler PhysicalAddress
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PhysicalAddress(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PhysicalAddress) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type Preferences struct {
+	ReportPrefs             *PreferencesReportPrefs             `json:"ReportPrefs,omitempty" url:"ReportPrefs,omitempty"`
+	AccountingInfoPrefs     *PreferencesAccountingInfoPrefs     `json:"AccountingInfoPrefs,omitempty" url:"AccountingInfoPrefs,omitempty"`
+	ProductAndServicesPrefs *PreferencesProductAndServicesPrefs `json:"ProductAndServicesPrefs,omitempty" url:"ProductAndServicesPrefs,omitempty"`
+	SalesFormsPrefs         *PreferencesSalesFormsPrefs         `json:"SalesFormsPrefs,omitempty" url:"SalesFormsPrefs,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *Preferences) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *Preferences) UnmarshalJSON(data []byte) error {
+	type unmarshaler Preferences
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = Preferences(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *Preferences) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PreferencesAccountingInfoPrefs struct {
+	// The first month of the fiscal year.
+	FirstMonthOfFiscalYear *string `json:"FirstMonthOfFiscalYear,omitempty" url:"FirstMonthOfFiscalYear,omitempty"`
+	// Whether to use account numbers.
+	UseAccountNumbers *bool `json:"UseAccountNumbers,omitempty" url:"UseAccountNumbers,omitempty"`
+	// The start month of the tax year.
+	TaxYearMonth *string `json:"TaxYearMonth,omitempty" url:"TaxYearMonth,omitempty"`
+	// Whether to track classes per transaction.
+	ClassTrackingPerTxn *bool `json:"ClassTrackingPerTxn,omitempty" url:"ClassTrackingPerTxn,omitempty"`
+	// Whether to track departments.
+	TrackDepartments *bool `json:"TrackDepartments,omitempty" url:"TrackDepartments,omitempty"`
+	// The customer terminology.
+	CustomerTerminology *string `json:"CustomerTerminology,omitempty" url:"CustomerTerminology,omitempty"`
+	// The book close date.
+	BookCloseDate *string `json:"BookCloseDate,omitempty" url:"BookCloseDate,omitempty"`
+	// The department terminology.
+	DepartmentTerminology *string `json:"DepartmentTerminology,omitempty" url:"DepartmentTerminology,omitempty"`
+	// Whether to track classes per transaction line.
+	ClassTrackingPerTxnLine *bool `json:"ClassTrackingPerTxnLine,omitempty" url:"ClassTrackingPerTxnLine,omitempty"`
+	// The tax form.
+	TaxForm *string `json:"TaxForm,omitempty" url:"TaxForm,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PreferencesAccountingInfoPrefs) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PreferencesAccountingInfoPrefs) UnmarshalJSON(data []byte) error {
+	type unmarshaler PreferencesAccountingInfoPrefs
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PreferencesAccountingInfoPrefs(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PreferencesAccountingInfoPrefs) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PreferencesProductAndServicesPrefs struct {
+	// Whether to show quantity with price.
+	QuantityWithPrice *bool `json:"QuantityWithPrice,omitempty" url:"QuantityWithPrice,omitempty"`
+	// Whether to show quantity on hand.
+	QuantityOnHand *bool `json:"QuantityOnHand,omitempty" url:"QuantityOnHand,omitempty"`
+	// Whether the product and services are for sales.
+	ForSales *bool `json:"ForSales,omitempty" url:"ForSales,omitempty"`
+	// Whether the product and services are for purchase.
+	ForPurchase *bool `json:"ForPurchase,omitempty" url:"ForPurchase,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PreferencesProductAndServicesPrefs) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PreferencesProductAndServicesPrefs) UnmarshalJSON(data []byte) error {
+	type unmarshaler PreferencesProductAndServicesPrefs
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PreferencesProductAndServicesPrefs(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PreferencesProductAndServicesPrefs) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PreferencesReportPrefs struct {
+	// The report basis.
+	ReportBasis *string `json:"ReportBasis,omitempty" url:"ReportBasis,omitempty"`
+	// Whether to calculate aging report from transaction date.
+	CalcAgingReportFromTxnDate *bool `json:"CalcAgingReportFromTxnDate,omitempty" url:"CalcAgingReportFromTxnDate,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PreferencesReportPrefs) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PreferencesReportPrefs) UnmarshalJSON(data []byte) error {
+	type unmarshaler PreferencesReportPrefs
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PreferencesReportPrefs(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PreferencesReportPrefs) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PreferencesSalesFormsPrefs struct {
+	// Whether e-transaction payment is enabled.
+	ETransactionPaymentEnabled *bool `json:"ETransactionPaymentEnabled,omitempty" url:"ETransactionPaymentEnabled,omitempty"`
+	// Whether custom transaction numbers are enabled.
+	CustomTxnNumbers *bool `json:"CustomTxnNumbers,omitempty" url:"CustomTxnNumbers,omitempty"`
+	// Whether shipping is allowed.
+	AllowShipping *bool `json:"AllowShipping,omitempty" url:"AllowShipping,omitempty"`
+	// Whether service date is allowed.
+	AllowServiceDate *bool `json:"AllowServiceDate,omitempty" url:"AllowServiceDate,omitempty"`
+	// The e-transaction enabled status.
+	ETransactionEnabledStatus *string `json:"ETransactionEnabledStatus,omitempty" url:"ETransactionEnabledStatus,omitempty"`
+	// The default customer message.
+	DefaultCustomerMessage *string `json:"DefaultCustomerMessage,omitempty" url:"DefaultCustomerMessage,omitempty"`
+	// Whether to email a copy to the company.
+	EmailCopyToCompany *bool `json:"EmailCopyToCompany,omitempty" url:"EmailCopyToCompany,omitempty"`
+	// Whether deposit is allowed.
+	AllowDeposit *bool `json:"AllowDeposit,omitempty" url:"AllowDeposit,omitempty"`
+	// Whether discount is allowed.
+	AllowDiscount *bool `json:"AllowDiscount,omitempty" url:"AllowDiscount,omitempty"`
+	// The default discount account.
+	DefaultDiscountAccount *string `json:"DefaultDiscountAccount,omitempty" url:"DefaultDiscountAccount,omitempty"`
+	// Whether to auto apply credit.
+	AutoApplyCredit *bool `json:"AutoApplyCredit,omitempty" url:"AutoApplyCredit,omitempty"`
+	// Whether to auto apply payments.
+	AutoApplyPayments *bool `json:"AutoApplyPayments,omitempty" url:"AutoApplyPayments,omitempty"`
+	// Whether estimates are allowed.
+	AllowEstimates *bool `json:"AllowEstimates,omitempty" url:"AllowEstimates,omitempty"`
+	// Whether IPN support is enabled.
+	IpnSupportEnabled *bool `json:"IPNSupportEnabled,omitempty" url:"IPNSupportEnabled,omitempty"`
+	// The default terms.
+	DefaultTerms *PreferencesSalesFormsPrefsDefaultTerms `json:"DefaultTerms,omitempty" url:"DefaultTerms,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PreferencesSalesFormsPrefs) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PreferencesSalesFormsPrefs) UnmarshalJSON(data []byte) error {
+	type unmarshaler PreferencesSalesFormsPrefs
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PreferencesSalesFormsPrefs(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PreferencesSalesFormsPrefs) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+// The default terms.
+type PreferencesSalesFormsPrefsDefaultTerms struct {
+	// The value of the default terms.
+	Value *string `json:"value,omitempty" url:"value,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PreferencesSalesFormsPrefsDefaultTerms) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PreferencesSalesFormsPrefsDefaultTerms) UnmarshalJSON(data []byte) error {
+	type unmarshaler PreferencesSalesFormsPrefsDefaultTerms
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PreferencesSalesFormsPrefsDefaultTerms(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PreferencesSalesFormsPrefsDefaultTerms) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type ProfitAndLoss struct {
+	// Start date of the profit and loss report.
+	StartDate *string `json:"startDate,omitempty" url:"startDate,omitempty"`
+	// End date of the profit and loss report.
+	EndDate *string `json:"endDate,omitempty" url:"endDate,omitempty"`
+	// Net income of the profit and loss report.
+	NetIncome *float64 `json:"netIncome,omitempty" url:"netIncome,omitempty"`
+	// Net operating income of the profit and loss report.
+	NetOperatingIncome *float64 `json:"netOperatingIncome,omitempty" url:"netOperatingIncome,omitempty"`
+	// Gross profit of the profit and loss report.
+	GrossProfit *float64           `json:"grossProfit,omitempty" url:"grossProfit,omitempty"`
+	Expenses    *ProfitAndLossItem `json:"expenses,omitempty" url:"expenses,omitempty"`
+	Income      *ProfitAndLossItem `json:"income,omitempty" url:"income,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *ProfitAndLoss) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *ProfitAndLoss) UnmarshalJSON(data []byte) error {
+	type unmarshaler ProfitAndLoss
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = ProfitAndLoss(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *ProfitAndLoss) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type ProfitAndLossItem struct {
+	// Total amount of the profit and loss item.
+	Total *float64 `json:"total,omitempty" url:"total,omitempty"`
+	// List of accounts in the profit and loss item.
+	Accounts []*ProfitAndLossItemAccount `json:"accounts,omitempty" url:"accounts,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *ProfitAndLossItem) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *ProfitAndLossItem) UnmarshalJSON(data []byte) error {
+	type unmarshaler ProfitAndLossItem
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = ProfitAndLossItem(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *ProfitAndLossItem) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type ProfitAndLossItemAccount struct {
+	// Name of the item.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// Total balance of the item.
+	Balance *float64 `json:"balance,omitempty" url:"balance,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *ProfitAndLossItemAccount) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *ProfitAndLossItemAccount) UnmarshalJSON(data []byte) error {
+	type unmarshaler ProfitAndLossItemAccount
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = ProfitAndLossItemAccount(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *ProfitAndLossItemAccount) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type QueryResponse struct {
+	// The start position of the query response.
+	StartPosition *float64 `json:"startPosition,omitempty" url:"startPosition,omitempty"`
+	// The total count of the query response.
+	TotalCount *float64 `json:"totalCount,omitempty" url:"totalCount,omitempty"`
+	// List of classes in the query response.
+	Class []*Class `json:"Class,omitempty" url:"Class,omitempty"`
+	// List of items in the query response.
+	Item []*Item `json:"Item,omitempty" url:"Item,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (q *QueryResponse) GetExtraProperties() map[string]interface{} {
+	return q.extraProperties
+}
+
+func (q *QueryResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler QueryResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*q = QueryResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *q)
+	if err != nil {
+		return err
+	}
+	q.extraProperties = extraProperties
+
+	q._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (q *QueryResponse) String() string {
+	if len(q._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(q._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(q); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", q)
+}
+
+// Reference type
+type ReferenceType struct {
+	// The ID for the referenced object as found in the Id field of the object payload. The context is set by the type of reference and is specific to the QuickBooks company file.
+	Value *string `json:"value,omitempty" url:"value,omitempty"`
+	// An identifying name for the object being referenced by value and is derived from the field that holds the common name of that object. This varies by context and specific type of object referenced. For example, references to a Customer object use Customer.DisplayName to populate this field. Optionally returned in responses, implementation dependent.
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (r *ReferenceType) GetExtraProperties() map[string]interface{} {
+	return r.extraProperties
+}
+
+func (r *ReferenceType) UnmarshalJSON(data []byte) error {
+	type unmarshaler ReferenceType
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*r = ReferenceType(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *r)
+	if err != nil {
+		return err
+	}
+	r.extraProperties = extraProperties
+
+	r._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (r *ReferenceType) String() string {
+	if len(r._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(r._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(r); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", r)
+}
+
+type Report struct {
+	// The header of the report.
+	Header *ReportHeader `json:"Header,omitempty" url:"Header,omitempty"`
+	// The rows of the report.
+	Rows *ReportRows `json:"Rows,omitempty" url:"Rows,omitempty"`
+	// The columns of the report.
+	Columns *ReportColumns `json:"Columns,omitempty" url:"Columns,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (r *Report) GetExtraProperties() map[string]interface{} {
+	return r.extraProperties
+}
+
+func (r *Report) UnmarshalJSON(data []byte) error {
+	type unmarshaler Report
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*r = Report(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *r)
+	if err != nil {
+		return err
+	}
+	r.extraProperties = extraProperties
+
+	r._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (r *Report) String() string {
+	if len(r._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(r._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(r); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", r)
+}
+
+// The columns of the report.
+type ReportColumns struct {
+	Column []*ReportColumnsColumnItem `json:"Column,omitempty" url:"Column,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (r *ReportColumns) GetExtraProperties() map[string]interface{} {
+	return r.extraProperties
+}
+
+func (r *ReportColumns) UnmarshalJSON(data []byte) error {
+	type unmarshaler ReportColumns
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*r = ReportColumns(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *r)
+	if err != nil {
+		return err
+	}
+	r.extraProperties = extraProperties
+
+	r._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (r *ReportColumns) String() string {
+	if len(r._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(r._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(r); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", r)
+}
+
+type ReportColumnsColumnItem struct {
+	// The type of the column.
+	ColType *string `json:"ColType,omitempty" url:"ColType,omitempty"`
+	// The title of the column.
+	ColTitle *string `json:"ColTitle,omitempty" url:"ColTitle,omitempty"`
+	// The metadata of the column.
+	MetaData *ReportColumnsColumnItemMetaData `json:"MetaData,omitempty" url:"MetaData,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (r *ReportColumnsColumnItem) GetExtraProperties() map[string]interface{} {
+	return r.extraProperties
+}
+
+func (r *ReportColumnsColumnItem) UnmarshalJSON(data []byte) error {
+	type unmarshaler ReportColumnsColumnItem
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*r = ReportColumnsColumnItem(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *r)
+	if err != nil {
+		return err
+	}
+	r.extraProperties = extraProperties
+
+	r._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (r *ReportColumnsColumnItem) String() string {
+	if len(r._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(r._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(r); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", r)
+}
+
+// The metadata of the column.
+type ReportColumnsColumnItemMetaData struct {
+	// The creation time of the column.
+	CreateTime *time.Time `json:"CreateTime,omitempty" url:"CreateTime,omitempty"`
+	// The last updated time of the column.
+	LastUpdatedTime *time.Time `json:"LastUpdatedTime,omitempty" url:"LastUpdatedTime,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (r *ReportColumnsColumnItemMetaData) GetExtraProperties() map[string]interface{} {
+	return r.extraProperties
+}
+
+func (r *ReportColumnsColumnItemMetaData) UnmarshalJSON(data []byte) error {
+	type embed ReportColumnsColumnItemMetaData
+	var unmarshaler = struct {
+		embed
+		CreateTime      *core.DateTime `json:"CreateTime,omitempty"`
+		LastUpdatedTime *core.DateTime `json:"LastUpdatedTime,omitempty"`
+	}{
+		embed: embed(*r),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
+		return err
+	}
+	*r = ReportColumnsColumnItemMetaData(unmarshaler.embed)
+	r.CreateTime = unmarshaler.CreateTime.TimePtr()
+	r.LastUpdatedTime = unmarshaler.LastUpdatedTime.TimePtr()
+
+	extraProperties, err := core.ExtractExtraProperties(data, *r)
+	if err != nil {
+		return err
+	}
+	r.extraProperties = extraProperties
+
+	r._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (r *ReportColumnsColumnItemMetaData) MarshalJSON() ([]byte, error) {
+	type embed ReportColumnsColumnItemMetaData
+	var marshaler = struct {
+		embed
+		CreateTime      *core.DateTime `json:"CreateTime,omitempty"`
+		LastUpdatedTime *core.DateTime `json:"LastUpdatedTime,omitempty"`
+	}{
+		embed:           embed(*r),
+		CreateTime:      core.NewOptionalDateTime(r.CreateTime),
+		LastUpdatedTime: core.NewOptionalDateTime(r.LastUpdatedTime),
+	}
+	return json.Marshal(marshaler)
+}
+
+func (r *ReportColumnsColumnItemMetaData) String() string {
+	if len(r._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(r._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(r); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", r)
+}
+
+// The header of the report.
+type ReportHeader struct {
+	// The name of the report.
+	ReportName *string `json:"ReportName,omitempty" url:"ReportName,omitempty"`
+	// The date macro of the report.
+	DateMacro *string `json:"DateMacro,omitempty" url:"DateMacro,omitempty"`
+	// The report basis of the report.
+	ReportBasis *string `json:"ReportBasis,omitempty" url:"ReportBasis,omitempty"`
+	// The start date of the report.
+	StartPeriod *string `json:"StartPeriod,omitempty" url:"StartPeriod,omitempty"`
+	// The end date of the report.
+	EndPeriod *string `json:"EndPeriod,omitempty" url:"EndPeriod,omitempty"`
+	// The time of the report.
+	Time *time.Time `json:"Time,omitempty" url:"Time,omitempty"`
+	// The column summarization of the report.
+	SummarizeColumnsBy *string `json:"SummarizeColumnsBy,omitempty" url:"SummarizeColumnsBy,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (r *ReportHeader) GetExtraProperties() map[string]interface{} {
+	return r.extraProperties
+}
+
+func (r *ReportHeader) UnmarshalJSON(data []byte) error {
+	type embed ReportHeader
+	var unmarshaler = struct {
+		embed
+		Time *core.DateTime `json:"Time,omitempty"`
+	}{
+		embed: embed(*r),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
+		return err
+	}
+	*r = ReportHeader(unmarshaler.embed)
+	r.Time = unmarshaler.Time.TimePtr()
+
+	extraProperties, err := core.ExtractExtraProperties(data, *r)
+	if err != nil {
+		return err
+	}
+	r.extraProperties = extraProperties
+
+	r._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (r *ReportHeader) MarshalJSON() ([]byte, error) {
+	type embed ReportHeader
+	var marshaler = struct {
+		embed
+		Time *core.DateTime `json:"Time,omitempty"`
+	}{
+		embed: embed(*r),
+		Time:  core.NewOptionalDateTime(r.Time),
+	}
+	return json.Marshal(marshaler)
+}
+
+func (r *ReportHeader) String() string {
+	if len(r._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(r._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(r); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", r)
+}
+
+// The rows of the report.
+type ReportRows struct {
+	Row []*ReportRowsRowItem `json:"Row,omitempty" url:"Row,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (r *ReportRows) GetExtraProperties() map[string]interface{} {
+	return r.extraProperties
+}
+
+func (r *ReportRows) UnmarshalJSON(data []byte) error {
+	type unmarshaler ReportRows
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*r = ReportRows(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *r)
+	if err != nil {
+		return err
+	}
+	r.extraProperties = extraProperties
+
+	r._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (r *ReportRows) String() string {
+	if len(r._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(r._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(r); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", r)
+}
+
+type ReportRowsRowItem struct {
+	// The header of the row.
+	Header *ReportRowsRowItemHeader `json:"Header,omitempty" url:"Header,omitempty"`
+	// The rows of the row.
+	Rows *ReportRowsRowItemRows `json:"Rows,omitempty" url:"Rows,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (r *ReportRowsRowItem) GetExtraProperties() map[string]interface{} {
+	return r.extraProperties
+}
+
+func (r *ReportRowsRowItem) UnmarshalJSON(data []byte) error {
+	type unmarshaler ReportRowsRowItem
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*r = ReportRowsRowItem(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *r)
+	if err != nil {
+		return err
+	}
+	r.extraProperties = extraProperties
+
+	r._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (r *ReportRowsRowItem) String() string {
+	if len(r._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(r._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(r); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", r)
+}
+
+// The header of the row.
+type ReportRowsRowItemHeader struct {
+	ColData []*ReportRowsRowItemHeaderColDataItem `json:"ColData,omitempty" url:"ColData,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (r *ReportRowsRowItemHeader) GetExtraProperties() map[string]interface{} {
+	return r.extraProperties
+}
+
+func (r *ReportRowsRowItemHeader) UnmarshalJSON(data []byte) error {
+	type unmarshaler ReportRowsRowItemHeader
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*r = ReportRowsRowItemHeader(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *r)
+	if err != nil {
+		return err
+	}
+	r.extraProperties = extraProperties
+
+	r._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (r *ReportRowsRowItemHeader) String() string {
+	if len(r._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(r._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(r); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", r)
+}
+
+type ReportRowsRowItemHeaderColDataItem struct {
+	// The value of the column.
+	Value *string `json:"value,omitempty" url:"value,omitempty"`
+	// The ID of the column.
+	Id *string `json:"id,omitempty" url:"id,omitempty"`
+	// The type of the column.
+	Type *string `json:"type,omitempty" url:"type,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (r *ReportRowsRowItemHeaderColDataItem) GetExtraProperties() map[string]interface{} {
+	return r.extraProperties
+}
+
+func (r *ReportRowsRowItemHeaderColDataItem) UnmarshalJSON(data []byte) error {
+	type unmarshaler ReportRowsRowItemHeaderColDataItem
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*r = ReportRowsRowItemHeaderColDataItem(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *r)
+	if err != nil {
+		return err
+	}
+	r.extraProperties = extraProperties
+
+	r._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (r *ReportRowsRowItemHeaderColDataItem) String() string {
+	if len(r._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(r._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(r); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", r)
+}
+
+// The rows of the row.
+type ReportRowsRowItemRows struct {
+	Row []*ReportRowsRowItemRowsRowItem `json:"Row,omitempty" url:"Row,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (r *ReportRowsRowItemRows) GetExtraProperties() map[string]interface{} {
+	return r.extraProperties
+}
+
+func (r *ReportRowsRowItemRows) UnmarshalJSON(data []byte) error {
+	type unmarshaler ReportRowsRowItemRows
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*r = ReportRowsRowItemRows(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *r)
+	if err != nil {
+		return err
+	}
+	r.extraProperties = extraProperties
+
+	r._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (r *ReportRowsRowItemRows) String() string {
+	if len(r._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(r._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(r); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", r)
+}
+
+type ReportRowsRowItemRowsRowItem struct {
+	// The header of the row.
+	Header *ReportRowsRowItemRowsRowItemHeader `json:"Header,omitempty" url:"Header,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (r *ReportRowsRowItemRowsRowItem) GetExtraProperties() map[string]interface{} {
+	return r.extraProperties
+}
+
+func (r *ReportRowsRowItemRowsRowItem) UnmarshalJSON(data []byte) error {
+	type unmarshaler ReportRowsRowItemRowsRowItem
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*r = ReportRowsRowItemRowsRowItem(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *r)
+	if err != nil {
+		return err
+	}
+	r.extraProperties = extraProperties
+
+	r._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (r *ReportRowsRowItemRowsRowItem) String() string {
+	if len(r._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(r._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(r); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", r)
+}
+
+// The header of the row.
+type ReportRowsRowItemRowsRowItemHeader struct {
+	ColData []*ReportRowsRowItemRowsRowItemHeaderColDataItem `json:"ColData,omitempty" url:"ColData,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (r *ReportRowsRowItemRowsRowItemHeader) GetExtraProperties() map[string]interface{} {
+	return r.extraProperties
+}
+
+func (r *ReportRowsRowItemRowsRowItemHeader) UnmarshalJSON(data []byte) error {
+	type unmarshaler ReportRowsRowItemRowsRowItemHeader
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*r = ReportRowsRowItemRowsRowItemHeader(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *r)
+	if err != nil {
+		return err
+	}
+	r.extraProperties = extraProperties
+
+	r._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (r *ReportRowsRowItemRowsRowItemHeader) String() string {
+	if len(r._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(r._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(r); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", r)
+}
+
+type ReportRowsRowItemRowsRowItemHeaderColDataItem struct {
+	// The value of the column.
+	Value *string `json:"value,omitempty" url:"value,omitempty"`
+	// The ID of the column.
+	Id *string `json:"id,omitempty" url:"id,omitempty"`
+	// The type of the column.
+	Type *string `json:"type,omitempty" url:"type,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (r *ReportRowsRowItemRowsRowItemHeaderColDataItem) GetExtraProperties() map[string]interface{} {
+	return r.extraProperties
+}
+
+func (r *ReportRowsRowItemRowsRowItemHeaderColDataItem) UnmarshalJSON(data []byte) error {
+	type unmarshaler ReportRowsRowItemRowsRowItemHeaderColDataItem
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*r = ReportRowsRowItemRowsRowItemHeaderColDataItem(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *r)
+	if err != nil {
+		return err
+	}
+	r.extraProperties = extraProperties
+
+	r._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (r *ReportRowsRowItemRowsRowItemHeaderColDataItem) String() string {
+	if len(r._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(r._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(r); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", r)
+}
+
+type SalesItemLineDetail struct {
+	// The quantity of the item.
+	Qty *float64 `json:"Qty,omitempty" url:"Qty,omitempty"`
+	// The price of a single unit of the item.
+	UnitPrice *float64       `json:"UnitPrice,omitempty" url:"UnitPrice,omitempty"`
+	ItemRef   *ReferenceType `json:"ItemRef,omitempty" url:"ItemRef,omitempty"`
+	// A description of the line item.
+	Description *string `json:"Description,omitempty" url:"Description,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (s *SalesItemLineDetail) GetExtraProperties() map[string]interface{} {
+	return s.extraProperties
+}
+
+func (s *SalesItemLineDetail) UnmarshalJSON(data []byte) error {
+	type unmarshaler SalesItemLineDetail
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SalesItemLineDetail(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+
+	s._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SalesItemLineDetail) String() string {
+	if len(s._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
+// Telephone number
+type TelephoneNumber struct {
+	// Specifies the telephone number in free form.
+	FreeFormNumber *string `json:"FreeFormNumber,omitempty" url:"FreeFormNumber,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (t *TelephoneNumber) GetExtraProperties() map[string]interface{} {
+	return t.extraProperties
+}
+
+func (t *TelephoneNumber) UnmarshalJSON(data []byte) error {
+	type unmarshaler TelephoneNumber
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*t = TelephoneNumber(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *t)
+	if err != nil {
+		return err
+	}
+	t.extraProperties = extraProperties
+
+	t._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (t *TelephoneNumber) String() string {
+	if len(t._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(t._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(t); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", t)
+}
+
+type Vendor struct {
+	// Unique identifier for this object. Sort order is ASC by default.
+	Id *string `json:"Id,omitempty" url:"Id,omitempty"`
+	// Version number of the object. It is used to lock an object for use by one app at a time. As soon as an application modifies an object, its SyncToken is incremented. Attempts to modify an object specifying an older SyncToken fails. Only the latest version of the object is maintained by QuickBooks Online.
+	SyncToken *string `json:"SyncToken,omitempty" url:"SyncToken,omitempty"`
+	// Title of the person. This tag supports i18n, all locales. The DisplayName attribute or at least one of Title, GivenName, MiddleName, FamilyName, or Suffix attributes are required during create.
+	Title *string `json:"Title,omitempty" url:"Title,omitempty"`
+	// Given name or first name of a person. The DisplayName attribute or at least one of Title, GivenName, MiddleName, FamilyName, or Suffix attributes is required for object create.
+	GivenName *string `json:"GivenName,omitempty" url:"GivenName,omitempty"`
+	// Middle name of the person. The person can have zero or more middle names. The DisplayName attribute or at least one of Title, GivenName, MiddleName, FamilyName, or Suffix attributes is required for object create.
+	MiddleName *string `json:"MiddleName,omitempty" url:"MiddleName,omitempty"`
+	// Suffix of the name. For example, Jr. The DisplayName attribute or at least one of Title, GivenName, MiddleName, FamilyName, or Suffix attributes is required for object create.
+	Suffix *string `json:"Suffix,omitempty" url:"Suffix,omitempty"`
+	// Family name or the last name of the person. The DisplayName attribute or at least one of Title, GivenName, MiddleName, FamilyName, or Suffix attributes is required for object create.
+	FamilyName *string `json:"FamilyName,omitempty" url:"FamilyName,omitempty"`
+	// Primary email address.
+	PrimaryEmailAddr *EmailAddress `json:"PrimaryEmailAddr,omitempty" url:"PrimaryEmailAddr,omitempty"`
+	// The name of the vendor as displayed. Must be unique across all Vendor, Customer, and Employee objects. Cannot be removed with sparse update. If not supplied, the system generates DisplayName by concatenating vendor name components supplied in the request from the following list- Title, GivenName, MiddleName, FamilyName, and Suffix.
+	DisplayName *string `json:"DisplayName,omitempty" url:"DisplayName,omitempty"`
+	// List of ContactInfo entities of any contact info type.
+	OtherContactInfo map[string]interface{} `json:"OtherContactInfo,omitempty" url:"OtherContactInfo,omitempty"`
+	// Identifies the accounts payable account to be used for this supplier. Each supplier must have his own AP account. Applicable for France companies, only. Available when endpoint is evoked with the minorversion=3 query parameter. Query the Account name list resource to determine the appropriate Account object for this reference. Use Account.Id and Account.Name from that object for APAccountRef.value and APAccountRef.name, respectively.
+	ApAccountRef *ReferenceType `json:"APAccountRef,omitempty" url:"APAccountRef,omitempty"`
+	// Reference to a default Term associated with this Vendor object. Query the Term name list resource to determine the appropriate Term object for this reference. Use Term.Id and Term.Name from that object for TermRef.value and TermRef.name, respectively.
+	TermRef *ReferenceType `json:"TermRef,omitempty" url:"TermRef,omitempty"`
+	// The Source type of the transactions created by QuickBooks Commerce. Valid values include- QBCommerce
+	Source *string `json:"Source,omitempty" url:"Source,omitempty"`
+	// GSTIN is an identification number assigned to every GST registered business.
+	Gstin *string `json:"GSTIN,omitempty" url:"GSTIN,omitempty"`
+	// True if vendor is T4A eligible. Valid for CA locale
+	T4AEligible *string `json:"T4AEligible,omitempty" url:"T4AEligible,omitempty"`
+	// Fax number
+	Fax *TelephoneNumber `json:"Fax,omitempty" url:"Fax,omitempty"`
+	// Also called, PAN (in India) is a code that acts as an identification for individuals, families and corporates, especially for those who pay taxes on their income.
+	BusinessNumber *string `json:"BusinessNumber,omitempty" url:"BusinessNumber,omitempty"`
+	// Reference to the currency in which all amounts associated with this vendor are expressed. Once set, it cannot be changed. If specified currency is not currently in the company's currency list, it is added. If not specified, currency for this vendor is the home currency of the company, as defined by Preferences.CurrencyPrefs.HomeCurrency. Read-only after object is created.
+	CurrencyRef *CurrencyRefType `json:"CurrencyRef,omitempty" url:"CurrencyRef,omitempty"`
+	// Indicate if the vendor has TPAR enabled. TPAR stands for Taxable Payments Annual Report. The TPAR is mandated by ATO to get the details payments that businesses make to contractors for providing services. Some government entities also need to report the grants they have paid in a TPAR.
+	HasTpar *bool `json:"HasTPAR,omitempty" url:"HasTPAR,omitempty"`
+	// The method in which the supplier tracks their income. Applicable for France companies, only. Available when endpoint is evoked with the minorversion=3 query parameter. Valid values include- Cash and Accrual.
+	TaxReportingBasis *string `json:"TaxReportingBasis,omitempty" url:"TaxReportingBasis,omitempty"`
+	// Mobile phone number
+	Mobile *TelephoneNumber `json:"Mobile,omitempty" url:"Mobile,omitempty"`
+	// Primary phone number
+	PrimaryPhone *TelephoneNumber `json:"PrimaryPhone,omitempty" url:"PrimaryPhone,omitempty"`
+	// If true, this object is currently enabled for use by QuickBooks.
+	Active *bool `json:"Active,omitempty" url:"Active,omitempty"`
+	// Alternate phone number
+	AlternatePhone *TelephoneNumber `json:"AlternatePhone,omitempty" url:"AlternatePhone,omitempty"`
+	// Descriptive information about the object. The MetaData values are set by Data Services and are read only for all applications.
+	MetaData *ModificationMetaData `json:"MetaData,omitempty" url:"MetaData,omitempty"`
+	// This vendor is an independent contractor; someone who is given a 1099-MISC form at the end of the year. A 1099 vendor is paid with regular checks, and taxes are not withheld on their behalf.
+	Vendor1099 *bool `json:"Vendor1099,omitempty" url:"Vendor1099,omitempty"`
+	// BillRate can be set to specify this vendor's hourly billing rate.
+	BillRate *float64 `json:"BillRate,omitempty" url:"BillRate,omitempty"`
+	// Website address.
+	WebAddr *WebSiteAddress `json:"WebAddr,omitempty" url:"WebAddr,omitempty"`
+	// True if vendor is T5018 eligible. Valid for CA locale
+	T5018Eligible *bool `json:"T5018Eligible,omitempty" url:"T5018Eligible,omitempty"`
+	// The name of the company associated with the person or organization.
+	CompanyName *string `json:"CompanyName,omitempty" url:"CompanyName,omitempty"`
+	// Vendor Payment Bank Detail.
+	VendorPaymentBankDetail map[string]interface{} `json:"VendorPaymentBankDetail,omitempty" url:"VendorPaymentBankDetail,omitempty"`
+	// The tax ID of the Person or Organization. The value is masked in responses, exposing only last four characters. For example, the ID of 123-45-6789 is returned as XXXXXXX6789.
+	TaxIdentifier *string `json:"TaxIdentifier,omitempty" url:"TaxIdentifier,omitempty"`
+	// Name or number of the account associated with this vendor.
+	AcctNum *string `json:"AcctNum,omitempty" url:"AcctNum,omitempty"`
+	// For the filing of GSTR, transactions need to be classified depending on the type of vendor from whom the purchase is made. To facilitate this, we have introduced a new field as 'GST registration type'. Possible values are listed below- GST_REG_REG GST registered- Regular. Customer who has a business which is registered under GST and has a GSTIN (doesn’t include customers registered under composition scheme, as an SEZ or as EOU's, STP's EHTP's etc.). GST_REG_COMP GST registered-Composition. Customer who has a business which is registered under the composition scheme of GST and has a GSTIN. GST_UNREG GST unregistered. Customer who has a business which is not registered under GST and does not have a GSTIN. CONSUMER Consumer. Customer who is not registered under GST and is the final consumer of the service or product sold. OVERSEAS Overseas. Customer who has a business which is located out of India. SEZ SEZ. Customer who has a business which is registered under GST, has a GSTIN and is located in a SEZ or is a SEZ Developer. DEEMED Deemed exports- EOU's, STP's EHTP's etc. Customer who has a business which is registered under GST and falls in the category of companies (EOU's, STP's EHTP's etc.), to which supplies are made they are termed as deemed exports.
+	GstRegistrationType *string `json:"GSTRegistrationType,omitempty" url:"GSTRegistrationType,omitempty"`
+	// Name of the person or organization as printed on a check. If not provided, this is populated from DisplayName. Cannot be removed with sparse update.
+	PrintOnCheckName *string `json:"PrintOnCheckName,omitempty" url:"PrintOnCheckName,omitempty"`
+	// Default billing address
+	BillAddr *PhysicalAddress `json:"BillAddr,omitempty" url:"BillAddr,omitempty"`
+	// Specifies the open balance amount or the amount unpaid by the customer. For the create operation, this represents the opening balance for the customer. When returned in response to the query request it represents the current open balance (unpaid amount) for that customer. Write-on-create, read-only otherwise.
+	Balance *float64 `json:"Balance,omitempty" url:"Balance,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (v *Vendor) GetExtraProperties() map[string]interface{} {
+	return v.extraProperties
+}
+
+func (v *Vendor) UnmarshalJSON(data []byte) error {
+	type unmarshaler Vendor
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*v = Vendor(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *v)
+	if err != nil {
+		return err
+	}
+	v.extraProperties = extraProperties
+
+	v._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (v *Vendor) String() string {
+	if len(v._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(v._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(v); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", v)
+}
+
+type VendorCreateObject struct {
+	// Unique identifier for this object. Sort order is ASC by default.
+	Id *string `json:"Id,omitempty" url:"Id,omitempty"`
+	// Version number of the object. It is used to lock an object for use by one app at a time. As soon as an application modifies an object, its SyncToken is incremented. Attempts to modify an object specifying an older SyncToken fails. Only the latest version of the object is maintained by QuickBooks Online.
+	SyncToken *string `json:"SyncToken,omitempty" url:"SyncToken,omitempty"`
+	// Title of the person. This tag supports i18n, all locales. The DisplayName attribute or at least one of Title, GivenName, MiddleName, FamilyName, or Suffix attributes are required during create.
+	Title *string `json:"Title,omitempty" url:"Title,omitempty"`
+	// Given name or first name of a person. The DisplayName attribute or at least one of Title, GivenName, MiddleName, FamilyName, or Suffix attributes is required for object create.
+	GivenName *string `json:"GivenName,omitempty" url:"GivenName,omitempty"`
+	// Middle name of the person. The person can have zero or more middle names. The DisplayName attribute or at least one of Title, GivenName, MiddleName, FamilyName, or Suffix attributes is required for object create.
+	MiddleName *string `json:"MiddleName,omitempty" url:"MiddleName,omitempty"`
+	// Suffix of the name. For example, Jr. The DisplayName attribute or at least one of Title, GivenName, MiddleName, FamilyName, or Suffix attributes is required for object create.
+	Suffix *string `json:"Suffix,omitempty" url:"Suffix,omitempty"`
+	// Family name or the last name of the person. The DisplayName attribute or at least one of Title, GivenName, MiddleName, FamilyName, or Suffix attributes is required for object create.
+	FamilyName *string `json:"FamilyName,omitempty" url:"FamilyName,omitempty"`
+	// Primary email address.
+	PrimaryEmailAddr *EmailAddress `json:"PrimaryEmailAddr,omitempty" url:"PrimaryEmailAddr,omitempty"`
+	// The name of the vendor as displayed. Must be unique across all Vendor, Customer, and Employee objects. Cannot be removed with sparse update. If not supplied, the system generates DisplayName by concatenating vendor name components supplied in the request from the following list- Title, GivenName, MiddleName, FamilyName, and Suffix.
+	DisplayName *string `json:"DisplayName,omitempty" url:"DisplayName,omitempty"`
+	// List of ContactInfo entities of any contact info type.
+	OtherContactInfo map[string]interface{} `json:"OtherContactInfo,omitempty" url:"OtherContactInfo,omitempty"`
+	// Identifies the accounts payable account to be used for this supplier. Each supplier must have his own AP account. Applicable for France companies, only. Available when endpoint is evoked with the minorversion=3 query parameter. Query the Account name list resource to determine the appropriate Account object for this reference. Use Account.Id and Account.Name from that object for APAccountRef.value and APAccountRef.name, respectively.
+	ApAccountRef *ReferenceType `json:"APAccountRef,omitempty" url:"APAccountRef,omitempty"`
+	// Reference to a default Term associated with this Vendor object. Query the Term name list resource to determine the appropriate Term object for this reference. Use Term.Id and Term.Name from that object for TermRef.value and TermRef.name, respectively.
+	TermRef *ReferenceType `json:"TermRef,omitempty" url:"TermRef,omitempty"`
+	// The Source type of the transactions created by QuickBooks Commerce. Valid values include- QBCommerce
+	Source *string `json:"Source,omitempty" url:"Source,omitempty"`
+	// GSTIN is an identification number assigned to every GST registered business.
+	Gstin *string `json:"GSTIN,omitempty" url:"GSTIN,omitempty"`
+	// True if vendor is T4A eligible. Valid for CA locale
+	T4AEligible *string `json:"T4AEligible,omitempty" url:"T4AEligible,omitempty"`
+	// Fax number
+	Fax *TelephoneNumber `json:"Fax,omitempty" url:"Fax,omitempty"`
+	// Also called, PAN (in India) is a code that acts as an identification for individuals, families and corporates, especially for those who pay taxes on their income.
+	BusinessNumber *string `json:"BusinessNumber,omitempty" url:"BusinessNumber,omitempty"`
+	// Indicate if the vendor has TPAR enabled. TPAR stands for Taxable Payments Annual Report. The TPAR is mandated by ATO to get the details payments that businesses make to contractors for providing services. Some government entities also need to report the grants they have paid in a TPAR.
+	HasTpar *bool `json:"HasTPAR,omitempty" url:"HasTPAR,omitempty"`
+	// The method in which the supplier tracks their income. Applicable for France companies, only. Available when endpoint is evoked with the minorversion=3 query parameter. Valid values include- Cash and Accrual.
+	TaxReportingBasis *string `json:"TaxReportingBasis,omitempty" url:"TaxReportingBasis,omitempty"`
+	// Mobile phone number
+	Mobile *TelephoneNumber `json:"Mobile,omitempty" url:"Mobile,omitempty"`
+	// Primary phone number
+	PrimaryPhone *TelephoneNumber `json:"PrimaryPhone,omitempty" url:"PrimaryPhone,omitempty"`
+	// If true, this object is currently enabled for use by QuickBooks.
+	Active *bool `json:"Active,omitempty" url:"Active,omitempty"`
+	// Alternate phone number
+	AlternatePhone *TelephoneNumber `json:"AlternatePhone,omitempty" url:"AlternatePhone,omitempty"`
+	// Descriptive information about the object. The MetaData values are set by Data Services and are read only for all applications.
+	MetaData *ModificationMetaData `json:"MetaData,omitempty" url:"MetaData,omitempty"`
+	// This vendor is an independent contractor; someone who is given a 1099-MISC form at the end of the year. A 1099 vendor is paid with regular checks, and taxes are not withheld on their behalf.
+	Vendor1099 *bool `json:"Vendor1099,omitempty" url:"Vendor1099,omitempty"`
+	// BillRate can be set to specify this vendor's hourly billing rate.
+	BillRate *float64 `json:"BillRate,omitempty" url:"BillRate,omitempty"`
+	// Website address.
+	WebAddr *WebSiteAddress `json:"WebAddr,omitempty" url:"WebAddr,omitempty"`
+	// True if vendor is T5018 eligible. Valid for CA locale
+	T5018Eligible *bool `json:"T5018Eligible,omitempty" url:"T5018Eligible,omitempty"`
+	// The name of the company associated with the person or organization.
+	CompanyName *string `json:"CompanyName,omitempty" url:"CompanyName,omitempty"`
+	// Vendor Payment Bank Detail.
+	VendorPaymentBankDetail map[string]interface{} `json:"VendorPaymentBankDetail,omitempty" url:"VendorPaymentBankDetail,omitempty"`
+	// The tax ID of the Person or Organization. The value is masked in responses, exposing only last four characters. For example, the ID of 123-45-6789 is returned as XXXXXXX6789.
+	TaxIdentifier *string `json:"TaxIdentifier,omitempty" url:"TaxIdentifier,omitempty"`
+	// Name or number of the account associated with this vendor.
+	AcctNum *string `json:"AcctNum,omitempty" url:"AcctNum,omitempty"`
+	// For the filing of GSTR, transactions need to be classified depending on the type of vendor from whom the purchase is made. To facilitate this, we have introduced a new field as 'GST registration type'. Possible values are listed below- GST_REG_REG GST registered- Regular. Customer who has a business which is registered under GST and has a GSTIN (doesn’t include customers registered under composition scheme, as an SEZ or as EOU's, STP's EHTP's etc.). GST_REG_COMP GST registered-Composition. Customer who has a business which is registered under the composition scheme of GST and has a GSTIN. GST_UNREG GST unregistered. Customer who has a business which is not registered under GST and does not have a GSTIN. CONSUMER Consumer. Customer who is not registered under GST and is the final consumer of the service or product sold. OVERSEAS Overseas. Customer who has a business which is located out of India. SEZ SEZ. Customer who has a business which is registered under GST, has a GSTIN and is located in a SEZ or is a SEZ Developer. DEEMED Deemed exports- EOU's, STP's EHTP's etc. Customer who has a business which is registered under GST and falls in the category of companies (EOU's, STP's EHTP's etc.), to which supplies are made they are termed as deemed exports.
+	GstRegistrationType *string `json:"GSTRegistrationType,omitempty" url:"GSTRegistrationType,omitempty"`
+	// Name of the person or organization as printed on a check. If not provided, this is populated from DisplayName. Cannot be removed with sparse update.
+	PrintOnCheckName *string `json:"PrintOnCheckName,omitempty" url:"PrintOnCheckName,omitempty"`
+	// Default billing address
+	BillAddr *PhysicalAddress `json:"BillAddr,omitempty" url:"BillAddr,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (v *VendorCreateObject) GetExtraProperties() map[string]interface{} {
+	return v.extraProperties
+}
+
+func (v *VendorCreateObject) UnmarshalJSON(data []byte) error {
+	type unmarshaler VendorCreateObject
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*v = VendorCreateObject(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *v)
+	if err != nil {
+		return err
+	}
+	v.extraProperties = extraProperties
+
+	v._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (v *VendorCreateObject) String() string {
+	if len(v._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(v._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(v); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", v)
+}
+
+type VendorResponse struct {
+	Vendor *Vendor `json:"Vendor,omitempty" url:"Vendor,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (v *VendorResponse) GetExtraProperties() map[string]interface{} {
+	return v.extraProperties
+}
+
+func (v *VendorResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler VendorResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*v = VendorResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *v)
+	if err != nil {
+		return err
+	}
+	v.extraProperties = extraProperties
+
+	v._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (v *VendorResponse) String() string {
+	if len(v._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(v._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(v); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", v)
+}
+
+// Website address
+type WebSiteAddress struct {
+	// Uniform Resource Identifier for the web site.
+	Uri *string `json:"URI,omitempty" url:"URI,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (w *WebSiteAddress) GetExtraProperties() map[string]interface{} {
+	return w.extraProperties
+}
+
+func (w *WebSiteAddress) UnmarshalJSON(data []byte) error {
+	type unmarshaler WebSiteAddress
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*w = WebSiteAddress(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *w)
+	if err != nil {
+		return err
+	}
+	w.extraProperties = extraProperties
+
+	w._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (w *WebSiteAddress) String() string {
+	if len(w._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(w._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(w); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", w)
 }
 
 type AttachableCreateRequestAttachableRefItemEntityRef struct {

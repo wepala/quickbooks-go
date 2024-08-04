@@ -40,7 +40,7 @@ func (c *Client) Create(
 ) error {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -80,23 +80,28 @@ func (c *Client) Create(
 func (c *Client) Readbyid(
 	ctx context.Context,
 	companyid string,
+	id string,
 	request *api.ItemReadbyidRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.Item, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := core.EncodeURL(baseURL+"/v3/company/%v/item/2", companyid)
+	endpointURL := core.EncodeURL(
+		baseURL+"/v3/company/%v/item/%v",
+		companyid,
+		id,
+	)
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
@@ -104,6 +109,7 @@ func (c *Client) Readbyid(
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.Item
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -112,9 +118,10 @@ func (c *Client) Readbyid(
 			MaxAttempts: options.MaxAttempts,
 			Headers:     headers,
 			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }

@@ -41,7 +41,7 @@ func (c *Client) Create(
 ) error {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -87,7 +87,7 @@ func (c *Client) Readbyid(
 ) error {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -148,7 +148,7 @@ func (c *Client) UploadAttachments(
 ) error {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}

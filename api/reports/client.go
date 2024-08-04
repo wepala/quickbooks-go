@@ -42,7 +42,7 @@ func (c *Client) ReportAccountlist(
 ) error {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -85,10 +85,10 @@ func (c *Client) ReportAgedpayabledetail(
 	companyid string,
 	request *api.ReportAgedpayabledetailRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.Report, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -99,7 +99,7 @@ func (c *Client) ReportAgedpayabledetail(
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
@@ -107,6 +107,7 @@ func (c *Client) ReportAgedpayabledetail(
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.Report
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -115,11 +116,12 @@ func (c *Client) ReportAgedpayabledetail(
 			MaxAttempts: options.MaxAttempts,
 			Headers:     headers,
 			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // Report - AgedPayable aging summary
@@ -131,10 +133,10 @@ func (c *Client) ReportAgedpayables(
 	companyid string,
 	request *api.ReportAgedpayablesRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.Report, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -145,7 +147,7 @@ func (c *Client) ReportAgedpayables(
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
@@ -153,6 +155,7 @@ func (c *Client) ReportAgedpayables(
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.Report
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -161,11 +164,12 @@ func (c *Client) ReportAgedpayables(
 			MaxAttempts: options.MaxAttempts,
 			Headers:     headers,
 			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // Report - AgedReceivableDetail aging detail
@@ -177,10 +181,10 @@ func (c *Client) ReportAgedreceivabledetail(
 	companyid string,
 	request *api.ReportAgedreceivabledetailRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.Report, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -191,7 +195,7 @@ func (c *Client) ReportAgedreceivabledetail(
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
@@ -199,6 +203,7 @@ func (c *Client) ReportAgedreceivabledetail(
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.Report
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -207,11 +212,12 @@ func (c *Client) ReportAgedreceivabledetail(
 			MaxAttempts: options.MaxAttempts,
 			Headers:     headers,
 			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // Report - AgedReceivable aging summary
@@ -223,10 +229,10 @@ func (c *Client) ReportAgedreceivables(
 	companyid string,
 	request *api.ReportAgedreceivablesRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.Report, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -237,7 +243,7 @@ func (c *Client) ReportAgedreceivables(
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
@@ -245,6 +251,7 @@ func (c *Client) ReportAgedreceivables(
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.Report
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -253,11 +260,12 @@ func (c *Client) ReportAgedreceivables(
 			MaxAttempts: options.MaxAttempts,
 			Headers:     headers,
 			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // Report - BalanceSheet
@@ -269,10 +277,10 @@ func (c *Client) ReportBalancesheet(
 	companyid string,
 	request *api.ReportBalancesheetRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.Report, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -283,7 +291,7 @@ func (c *Client) ReportBalancesheet(
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
@@ -291,6 +299,7 @@ func (c *Client) ReportBalancesheet(
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.Report
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -299,11 +308,12 @@ func (c *Client) ReportBalancesheet(
 			MaxAttempts: options.MaxAttempts,
 			Headers:     headers,
 			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // Report - CashFlow
@@ -315,10 +325,10 @@ func (c *Client) ReportCashflow(
 	companyid string,
 	request *api.ReportCashflowRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.Report, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -329,7 +339,7 @@ func (c *Client) ReportCashflow(
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
@@ -337,6 +347,7 @@ func (c *Client) ReportCashflow(
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.Report
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -345,11 +356,12 @@ func (c *Client) ReportCashflow(
 			MaxAttempts: options.MaxAttempts,
 			Headers:     headers,
 			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // Report - CashSales
@@ -359,10 +371,10 @@ func (c *Client) ReportCashsales(
 	companyid string,
 	request *api.ReportCashsalesRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.Report, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -373,7 +385,7 @@ func (c *Client) ReportCashsales(
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
@@ -381,6 +393,7 @@ func (c *Client) ReportCashsales(
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.Report
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -389,11 +402,12 @@ func (c *Client) ReportCashsales(
 			MaxAttempts: options.MaxAttempts,
 			Headers:     headers,
 			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // Report - CustomerBalance
@@ -403,10 +417,10 @@ func (c *Client) ReportCustomerbalance(
 	companyid string,
 	request *api.ReportCustomerbalanceRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.Report, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -417,7 +431,7 @@ func (c *Client) ReportCustomerbalance(
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
@@ -425,6 +439,7 @@ func (c *Client) ReportCustomerbalance(
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.Report
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -433,11 +448,12 @@ func (c *Client) ReportCustomerbalance(
 			MaxAttempts: options.MaxAttempts,
 			Headers:     headers,
 			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // Report - CustomerBalance Detail
@@ -449,10 +465,10 @@ func (c *Client) ReportCustomerbalancedetail(
 	companyid string,
 	request *api.ReportCustomerbalancedetailRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.Report, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -463,7 +479,7 @@ func (c *Client) ReportCustomerbalancedetail(
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
@@ -471,6 +487,7 @@ func (c *Client) ReportCustomerbalancedetail(
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.Report
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -479,11 +496,12 @@ func (c *Client) ReportCustomerbalancedetail(
 			MaxAttempts: options.MaxAttempts,
 			Headers:     headers,
 			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // Report - Customer Income
@@ -493,10 +511,10 @@ func (c *Client) ReportCustomerincome(
 	companyid string,
 	request *api.ReportCustomerincomeRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.Report, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -507,7 +525,7 @@ func (c *Client) ReportCustomerincome(
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
@@ -515,6 +533,7 @@ func (c *Client) ReportCustomerincome(
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.Report
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -523,11 +542,12 @@ func (c *Client) ReportCustomerincome(
 			MaxAttempts: options.MaxAttempts,
 			Headers:     headers,
 			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // Report - Customer Sales
@@ -537,10 +557,10 @@ func (c *Client) ReportCustomersales(
 	companyid string,
 	request *api.ReportCustomersalesRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.Report, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -551,7 +571,7 @@ func (c *Client) ReportCustomersales(
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
@@ -559,6 +579,7 @@ func (c *Client) ReportCustomersales(
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.Report
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -567,11 +588,12 @@ func (c *Client) ReportCustomersales(
 			MaxAttempts: options.MaxAttempts,
 			Headers:     headers,
 			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // Report - Department Sales
@@ -581,10 +603,10 @@ func (c *Client) ReportDepartmentsales(
 	companyid string,
 	request *api.ReportDepartmentsalesRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.Report, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -595,7 +617,7 @@ func (c *Client) ReportDepartmentsales(
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
@@ -603,6 +625,7 @@ func (c *Client) ReportDepartmentsales(
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.Report
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -611,11 +634,12 @@ func (c *Client) ReportDepartmentsales(
 			MaxAttempts: options.MaxAttempts,
 			Headers:     headers,
 			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // Report - General Ledger
@@ -627,10 +651,10 @@ func (c *Client) ReportGeneralledger(
 	companyid string,
 	request *api.ReportGeneralledgerRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.Report, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -641,7 +665,7 @@ func (c *Client) ReportGeneralledger(
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
@@ -649,6 +673,7 @@ func (c *Client) ReportGeneralledger(
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.Report
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -657,11 +682,12 @@ func (c *Client) ReportGeneralledger(
 			MaxAttempts: options.MaxAttempts,
 			Headers:     headers,
 			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // Report - Inventory Valuation Summary
@@ -673,10 +699,10 @@ func (c *Client) ReportInventoryvaluationsummary(
 	companyid string,
 	request *api.ReportInventoryvaluationsummaryRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.Report, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -687,7 +713,7 @@ func (c *Client) ReportInventoryvaluationsummary(
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
@@ -695,6 +721,7 @@ func (c *Client) ReportInventoryvaluationsummary(
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.Report
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -703,11 +730,12 @@ func (c *Client) ReportInventoryvaluationsummary(
 			MaxAttempts: options.MaxAttempts,
 			Headers:     headers,
 			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // Report - Item Sales
@@ -719,10 +747,10 @@ func (c *Client) ReportItemsales(
 	companyid string,
 	request *api.ReportItemsalesRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.Report, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -733,7 +761,7 @@ func (c *Client) ReportItemsales(
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
@@ -741,6 +769,7 @@ func (c *Client) ReportItemsales(
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.Report
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -749,11 +778,12 @@ func (c *Client) ReportItemsales(
 			MaxAttempts: options.MaxAttempts,
 			Headers:     headers,
 			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // Report - Profit and Loss
@@ -765,10 +795,10 @@ func (c *Client) ReportProfitandloss(
 	companyid string,
 	request *api.ReportProfitandlossRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.Report, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -779,7 +809,7 @@ func (c *Client) ReportProfitandloss(
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
@@ -787,6 +817,7 @@ func (c *Client) ReportProfitandloss(
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.Report
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -795,11 +826,12 @@ func (c *Client) ReportProfitandloss(
 			MaxAttempts: options.MaxAttempts,
 			Headers:     headers,
 			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // Report - Profit and Loss Detail
@@ -811,10 +843,10 @@ func (c *Client) ReportProfitandlossdetail(
 	companyid string,
 	request *api.ReportProfitandlossdetailRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.Report, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -825,7 +857,7 @@ func (c *Client) ReportProfitandlossdetail(
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
@@ -833,6 +865,7 @@ func (c *Client) ReportProfitandlossdetail(
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.Report
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -841,11 +874,12 @@ func (c *Client) ReportProfitandlossdetail(
 			MaxAttempts: options.MaxAttempts,
 			Headers:     headers,
 			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // Report - Trial Balance
@@ -857,10 +891,10 @@ func (c *Client) ReportTrialbalance(
 	companyid string,
 	request *api.ReportTrialbalanceRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.Report, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -871,7 +905,7 @@ func (c *Client) ReportTrialbalance(
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
@@ -879,6 +913,7 @@ func (c *Client) ReportTrialbalance(
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.Report
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -887,11 +922,12 @@ func (c *Client) ReportTrialbalance(
 			MaxAttempts: options.MaxAttempts,
 			Headers:     headers,
 			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // Report - Trial List
@@ -903,10 +939,10 @@ func (c *Client) ReportTransactionlist(
 	companyid string,
 	request *api.ReportTransactionlistRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.Report, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -917,7 +953,7 @@ func (c *Client) ReportTransactionlist(
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
@@ -925,6 +961,7 @@ func (c *Client) ReportTransactionlist(
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.Report
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -933,11 +970,12 @@ func (c *Client) ReportTransactionlist(
 			MaxAttempts: options.MaxAttempts,
 			Headers:     headers,
 			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // Report - Vendor Balance
@@ -949,10 +987,10 @@ func (c *Client) ReportVendorbalance(
 	companyid string,
 	request *api.ReportVendorbalanceRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.Report, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -963,7 +1001,7 @@ func (c *Client) ReportVendorbalance(
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
@@ -971,6 +1009,7 @@ func (c *Client) ReportVendorbalance(
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.Report
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -979,11 +1018,12 @@ func (c *Client) ReportVendorbalance(
 			MaxAttempts: options.MaxAttempts,
 			Headers:     headers,
 			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // Report - Vendor Balance Detail
@@ -995,10 +1035,10 @@ func (c *Client) ReportVendorbalancedetail(
 	companyid string,
 	request *api.ReportVendorbalancedetailRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.Report, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -1009,7 +1049,7 @@ func (c *Client) ReportVendorbalancedetail(
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
@@ -1017,6 +1057,7 @@ func (c *Client) ReportVendorbalancedetail(
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.Report
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -1025,11 +1066,12 @@ func (c *Client) ReportVendorbalancedetail(
 			MaxAttempts: options.MaxAttempts,
 			Headers:     headers,
 			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // Report - Vendor Expense
@@ -1044,7 +1086,7 @@ func (c *Client) ReportVendorexpense(
 ) error {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}

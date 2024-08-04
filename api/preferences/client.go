@@ -37,10 +37,10 @@ func (c *Client) PreferenceRead(
 	companyid string,
 	request *api.PreferenceReadRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.PreferenceReadResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -51,7 +51,7 @@ func (c *Client) PreferenceRead(
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
@@ -59,6 +59,7 @@ func (c *Client) PreferenceRead(
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.PreferenceReadResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -67,11 +68,12 @@ func (c *Client) PreferenceRead(
 			MaxAttempts: options.MaxAttempts,
 			Headers:     headers,
 			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // Update the preference object endpoint
@@ -84,7 +86,7 @@ func (c *Client) PreferenceUpdate(
 ) error {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}

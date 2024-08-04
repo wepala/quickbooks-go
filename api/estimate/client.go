@@ -40,7 +40,7 @@ func (c *Client) Create(
 ) error {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
@@ -80,19 +80,24 @@ func (c *Client) Create(
 func (c *Client) Readbyid(
 	ctx context.Context,
 	companyid string,
+	estimateId string,
 	request *api.EstimateReadbyidRequest,
 	opts ...option.RequestOption,
 ) error {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := core.EncodeURL(baseURL+"/v3/company/%v/estimate/163", companyid)
+	endpointURL := core.EncodeURL(
+		baseURL+"/v3/company/%v/estimate/%v",
+		companyid,
+		estimateId,
+	)
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {

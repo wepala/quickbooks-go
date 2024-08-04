@@ -9,5 +9,5 @@ package api
 var Environments = struct {
 	Default string
 }{
-	Default: "https://{{baseurl}}",
+	Default: "https://quickbooks.api.intuit.com",
 }

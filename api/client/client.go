@@ -29,6 +29,7 @@ import (
 	preferences "github.com/wepala/quickbooks-go/api/preferences"
 	purchase "github.com/wepala/quickbooks-go/api/purchase"
 	purchaseorder "github.com/wepala/quickbooks-go/api/purchaseorder"
+	query "github.com/wepala/quickbooks-go/api/query"
 	refundreceipt "github.com/wepala/quickbooks-go/api/refundreceipt"
 	reports "github.com/wepala/quickbooks-go/api/reports"
 	salesreceipt "github.com/wepala/quickbooks-go/api/salesreceipt"
@@ -72,6 +73,7 @@ type Client struct {
 	Preferences       *preferences.Client
 	Purchase          *purchase.Client
 	Purchaseorder     *purchaseorder.Client
+	Query             *query.Client
 	Refundreceipt     *refundreceipt.Client
 	Reports           *reports.Client
 	Salesreceipt      *salesreceipt.Client
@@ -120,6 +122,7 @@ func NewClient(opts ...option.RequestOption) *Client {
 		Preferences:       preferences.NewClient(opts...),
 		Purchase:          purchase.NewClient(opts...),
 		Purchaseorder:     purchaseorder.NewClient(opts...),
+		Query:             query.NewClient(opts...),
 		Refundreceipt:     refundreceipt.NewClient(opts...),
 		Reports:           reports.NewClient(opts...),
 		Salesreceipt:      salesreceipt.NewClient(opts...),
@@ -146,7 +149,7 @@ func (c *Client) Batch(
 ) error {
 	options := core.NewRequestOptions(opts...)
 
-	baseURL := "https://{{baseurl}}"
+	baseURL := "https://quickbooks.api.intuit.com"
 	if c.baseURL != "" {
 		baseURL = c.baseURL
 	}

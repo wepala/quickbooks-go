@@ -31,6 +31,47 @@ type PreferenceUpdateRequest struct {
 	Sparse                  *bool                                           `json:"sparse,omitempty" url:"-"`
 }
 
+type PreferenceReadResponse struct {
+	Preferences *Preferences `json:"Preferences,omitempty" url:"Preferences,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PreferenceReadResponse) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PreferenceReadResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler PreferenceReadResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PreferenceReadResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PreferenceReadResponse) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
 type PreferenceUpdateRequestAccountingInfoPrefs struct {
 	ClassTrackingPerTxn     *bool   `json:"ClassTrackingPerTxn,omitempty" url:"ClassTrackingPerTxn,omitempty"`
 	ClassTrackingPerTxnLine *bool   `json:"ClassTrackingPerTxnLine,omitempty" url:"ClassTrackingPerTxnLine,omitempty"`
