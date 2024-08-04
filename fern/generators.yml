@@ -1,0 +1,11 @@
+default-group: local
+groups:
+  local:
+    generators:
+      - name: fernapi/fern-go-sdk
+        version: 0.22.0
+        output:
+          location: local-file-system
+          path: ../api
+        config:
+          importPath: github.com/wepala/quickbooks-go/api
