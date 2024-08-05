@@ -60,14 +60,6 @@ func (c *Client) Create(
 	}
 	endpointURL := core.EncodeURL(baseURL+"/v3/company/%v/taxagency", companyid)
 
-	queryParams, err := core.QueryValues(request)
-	if err != nil {
-		return err
-	}
-	if len(queryParams) > 0 {
-		endpointURL += "?" + queryParams.Encode()
-	}
-
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	if err := c.caller.Call(
@@ -91,7 +83,7 @@ func (c *Client) Create(
 func (c *Client) Readbyid(
 	ctx context.Context,
 	companyid string,
-	request *api.TaxagencyReadbyidRequest,
+	id string,
 	opts ...option.RequestOption,
 ) error {
 	options := core.NewRequestOptions(opts...)
@@ -103,15 +95,11 @@ func (c *Client) Readbyid(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := core.EncodeURL(baseURL+"/v3/company/%v/taxagency/3", companyid)
-
-	queryParams, err := core.QueryValues(request)
-	if err != nil {
-		return err
-	}
-	if len(queryParams) > 0 {
-		endpointURL += "?" + queryParams.Encode()
-	}
+	endpointURL := core.EncodeURL(
+		baseURL+"/v3/company/%v/taxagency/%v",
+		companyid,
+		id,
+	)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 

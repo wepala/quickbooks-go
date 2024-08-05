@@ -49,14 +49,6 @@ func (c *Client) Create(
 	}
 	endpointURL := core.EncodeURL(baseURL+"/v3/company/%v/item", companyid)
 
-	queryParams, err := core.QueryValues(request)
-	if err != nil {
-		return err
-	}
-	if len(queryParams) > 0 {
-		endpointURL += "?" + queryParams.Encode()
-	}
-
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
 	if err := c.caller.Call(
@@ -81,7 +73,6 @@ func (c *Client) Readbyid(
 	ctx context.Context,
 	companyid string,
 	id string,
-	request *api.ItemReadbyidRequest,
 	opts ...option.RequestOption,
 ) (*api.Item, error) {
 	options := core.NewRequestOptions(opts...)
@@ -98,14 +89,6 @@ func (c *Client) Readbyid(
 		companyid,
 		id,
 	)
-
-	queryParams, err := core.QueryValues(request)
-	if err != nil {
-		return nil, err
-	}
-	if len(queryParams) > 0 {
-		endpointURL += "?" + queryParams.Encode()
-	}
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 

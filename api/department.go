@@ -3,7 +3,6 @@
 package api
 
 type DepartmentCreateRequest struct {
-	Minorversion       *string `json:"-" url:"minorversion,omitempty"`
 	Active             *bool   `json:"Active,omitempty" url:"-"`
 	FullyQualifiedName *string `json:"FullyQualifiedName,omitempty" url:"-"`
 	Id                 *string `json:"Id,omitempty" url:"-"`
@@ -12,8 +11,4 @@ type DepartmentCreateRequest struct {
 	SyncToken          *string `json:"SyncToken,omitempty" url:"-"`
 	Domain             *string `json:"domain,omitempty" url:"-"`
 	Sparse             *bool   `json:"sparse,omitempty" url:"-"`
-}
-
-type DepartmentReadbyidRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
 }

@@ -37,7 +37,7 @@ func (c *Client) Create(
 	companyid string,
 	request *api.VendorCreateRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.VendorResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://quickbooks.api.intuit.com"
@@ -49,16 +49,9 @@ func (c *Client) Create(
 	}
 	endpointURL := core.EncodeURL(baseURL+"/v3/company/%v/vendor", companyid)
 
-	queryParams, err := core.QueryValues(request)
-	if err != nil {
-		return err
-	}
-	if len(queryParams) > 0 {
-		endpointURL += "?" + queryParams.Encode()
-	}
-
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.VendorResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -68,11 +61,12 @@ func (c *Client) Create(
 			Headers:     headers,
 			Client:      options.HTTPClient,
 			Request:     request,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // Read a vendor object by Id
@@ -80,9 +74,9 @@ func (c *Client) Create(
 func (c *Client) Readbyid(
 	ctx context.Context,
 	companyid string,
-	request *api.VendorReadbyidRequest,
+	id string,
 	opts ...option.RequestOption,
-) error {
+) (*api.VendorResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://quickbooks.api.intuit.com"
@@ -92,18 +86,15 @@ func (c *Client) Readbyid(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := core.EncodeURL(baseURL+"/v3/company/%v/vendor/70", companyid)
-
-	queryParams, err := core.QueryValues(request)
-	if err != nil {
-		return err
-	}
-	if len(queryParams) > 0 {
-		endpointURL += "?" + queryParams.Encode()
-	}
+	endpointURL := core.EncodeURL(
+		baseURL+"/v3/company/%v/vendor/%v",
+		companyid,
+		id,
+	)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.VendorResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -112,9 +103,10 @@ func (c *Client) Readbyid(
 			MaxAttempts: options.MaxAttempts,
 			Headers:     headers,
 			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }

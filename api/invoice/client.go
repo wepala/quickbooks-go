@@ -37,7 +37,7 @@ func (c *Client) Create(
 	companyid string,
 	request *api.InvoiceCreateRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.InvoiceResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://quickbooks.api.intuit.com"
@@ -51,7 +51,7 @@ func (c *Client) Create(
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
@@ -59,6 +59,7 @@ func (c *Client) Create(
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.InvoiceResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -68,11 +69,12 @@ func (c *Client) Create(
 			Headers:     headers,
 			Client:      options.HTTPClient,
 			Request:     request,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // Read an invoice object by Id
@@ -80,9 +82,8 @@ func (c *Client) Readbyid(
 	ctx context.Context,
 	companyid string,
 	invoiceId string,
-	request *api.InvoiceReadbyidRequest,
 	opts ...option.RequestOption,
-) (*api.Invoice, error) {
+) (*api.InvoiceResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://quickbooks.api.intuit.com"
@@ -98,17 +99,9 @@ func (c *Client) Readbyid(
 		invoiceId,
 	)
 
-	queryParams, err := core.QueryValues(request)
-	if err != nil {
-		return nil, err
-	}
-	if len(queryParams) > 0 {
-		endpointURL += "?" + queryParams.Encode()
-	}
-
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
-	var response *api.Invoice
+	var response *api.InvoiceResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{

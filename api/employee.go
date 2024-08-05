@@ -9,7 +9,6 @@ import (
 )
 
 type EmployeeCreateRequest struct {
-	Minorversion     *string                            `json:"-" url:"minorversion,omitempty"`
 	Active           *bool                              `json:"Active,omitempty" url:"-"`
 	BillableTime     *bool                              `json:"BillableTime,omitempty" url:"-"`
 	DisplayName      *string                            `json:"DisplayName,omitempty" url:"-"`
@@ -24,10 +23,6 @@ type EmployeeCreateRequest struct {
 	SyncToken        *string                            `json:"SyncToken,omitempty" url:"-"`
 	Domain           *string                            `json:"domain,omitempty" url:"-"`
 	Sparse           *bool                              `json:"sparse,omitempty" url:"-"`
-}
-
-type EmployeeReadbyidRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
 }
 
 type EmployeeCreateRequestMetaData struct {

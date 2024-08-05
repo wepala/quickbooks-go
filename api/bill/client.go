@@ -38,7 +38,7 @@ func (c *Client) Create(
 	companyid string,
 	request *api.BillCreateRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.BillResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://quickbooks.api.intuit.com"
@@ -52,7 +52,7 @@ func (c *Client) Create(
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
@@ -60,6 +60,7 @@ func (c *Client) Create(
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.BillResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -69,11 +70,12 @@ func (c *Client) Create(
 			Headers:     headers,
 			Client:      options.HTTPClient,
 			Request:     request,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // Retrieve a bill by Id
@@ -82,9 +84,9 @@ func (c *Client) Create(
 func (c *Client) Getbyid(
 	ctx context.Context,
 	companyid string,
-	request *api.BillGetbyidRequest,
+	id string,
 	opts ...option.RequestOption,
-) error {
+) (*api.BillResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://quickbooks.api.intuit.com"
@@ -94,18 +96,15 @@ func (c *Client) Getbyid(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := core.EncodeURL(baseURL+"/v3/company/%v/bill/1", companyid)
-
-	queryParams, err := core.QueryValues(request)
-	if err != nil {
-		return err
-	}
-	if len(queryParams) > 0 {
-		endpointURL += "?" + queryParams.Encode()
-	}
+	endpointURL := core.EncodeURL(
+		baseURL+"/v3/company/%v/bill/%v",
+		companyid,
+		id,
+	)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.BillResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -114,9 +113,10 @@ func (c *Client) Getbyid(
 			MaxAttempts: options.MaxAttempts,
 			Headers:     headers,
 			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }

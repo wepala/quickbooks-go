@@ -20,17 +20,6 @@ paths:
       summary: Account-Create
       description: Create a new Account
       operationId: accountCreate
-      parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       requestBody:
         content:
           application/json:
@@ -111,35 +100,37 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
     parameters:
       - name: companyid
         in: path
         required: true
         schema:
           type: string
-  /v3/company/{companyid}/account/1:
+  /v3/company/{companyid}/account/{id}:
     get:
       tags:
         - Account
       summary: Account-ReadById
       description: Get the Account which has accountId as 1
       operationId: accountReadbyid
-      parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
     parameters:
       - name: companyid
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
         in: path
         required: true
         schema:
@@ -154,16 +145,6 @@ paths:
         Method - POST
       operationId: accountReadall
       parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
         - name: query
           in: query
           schema:
@@ -258,16 +239,6 @@ paths:
         Method - POST
       operationId: attachableCreate
       parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
         - name: operation
           in: query
           schema:
@@ -373,7 +344,7 @@ paths:
         required: true
         schema:
           type: string
-  /v3/company/{companyid}/attachable/5000000000000029383:
+  /v3/company/{companyid}/attachable/{id}:
     get:
       tags:
         - Attachable
@@ -383,22 +354,16 @@ paths:
         Accept:application/json
         Method - GET
       operationId: attachableReadbyid
-      parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
     parameters:
       - name: companyid
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
         in: path
         required: true
         schema:
@@ -430,12 +395,6 @@ paths:
         The file or files are stored in the Attachment list with the name specified by the filename parameter.
         If the data supplied with the Attachable object cannot be validated, an error is returned and the file is not uploaded.
       operationId: uploadAttachments
-      parameters:
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       requestBody:
         content:
           text/plain:
@@ -547,17 +506,6 @@ paths:
         Content-Type:application/json
         Method - POST
       operationId: batch
-      parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       requestBody:
         content:
           application/json:
@@ -674,18 +622,9 @@ paths:
         Method - POST
       operationId: billCreate
       parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
         - name: operation
           in: query
+          required: false
           schema:
             type: string
             example: delete
@@ -731,13 +670,17 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillResponse'
     parameters:
       - name: companyid
         in: path
         required: true
         schema:
           type: string
-  /v3/company/{companyid}/bill/1:
+  /v3/company/{companyid}/bill/{id}:
     get:
       tags:
         - Bill
@@ -747,22 +690,20 @@ paths:
         Accept:application/json
         Method - GET
       operationId: billGetbyid
-      parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillResponse'
     parameters:
       - name: companyid
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
         in: path
         required: true
         schema:
@@ -778,18 +719,9 @@ paths:
         Method - POST
       operationId: billpaymentCreate
       parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
         - name: operation
           in: query
+          required: false
           schema:
             type: string
             example: delete
@@ -904,7 +836,7 @@ paths:
         required: true
         schema:
           type: string
-  /v3/company/{companyid}/billpayment/118:
+  /v3/company/{companyid}/billpayment/{id}:
     get:
       tags:
         - BillPayment
@@ -913,22 +845,16 @@ paths:
         Retrieve BillPayment by Id
         Method - GET
       operationId: billpaymentReadbyid
-      parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
     parameters:
       - name: companyid
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
         in: path
         required: true
         schema:
@@ -953,11 +879,6 @@ paths:
           schema:
             type: string
             example: '2016-08-10'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
@@ -977,17 +898,8 @@ paths:
         Method - POST
       operationId: classCreate
       parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
         - name: operation
+          required: false
           in: query
           schema:
             type: string
@@ -1031,7 +943,7 @@ paths:
         required: true
         schema:
           type: string
-  /v3/company/{companyid}/class/5000000000000018727:
+  /v3/company/{companyid}/class/{id}:
     get:
       tags:
         - Class
@@ -1040,22 +952,16 @@ paths:
         Read a Class object by Id
         Method - GET
       operationId: classReadbyid
-      parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
     parameters:
       - name: companyid
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
         in: path
         required: true
         schema:
@@ -1067,17 +973,6 @@ paths:
       summary: CompanyInfo-ReadById
       description: 'Method : GET'
       operationId: companyinfoReadbyid
-      parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
@@ -1102,17 +997,8 @@ paths:
         Method : POST
       operationId: creditmemoCreate
       parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
         - name: operation
+          required: false
           in: query
           schema:
             type: string
@@ -1216,7 +1102,7 @@ paths:
         required: true
         schema:
           type: string
-  /v3/company/{companyid}/creditmemo/160:
+  /v3/company/{companyid}/creditmemo/{id}:
     get:
       tags:
         - CreditMemo
@@ -1225,22 +1111,16 @@ paths:
         Read a credit memo by Id
         Method : GET
       operationId: creditmemoReadbyid
-      parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
     parameters:
       - name: companyid
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
         in: path
         required: true
         schema:
@@ -1254,17 +1134,6 @@ paths:
         Create a customer
         Method : POST
       operationId: customerCreate
-      parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       requestBody:
         content:
           application/json:
@@ -1344,13 +1213,17 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerResponse'
     parameters:
       - name: companyid
         in: path
         required: true
         schema:
           type: string
-  /v3/company/{companyid}/customer/63:
+  /v3/company/{companyid}/customer/{id}:
     get:
       tags:
         - Customer
@@ -1359,22 +1232,20 @@ paths:
         Read a customer entry by Id
         Method : GET
       operationId: customerReadbyid
-      parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerResponse'
     parameters:
       - name: companyid
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
         in: path
         required: true
         schema:
@@ -1388,17 +1259,6 @@ paths:
         Create a department object
         Method : POST
       operationId: departmentCreate
-      parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       requestBody:
         content:
           application/json:
@@ -1462,7 +1322,7 @@ paths:
         required: true
         schema:
           type: string
-  /v3/company/{companyid}/department/1:
+  /v3/company/{companyid}/department/{id}:
     get:
       tags:
         - Department
@@ -1471,22 +1331,16 @@ paths:
         Read a department object
         Method : GET
       operationId: departmentReadbyid
-      parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
     parameters:
       - name: companyid
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
         in: path
         required: true
         schema:
@@ -1501,18 +1355,9 @@ paths:
         Method : POST
       operationId: depositCreate
       parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
         - name: operation
           in: query
+          required: false
           schema:
             type: string
             example: delete
@@ -1578,7 +1423,7 @@ paths:
         required: true
         schema:
           type: string
-  /v3/company/{companyid}/deposit/162:
+  /v3/company/{companyid}/deposit/{id}:
     get:
       tags:
         - Deposit
@@ -1587,22 +1432,16 @@ paths:
         Read a deposit object by Id
         Method : POST
       operationId: depositReadbyid
-      parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
     parameters:
       - name: companyid
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
         in: path
         required: true
         schema:
@@ -1617,17 +1456,6 @@ paths:
         Method : POST
 
       operationId: employeeCreate
-      parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       requestBody:
         content:
           application/json:
@@ -1771,7 +1599,7 @@ paths:
         required: true
         schema:
           type: string
-  /v3/company/{companyid}/employee/68:
+  /v3/company/{companyid}/employee/{id}:
     get:
       tags:
         - Employee
@@ -1781,22 +1609,16 @@ paths:
         Method : GET
 
       operationId: employeeReadbyid
-      parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
     parameters:
       - name: companyid
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
         in: path
         required: true
         schema:
@@ -1811,17 +1633,8 @@ paths:
         Method : POST
       operationId: estimateCreate
       parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
         - name: operation
+          required: false
           in: query
           schema:
             type: string
@@ -1979,16 +1792,6 @@ paths:
           required: true
           schema:
             type: string
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
@@ -2018,16 +1821,6 @@ paths:
           schema:
             type: string
             example: '2017-04-25'
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
@@ -2047,17 +1840,8 @@ paths:
         Method : POST
       operationId: invoiceCreate
       parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
         - name: operation
+          required: false
           in: query
           schema:
             type: string
@@ -2161,6 +1945,10 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvoiceResponse'
     parameters:
       - name: companyid
         in: path
@@ -2181,23 +1969,13 @@ paths:
           required: true
           schema:
             type: string
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Invoice'
+                $ref: '#/components/schemas/InvoiceResponse'
     parameters:
       - name: companyid
         in: path
@@ -2213,17 +1991,6 @@ paths:
         Create an item object
         Method : POST
       operationId: itemCreate
-      parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       requestBody:
         content:
           application/json:
@@ -2390,16 +2157,6 @@ paths:
           required: true
           schema:
             type: string
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
@@ -2423,17 +2180,8 @@ paths:
         Method : POST
       operationId: journalentryCreate
       parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
         - name: operation
+          required: false
           in: query
           schema:
             type: string
@@ -2510,13 +2258,17 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JournalEntry'
     parameters:
       - name: companyid
         in: path
         required: true
         schema:
           type: string
-  /v3/company/{companyid}/journalentry/8:
+  /v3/company/{companyid}/journalentry/{id}:
     get:
       tags:
         - JournalEntry
@@ -2525,22 +2277,20 @@ paths:
         Read an journalentry object by Id
         Method : POST
       operationId: journalentryReadbyid
-      parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JournalEntry'
     parameters:
       - name: companyid
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
         in: path
         required: true
         schema:
@@ -2555,17 +2305,8 @@ paths:
         Method : POST
       operationId: paymentCreate
       parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
         - name: operation
+          required: false
           in: query
           schema:
             type: string
@@ -2654,13 +2395,17 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentResponse'
     parameters:
       - name: companyid
         in: path
         required: true
         schema:
           type: string
-  /v3/company/{companyid}/payment/174:
+  /v3/company/{companyid}/payment/{id}:
     get:
       tags:
         - Payment
@@ -2670,16 +2415,11 @@ paths:
         Method : GET
       operationId: paymentReadbyid
       parameters:
-        - name: minorversion
-          in: query
+        - name: id
+          in: path
+          required: true
           schema:
             type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
@@ -2698,17 +2438,6 @@ paths:
         Create a payment method
         Method : POST
       operationId: paymentmethodCreate
-      parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       requestBody:
         content:
           application/json:
@@ -2782,7 +2511,7 @@ paths:
         required: true
         schema:
           type: string
-  /v3/company/{companyid}/paymentmethod/8:
+  /v3/company/{companyid}/paymentmethod/{id}:
     get:
       tags:
         - PaymentMethod
@@ -2792,16 +2521,11 @@ paths:
         Method : GET
       operationId: paymentmethodReadbyid
       parameters:
-        - name: minorversion
-          in: query
+        - name: id
+          in: path
+          required: true
           schema:
             type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
@@ -2820,17 +2544,6 @@ paths:
         Read the preference object
         Method : POST
       operationId: preferenceRead
-      parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
@@ -2849,17 +2562,6 @@ paths:
         Update the preference object endpoint
         Method : POST
       operationId: preferenceUpdate
-      parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       requestBody:
         content:
           application/json:
@@ -3350,6 +3052,10 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Preferences'
     parameters:
       - name: companyid
         in: path
@@ -3366,17 +3072,8 @@ paths:
         Method : POST
       operationId: purchaseCreate
       parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
         - name: operation
+          required: false
           in: query
           schema:
             type: string
@@ -3463,7 +3160,7 @@ paths:
         required: true
         schema:
           type: string
-  /v3/company/{companyid}/purchase/175:
+  /v3/company/{companyid}/purchase/{id}:
     get:
       tags:
         - Purchase
@@ -3473,16 +3170,11 @@ paths:
         Method : POST
       operationId: purchaseReadbyid
       parameters:
-        - name: minorversion
-          in: query
+        - name: id
+          in: path
+          required: true
           schema:
             type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
@@ -3502,16 +3194,6 @@ paths:
         Method : POST
       operationId: purchaseorderCreate
       parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
         - name: operation
           in: query
           schema:
@@ -3627,16 +3309,6 @@ paths:
           required: true
           schema:
             type: string
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
@@ -3686,16 +3358,6 @@ paths:
         Method : POST
       operationId: refundreceiptCreate
       parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
         - name: operation
           in: query
           schema:
@@ -3782,7 +3444,7 @@ paths:
         required: true
         schema:
           type: string
-  /v3/company/{companyid}/refundreceipt/66:
+  /v3/company/{companyid}/refundreceipt/{id}:
     get:
       tags:
         - RefundReceipt
@@ -3792,16 +3454,11 @@ paths:
         Method : GET
       operationId: refundreceiptReadbyid
       parameters:
-        - name: minorversion
-          in: query
+        - name: id
+          in: path
+          required: true
           schema:
             type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
@@ -3821,22 +3478,27 @@ paths:
         Method : GET
 
         The information below provides a reference on how to access the account list detail report from the QuickBooks Online Report Service.
-
-      operationId: reportAccountlist
       parameters:
-        - name: minorversion
+        - name: start_date
           in: query
           schema:
             type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
+        - name: end_date
+          in: query
           schema:
             type: string
-            example: Intuit-qbov3-postman-collection1
+        - name: columns
+          in: query
+          schema:
+            type: string
+      operationId: reportAccountlist
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report'
     parameters:
       - name: companyid
         in: path
@@ -3853,21 +3515,20 @@ paths:
         Method : GET
 
         The information below provides a reference on how to access the AP Aging summary report from the QuickBooks Online Report Service.
-
-
-
-      operationId: reportAgedpayabledetail
       parameters:
-        - name: minorversion
+        - name: start_date
           in: query
           schema:
             type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
+        - name: end_date
+          in: query
           schema:
             type: string
-            example: Intuit-qbov3-postman-collection1
+        - name: columns
+          in: query
+          schema:
+            type: string
+      operationId: reportAgedpayabledetail
       responses:
         '200':
           description: ''
@@ -3885,28 +3546,25 @@ paths:
     get:
       tags:
         - Reports
+      parameters:
+        - name: start_date
+          in: query
+          schema:
+            type: string
+        - name: end_date
+          in: query
+          schema:
+            type: string
+        - name: columns
+          in: query
+          schema:
+            type: string
       summary: Report-AgedPayables
       description: |+
         Report - AgedPayable aging summary
         Method : GET
-
         The information below provides a reference on how to access the AP Aging summary report from the QuickBooks Online Report Service.
-
-
-
-
       operationId: reportAgedpayables
-      parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
@@ -3924,28 +3582,26 @@ paths:
     get:
       tags:
         - Reports
+      parameters:
+        - name: start_date
+          in: query
+          schema:
+            type: string
+        - name: end_date
+          in: query
+          schema:
+            type: string
+        - name: columns
+          in: query
+          schema:
+            type: string
       summary: Report-AgedReceivableDetail
       description: |+
         Report - AgedReceivableDetail aging detail
         Method : GET
 
         The information below provides a reference on how to access the AR Aging Detail report from the QuickBooks Online Report Service.
-
-
-
-
       operationId: reportAgedreceivabledetail
-      parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
@@ -3963,6 +3619,19 @@ paths:
     get:
       tags:
         - Reports
+      parameters:
+        - name: start_date
+          in: query
+          schema:
+            type: string
+        - name: end_date
+          in: query
+          schema:
+            type: string
+        - name: columns
+          in: query
+          schema:
+            type: string
       summary: Report-AgedReceivables
       description: |+
         Report - AgedReceivable aging summary
@@ -3970,22 +3639,7 @@ paths:
 
         The information below provides a reference on how to access the AR Aging Summary report from the QuickBooks Online Report Service.
 
-
-
-
-
       operationId: reportAgedreceivables
-      parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
@@ -4003,30 +3657,26 @@ paths:
     get:
       tags:
         - Reports
+      parameters:
+        - name: start_date
+          in: query
+          schema:
+            type: string
+        - name: end_date
+          in: query
+          schema:
+            type: string
+        - name: columns
+          in: query
+          schema:
+            type: string
       summary: Report-BalanceSheet
       description: |+
         Report - BalanceSheet
         Method : GET
 
         The information below provides a reference on how to query the Balance Sheet report from the QuickBooks Online Report Service.
-
-
-
-
-
-
       operationId: reportBalancesheet
-      parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
@@ -4044,6 +3694,19 @@ paths:
     get:
       tags:
         - Reports
+      parameters:
+        - name: start_date
+          in: query
+          schema:
+            type: string
+        - name: end_date
+          in: query
+          schema:
+            type: string
+        - name: columns
+          in: query
+          schema:
+            type: string
       summary: Report-CashFlow
       description: |+
         Report - CashFlow
@@ -4051,23 +3714,8 @@ paths:
 
         The information below provides a reference on how to access the cash flow report from the QuickBooks Online Report Service.
 
-
-
-
-
-
       operationId: reportCashflow
-      parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
+
       responses:
         '200':
           description: ''
@@ -4085,29 +3733,24 @@ paths:
     get:
       tags:
         - Reports
+      parameters:
+        - name: start_date
+          in: query
+          schema:
+            type: string
+        - name: end_date
+          in: query
+          schema:
+            type: string
+        - name: columns
+          in: query
+          schema:
+            type: string
       summary: Report-CashSales
       description: |+
         Report - CashSales
         Method : GET
-
-
-
-
-
-
-
       operationId: reportCashsales
-      parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
@@ -4129,25 +3772,20 @@ paths:
       description: |+
         Report - CustomerBalance
         Method : GET
-
-
-
-
-
-
-
       operationId: reportCustomerbalance
       parameters:
-        - name: minorversion
+        - name: start_date
           in: query
           schema:
             type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
+        - name: end_date
+          in: query
           schema:
             type: string
-            example: Intuit-qbov3-postman-collection1
+        - name: columns
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: ''
@@ -4171,27 +3809,20 @@ paths:
         Method : GET
 
         The information below provides a reference on how to access the Customer Balance Detail report from the QuickBooks Online Report Service.
-
-
-
-
-
-
-
-
-
       operationId: reportCustomerbalancedetail
       parameters:
-        - name: minorversion
+        - name: start_date
           in: query
           schema:
             type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
+        - name: end_date
+          in: query
           schema:
             type: string
-            example: Intuit-qbov3-postman-collection1
+        - name: columns
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: ''
@@ -4213,28 +3844,20 @@ paths:
       description: |+
         Report - Customer Income
         Method : GET
-
-
-
-
-
-
-
-
-
-
       operationId: reportCustomerincome
       parameters:
-        - name: minorversion
+        - name: start_date
           in: query
           schema:
             type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
+        - name: end_date
+          in: query
           schema:
             type: string
-            example: Intuit-qbov3-postman-collection1
+        - name: columns
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: ''
@@ -4256,28 +3879,20 @@ paths:
       description: |+
         Report - Customer Sales
         Method : GET
-
-
-
-
-
-
-
-
-
-
       operationId: reportCustomersales
       parameters:
-        - name: minorversion
+        - name: start_date
           in: query
           schema:
             type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
+        - name: end_date
+          in: query
           schema:
             type: string
-            example: Intuit-qbov3-postman-collection1
+        - name: columns
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: ''
@@ -4299,28 +3914,20 @@ paths:
       description: |+
         Report - Department Sales
         Method : GET
-
-
-
-
-
-
-
-
-
-
       operationId: reportDepartmentsales
       parameters:
-        - name: minorversion
+        - name: start_date
           in: query
           schema:
             type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
+        - name: end_date
+          in: query
           schema:
             type: string
-            example: Intuit-qbov3-postman-collection1
+        - name: columns
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: ''
@@ -4344,26 +3951,20 @@ paths:
         Method : GET
 
         Docs - https://developer.intuit.com/docs/api/accounting/general%20ledger
-
-
-
-
-
-
-
-
       operationId: reportGeneralledger
       parameters:
-        - name: minorversion
+        - name: start_date
           in: query
           schema:
             type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
+        - name: end_date
+          in: query
           schema:
             type: string
-            example: Intuit-qbov3-postman-collection1
+        - name: columns
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: ''
@@ -4387,26 +3988,20 @@ paths:
         Method : GET
 
         Docs - https://developer.intuit.com/docs/api/accounting/inventory%20valuation
-
-
-
-
-
-
-
-
       operationId: reportInventoryvaluationsummary
       parameters:
-        - name: minorversion
+        - name: start_date
           in: query
           schema:
             type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
+        - name: end_date
+          in: query
           schema:
             type: string
-            example: Intuit-qbov3-postman-collection1
+        - name: columns
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: ''
@@ -4430,26 +4025,20 @@ paths:
         Method : GET
 
         Docs - https://developer.intuit.com/docs/api/accounting/sales%20by%20product
-
-
-
-
-
-
-
-
       operationId: reportItemsales
       parameters:
-        - name: minorversion
+        - name: start_date
           in: query
           schema:
             type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
+        - name: end_date
+          in: query
           schema:
             type: string
-            example: Intuit-qbov3-postman-collection1
+        - name: columns
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: ''
@@ -4473,26 +4062,20 @@ paths:
         Method : GET
 
         Docs - https://developer.intuit.com/docs/api/accounting/profit%20and%20loss
-
-
-
-
-
-
-
-
       operationId: reportProfitandloss
       parameters:
-        - name: minorversion
+        - name: start_date
           in: query
           schema:
             type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
+        - name: end_date
+          in: query
           schema:
             type: string
-            example: Intuit-qbov3-postman-collection1
+        - name: columns
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: ''
@@ -4517,26 +4100,20 @@ paths:
         Method : GET
 
         Docs - https://developer.intuit.com/docs/api/accounting/profit%20and%20loss%20detail
-
-
-
-
-
-
-
-
       operationId: reportProfitandlossdetail
       parameters:
-        - name: minorversion
+        - name: start_date
           in: query
           schema:
             type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
+        - name: end_date
+          in: query
           schema:
             type: string
-            example: Intuit-qbov3-postman-collection1
+        - name: columns
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: ''
@@ -4560,25 +4137,20 @@ paths:
         Method : GET
 
         Docs - https://developer.intuit.com/docs/api/accounting/trial%20balance
-
-
-
-
-
-
-
       operationId: reportTrialbalance
       parameters:
-        - name: minorversion
+        - name: start_date
           in: query
           schema:
             type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
+        - name: end_date
+          in: query
           schema:
             type: string
-            example: Intuit-qbov3-postman-collection1
+        - name: columns
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: ''
@@ -4602,25 +4174,20 @@ paths:
         Method : GET
 
         Docs - https://developer.intuit.com/docs/api/accounting/transaction%20list
-
-
-
-
-
-
-
       operationId: reportTransactionlist
       parameters:
-        - name: minorversion
+        - name: start_date
           in: query
           schema:
             type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
+        - name: end_date
+          in: query
           schema:
             type: string
-            example: Intuit-qbov3-postman-collection1
+        - name: columns
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: ''
@@ -4644,24 +4211,20 @@ paths:
         Method : GET
 
         Docs - https://developer.intuit.com/docs/api/accounting/vendor%20balance
-
-
-
-
-
-
       operationId: reportVendorbalance
       parameters:
-        - name: minorversion
+        - name: start_date
           in: query
           schema:
             type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
+        - name: end_date
+          in: query
           schema:
             type: string
-            example: Intuit-qbov3-postman-collection1
+        - name: columns
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: ''
@@ -4685,23 +4248,20 @@ paths:
         Method : GET
 
         Docs - https://developer.intuit.com/docs/api/accounting/vendor%20balance%20detail
-
-
-
-
-
       operationId: reportVendorbalancedetail
       parameters:
-        - name: minorversion
+        - name: start_date
           in: query
           schema:
             type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
+        - name: end_date
+          in: query
           schema:
             type: string
-            example: Intuit-qbov3-postman-collection1
+        - name: columns
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: ''
@@ -4725,23 +4285,20 @@ paths:
         Method : GET
 
         Docs - https://developer.intuit.com/docs/api/accounting/expenses%20by%20vendor
-
-
-
-
-
       operationId: reportVendorexpense
       parameters:
-        - name: minorversion
+        - name: start_date
           in: query
           schema:
             type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
+        - name: end_date
+          in: query
           schema:
             type: string
-            example: Intuit-qbov3-postman-collection1
+        - name: columns
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: ''
@@ -4761,17 +4318,8 @@ paths:
         Method : POST
       operationId: salesreceiptCreate
       parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
         - name: operation
+          required: false
           in: query
           schema:
             type: string
@@ -4875,7 +4423,7 @@ paths:
         required: true
         schema:
           type: string
-  /v3/company/{companyid}/salesreceipt/181:
+  /v3/company/{companyid}/salesreceipt/{id}:
     get:
       tags:
         - SalesReceipt
@@ -4885,16 +4433,11 @@ paths:
         Method : POST
       operationId: salesreceiptReadbyid
       parameters:
-        - name: minorversion
-          in: query
+        - name: id
+          in: path
+          required: true
           schema:
             type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
@@ -4924,17 +4467,6 @@ paths:
           "time": "2016-09-02T02:17:24.353-07:00"
         }
       operationId: taxagencyCreate
-      parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       requestBody:
         content:
           application/json:
@@ -4957,7 +4489,7 @@ paths:
         required: true
         schema:
           type: string
-  /v3/company/{companyid}/taxagency/3:
+  /v3/company/{companyid}/taxagency/{id}:
     get:
       tags:
         - TaxAgency
@@ -4967,16 +4499,12 @@ paths:
         Method : GET
       operationId: taxagencyReadbyid
       parameters:
-        - name: minorversion
-          in: query
+        - name: id
+          in: path
+          required: true
           schema:
             type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
+
       responses:
         '200':
           description: ''
@@ -4986,7 +4514,7 @@ paths:
         required: true
         schema:
           type: string
-  /v3/company/{companyid}/taxcode/2:
+  /v3/company/{companyid}/taxcode/{id}:
     get:
       tags:
         - TaxCode
@@ -4996,16 +4524,11 @@ paths:
         Method : POST
       operationId: taxcodeReadbyid
       parameters:
-        - name: minorversion
-          in: query
+        - name: id
+          in: path
+          required: true
           schema:
             type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
@@ -5015,7 +4538,7 @@ paths:
         required: true
         schema:
           type: string
-  /v3/company/{companyid}/taxrate/1:
+  /v3/company/{companyid}/taxrate/{id}:
     get:
       tags:
         - TaxRate
@@ -5025,16 +4548,11 @@ paths:
         Method : POST
       operationId: taxrateReadbyid
       parameters:
-        - name: minorversion
-          in: query
+        - name: id
+          in: path
+          required: true
           schema:
             type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
@@ -5053,17 +4571,6 @@ paths:
         Use TaxService to create taxcode and corresponding taxrates
         Method : POST
       operationId: taxserviceCreate
-      parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       requestBody:
         content:
           application/json:
@@ -5122,17 +4629,6 @@ paths:
         Create a term object
         Method : POST
       operationId: termCreate
-      parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       requestBody:
         content:
           application/json:
@@ -5202,7 +4698,7 @@ paths:
         required: true
         schema:
           type: string
-  /v3/company/{companyid}/term/8:
+  /v3/company/{companyid}/term/{id}:
     get:
       tags:
         - Term
@@ -5213,16 +4709,11 @@ paths:
 
       operationId: termReadbyid
       parameters:
-        - name: minorversion
-          in: query
+        - name: id
+          in: path
+          required: true
           schema:
             type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
@@ -5240,24 +4731,7 @@ paths:
       description: |+
         Create a term object
         Method : POST
-
       operationId: timeactivityCreate
-      parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
-        - name: operation
-          in: query
-          schema:
-            type: string
-            example: delete
       requestBody:
         content:
           application/json:
@@ -5341,17 +4815,8 @@ paths:
 
       operationId: transferCreate
       parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
         - name: operation
+          required: false
           in: query
           schema:
             type: string
@@ -5409,7 +4874,7 @@ paths:
         required: true
         schema:
           type: string
-  /v3/company/{companyid}/transfer/184:
+  /v3/company/{companyid}/transfer/{id}:
     get:
       tags:
         - Transfer
@@ -5420,16 +4885,11 @@ paths:
 
       operationId: transferReadbyid
       parameters:
-        - name: minorversion
-          in: query
+        - name: id
+          in: path
+          required: true
           schema:
             type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
@@ -5449,17 +4909,6 @@ paths:
         Method : POST
 
       operationId: vendorCreate
-      parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       requestBody:
         content:
           application/json:
@@ -5681,13 +5130,17 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VendorResponse'
     parameters:
       - name: companyid
         in: path
         required: true
         schema:
           type: string
-  /v3/company/{companyid}/vendor/70:
+  /v3/company/{companyid}/vendor/{id}:
     get:
       tags:
         - Vendor
@@ -5695,22 +5148,20 @@ paths:
       description: |+
         Read a vendor object by Id
         Method : GET
-
       operationId: vendorReadbyid
       parameters:
-        - name: minorversion
-          in: query
+        - name: id
+          in: path
+          required: true
           schema:
             type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VendorResponse'
     parameters:
       - name: companyid
         in: path
@@ -5727,17 +5178,8 @@ paths:
         Method : POST
       operationId: vendorcreditCreate
       parameters:
-        - name: minorversion
-          in: query
-          schema:
-            type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
         - name: operation
+          required: false
           in: query
           schema:
             type: string
@@ -5848,7 +5290,7 @@ paths:
         required: true
         schema:
           type: string
-  /v3/company/{companyid}/vendorcredit/185:
+  /v3/company/{companyid}/vendorcredit/{id}:
     get:
       tags:
         - VendorCredit
@@ -5856,20 +5298,14 @@ paths:
       description: |-
         Read a vendorcredit object by Id
         Method : GET
-
         Please change the VendorCredit it from 165 to a valid VendorCredit objectId which exists in your QBO account
       operationId: vendorcreditReadbyid
       parameters:
-        - name: minorversion
-          in: query
+        - name: id
+          in: path
+          required: true
           schema:
             type: string
-            example: '{{minorversion}}'
-        - name: user-agent
-          in: header
-          schema:
-            type: string
-            example: Intuit-qbov3-postman-collection1
       responses:
         '200':
           description: ''
@@ -5880,7 +5316,10 @@ paths:
         schema:
           type: string
 components:
-  securitySchemes: { }
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
   schemas:
     BalanceSheetItemAccount:
       type: object
@@ -6183,6 +5622,41 @@ components:
           description: List of items in the query response.
           items:
             $ref: '#/components/schemas/Item'
+        Account:
+          type: array
+          description: List of accounts in the query response.
+          items:
+            $ref: '#/components/schemas/Account'
+        Vendor:
+          type: array
+          description: List of vendors in the query response.
+          items:
+            $ref: '#/components/schemas/Vendor'
+        Customer:
+          type: array
+          description: List of customers in the query response.
+          items:
+            $ref: '#/components/schemas/Customer'
+        Bill:
+          type: array
+          description: List of bills in the query response.
+          items:
+            $ref: '#/components/schemas/Bill'
+        Payment:
+          type: array
+          description: List of payments in the query response.
+          items:
+            $ref: '#/components/schemas/Payment'
+        Invoice:
+          type: array
+          description: List of invoices in the query response.
+          items:
+            $ref: '#/components/schemas/Invoice'
+        JournalEntry:
+          type: array
+          description: List of journal entries in the query response.
+          items:
+            $ref: '#/components/schemas/JournalEntry'
     ProfitAndLoss:
       type: object
       properties:

@@ -39,7 +39,7 @@ func (c *Client) ReportAccountlist(
 	companyid string,
 	request *api.ReportAccountlistRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.Report, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://quickbooks.api.intuit.com"
@@ -53,7 +53,7 @@ func (c *Client) ReportAccountlist(
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
@@ -61,6 +61,7 @@ func (c *Client) ReportAccountlist(
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.Report
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -69,11 +70,12 @@ func (c *Client) ReportAccountlist(
 			MaxAttempts: options.MaxAttempts,
 			Headers:     headers,
 			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // Report - AgedPayable aging detail
@@ -126,7 +128,6 @@ func (c *Client) ReportAgedpayabledetail(
 
 // Report - AgedPayable aging summary
 // Method : GET
-//
 // The information below provides a reference on how to access the AP Aging summary report from the QuickBooks Online Report Service.
 func (c *Client) ReportAgedpayables(
 	ctx context.Context,

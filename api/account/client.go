@@ -36,7 +36,7 @@ func (c *Client) Create(
 	companyid string,
 	request *api.AccountCreateRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.AccountResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://quickbooks.api.intuit.com"
@@ -48,16 +48,9 @@ func (c *Client) Create(
 	}
 	endpointURL := core.EncodeURL(baseURL+"/v3/company/%v/account", companyid)
 
-	queryParams, err := core.QueryValues(request)
-	if err != nil {
-		return err
-	}
-	if len(queryParams) > 0 {
-		endpointURL += "?" + queryParams.Encode()
-	}
-
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.AccountResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -67,20 +60,21 @@ func (c *Client) Create(
 			Headers:     headers,
 			Client:      options.HTTPClient,
 			Request:     request,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // Get the Account which has accountId as 1
 func (c *Client) Readbyid(
 	ctx context.Context,
 	companyid string,
-	request *api.AccountReadbyidRequest,
+	id string,
 	opts ...option.RequestOption,
-) error {
+) (*api.AccountResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://quickbooks.api.intuit.com"
@@ -90,18 +84,15 @@ func (c *Client) Readbyid(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := core.EncodeURL(baseURL+"/v3/company/%v/account/1", companyid)
-
-	queryParams, err := core.QueryValues(request)
-	if err != nil {
-		return err
-	}
-	if len(queryParams) > 0 {
-		endpointURL += "?" + queryParams.Encode()
-	}
+	endpointURL := core.EncodeURL(
+		baseURL+"/v3/company/%v/account/%v",
+		companyid,
+		id,
+	)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.AccountResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -110,9 +101,10 @@ func (c *Client) Readbyid(
 			MaxAttempts: options.MaxAttempts,
 			Headers:     headers,
 			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }

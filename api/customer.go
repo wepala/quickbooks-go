@@ -3,14 +3,9 @@
 package api
 
 type CustomerCreateRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
-	Active       *bool   `json:"Active,omitempty" url:"-"`
-	Id           *string `json:"Id,omitempty" url:"-"`
-	SyncToken    *string `json:"SyncToken,omitempty" url:"-"`
-	Domain       *string `json:"domain,omitempty" url:"-"`
-	Sparse       *bool   `json:"sparse,omitempty" url:"-"`
-}
-
-type CustomerReadbyidRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
+	Active    *bool   `json:"Active,omitempty" url:"-"`
+	Id        *string `json:"Id,omitempty" url:"-"`
+	SyncToken *string `json:"SyncToken,omitempty" url:"-"`
+	Domain    *string `json:"domain,omitempty" url:"-"`
+	Sparse    *bool   `json:"sparse,omitempty" url:"-"`
 }

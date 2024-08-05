@@ -8,12 +8,7 @@ import (
 	core "github.com/wepala/quickbooks-go/api/core"
 )
 
-type PreferenceReadRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
-}
-
 type PreferenceUpdateRequest struct {
-	Minorversion            *string                                         `json:"-" url:"minorversion,omitempty"`
 	AccountingInfoPrefs     *PreferenceUpdateRequestAccountingInfoPrefs     `json:"AccountingInfoPrefs,omitempty" url:"-"`
 	CurrencyPrefs           *PreferenceUpdateRequestCurrencyPrefs           `json:"CurrencyPrefs,omitempty" url:"-"`
 	EmailMessagesPrefs      *PreferenceUpdateRequestEmailMessagesPrefs      `json:"EmailMessagesPrefs,omitempty" url:"-"`

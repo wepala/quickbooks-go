@@ -80,7 +80,7 @@ func (c *Client) Create(
 func (c *Client) Readbyid(
 	ctx context.Context,
 	companyid string,
-	request *api.ClassReadbyidRequest,
+	id string,
 	opts ...option.RequestOption,
 ) error {
 	options := core.NewRequestOptions(opts...)
@@ -92,15 +92,11 @@ func (c *Client) Readbyid(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := core.EncodeURL(baseURL+"/v3/company/%v/class/5000000000000018727", companyid)
-
-	queryParams, err := core.QueryValues(request)
-	if err != nil {
-		return err
-	}
-	if len(queryParams) > 0 {
-		endpointURL += "?" + queryParams.Encode()
-	}
+	endpointURL := core.EncodeURL(
+		baseURL+"/v3/company/%v/class/%v",
+		companyid,
+		id,
+	)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 

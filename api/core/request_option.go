@@ -3,7 +3,6 @@
 package core
 
 import (
-	fmt "fmt"
 	http "net/http"
 )
 
@@ -21,7 +20,7 @@ type RequestOptions struct {
 	HTTPClient  HTTPClient
 	HTTPHeader  http.Header
 	MaxAttempts uint
-	UserAgent   *string
+	Token       string
 }
 
 // NewRequestOptions returns a new *RequestOptions value.
@@ -42,8 +41,8 @@ func NewRequestOptions(opts ...RequestOption) *RequestOptions {
 // for the request(s).
 func (r *RequestOptions) ToHeader() http.Header {
 	header := r.cloneHeader()
-	if r.UserAgent != nil {
-		header.Set("user-agent", fmt.Sprintf("%v", *r.UserAgent))
+	if r.Token != "" {
+		header.Set("Authorization", "Bearer "+r.Token)
 	}
 	return header
 }
@@ -88,11 +87,11 @@ func (m *MaxAttemptsOption) applyRequestOptions(opts *RequestOptions) {
 	opts.MaxAttempts = m.MaxAttempts
 }
 
-// UserAgentOption implements the RequestOption interface.
-type UserAgentOption struct {
-	UserAgent *string
+// TokenOption implements the RequestOption interface.
+type TokenOption struct {
+	Token string
 }
 
-func (u *UserAgentOption) applyRequestOptions(opts *RequestOptions) {
-	opts.UserAgent = u.UserAgent
+func (t *TokenOption) applyRequestOptions(opts *RequestOptions) {
+	opts.Token = t.Token
 }

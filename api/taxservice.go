@@ -9,7 +9,6 @@ import (
 )
 
 type TaxserviceCreateRequest struct {
-	Minorversion   *string                                      `json:"-" url:"minorversion,omitempty"`
 	TaxCode        *string                                      `json:"TaxCode,omitempty" url:"-"`
 	TaxRateDetails []*TaxserviceCreateRequestTaxRateDetailsItem `json:"TaxRateDetails,omitempty" url:"-"`
 }

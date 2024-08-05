@@ -3,93 +3,139 @@
 package api
 
 type ReportAccountlistRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
+	StartDate *string `json:"-" url:"start_date,omitempty"`
+	EndDate   *string `json:"-" url:"end_date,omitempty"`
+	Columns   *string `json:"-" url:"columns,omitempty"`
 }
 
 type ReportAgedpayabledetailRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
+	StartDate *string `json:"-" url:"start_date,omitempty"`
+	EndDate   *string `json:"-" url:"end_date,omitempty"`
+	Columns   *string `json:"-" url:"columns,omitempty"`
 }
 
 type ReportAgedpayablesRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
+	StartDate *string `json:"-" url:"start_date,omitempty"`
+	EndDate   *string `json:"-" url:"end_date,omitempty"`
+	Columns   *string `json:"-" url:"columns,omitempty"`
 }
 
 type ReportAgedreceivabledetailRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
+	StartDate *string `json:"-" url:"start_date,omitempty"`
+	EndDate   *string `json:"-" url:"end_date,omitempty"`
+	Columns   *string `json:"-" url:"columns,omitempty"`
 }
 
 type ReportAgedreceivablesRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
+	StartDate *string `json:"-" url:"start_date,omitempty"`
+	EndDate   *string `json:"-" url:"end_date,omitempty"`
+	Columns   *string `json:"-" url:"columns,omitempty"`
 }
 
 type ReportBalancesheetRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
+	StartDate *string `json:"-" url:"start_date,omitempty"`
+	EndDate   *string `json:"-" url:"end_date,omitempty"`
+	Columns   *string `json:"-" url:"columns,omitempty"`
 }
 
 type ReportCashflowRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
+	StartDate *string `json:"-" url:"start_date,omitempty"`
+	EndDate   *string `json:"-" url:"end_date,omitempty"`
+	Columns   *string `json:"-" url:"columns,omitempty"`
 }
 
 type ReportCashsalesRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
+	StartDate *string `json:"-" url:"start_date,omitempty"`
+	EndDate   *string `json:"-" url:"end_date,omitempty"`
+	Columns   *string `json:"-" url:"columns,omitempty"`
 }
 
 type ReportCustomerbalanceRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
+	StartDate *string `json:"-" url:"start_date,omitempty"`
+	EndDate   *string `json:"-" url:"end_date,omitempty"`
+	Columns   *string `json:"-" url:"columns,omitempty"`
 }
 
 type ReportCustomerbalancedetailRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
+	StartDate *string `json:"-" url:"start_date,omitempty"`
+	EndDate   *string `json:"-" url:"end_date,omitempty"`
+	Columns   *string `json:"-" url:"columns,omitempty"`
 }
 
 type ReportCustomerincomeRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
+	StartDate *string `json:"-" url:"start_date,omitempty"`
+	EndDate   *string `json:"-" url:"end_date,omitempty"`
+	Columns   *string `json:"-" url:"columns,omitempty"`
 }
 
 type ReportCustomersalesRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
+	StartDate *string `json:"-" url:"start_date,omitempty"`
+	EndDate   *string `json:"-" url:"end_date,omitempty"`
+	Columns   *string `json:"-" url:"columns,omitempty"`
 }
 
 type ReportDepartmentsalesRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
+	StartDate *string `json:"-" url:"start_date,omitempty"`
+	EndDate   *string `json:"-" url:"end_date,omitempty"`
+	Columns   *string `json:"-" url:"columns,omitempty"`
 }
 
 type ReportGeneralledgerRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
+	StartDate *string `json:"-" url:"start_date,omitempty"`
+	EndDate   *string `json:"-" url:"end_date,omitempty"`
+	Columns   *string `json:"-" url:"columns,omitempty"`
 }
 
 type ReportInventoryvaluationsummaryRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
+	StartDate *string `json:"-" url:"start_date,omitempty"`
+	EndDate   *string `json:"-" url:"end_date,omitempty"`
+	Columns   *string `json:"-" url:"columns,omitempty"`
 }
 
 type ReportItemsalesRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
+	StartDate *string `json:"-" url:"start_date,omitempty"`
+	EndDate   *string `json:"-" url:"end_date,omitempty"`
+	Columns   *string `json:"-" url:"columns,omitempty"`
 }
 
 type ReportProfitandlossRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
+	StartDate *string `json:"-" url:"start_date,omitempty"`
+	EndDate   *string `json:"-" url:"end_date,omitempty"`
+	Columns   *string `json:"-" url:"columns,omitempty"`
 }
 
 type ReportProfitandlossdetailRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
+	StartDate *string `json:"-" url:"start_date,omitempty"`
+	EndDate   *string `json:"-" url:"end_date,omitempty"`
+	Columns   *string `json:"-" url:"columns,omitempty"`
 }
 
 type ReportTransactionlistRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
+	StartDate *string `json:"-" url:"start_date,omitempty"`
+	EndDate   *string `json:"-" url:"end_date,omitempty"`
+	Columns   *string `json:"-" url:"columns,omitempty"`
 }
 
 type ReportTrialbalanceRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
+	StartDate *string `json:"-" url:"start_date,omitempty"`
+	EndDate   *string `json:"-" url:"end_date,omitempty"`
+	Columns   *string `json:"-" url:"columns,omitempty"`
 }
 
 type ReportVendorbalanceRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
+	StartDate *string `json:"-" url:"start_date,omitempty"`
+	EndDate   *string `json:"-" url:"end_date,omitempty"`
+	Columns   *string `json:"-" url:"columns,omitempty"`
 }
 
 type ReportVendorbalancedetailRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
+	StartDate *string `json:"-" url:"start_date,omitempty"`
+	EndDate   *string `json:"-" url:"end_date,omitempty"`
+	Columns   *string `json:"-" url:"columns,omitempty"`
 }
 
 type ReportVendorexpenseRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
+	StartDate *string `json:"-" url:"start_date,omitempty"`
+	EndDate   *string `json:"-" url:"end_date,omitempty"`
+	Columns   *string `json:"-" url:"columns,omitempty"`
 }

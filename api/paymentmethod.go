@@ -9,19 +9,14 @@ import (
 )
 
 type PaymentmethodCreateRequest struct {
-	Minorversion *string                             `json:"-" url:"minorversion,omitempty"`
-	Active       *bool                               `json:"Active,omitempty" url:"-"`
-	Id           *string                             `json:"Id,omitempty" url:"-"`
-	MetaData     *PaymentmethodCreateRequestMetaData `json:"MetaData,omitempty" url:"-"`
-	Name         *string                             `json:"Name,omitempty" url:"-"`
-	SyncToken    *string                             `json:"SyncToken,omitempty" url:"-"`
-	Type         *string                             `json:"Type,omitempty" url:"-"`
-	Domain       *string                             `json:"domain,omitempty" url:"-"`
-	Sparse       *bool                               `json:"sparse,omitempty" url:"-"`
-}
-
-type PaymentmethodReadbyidRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
+	Active    *bool                               `json:"Active,omitempty" url:"-"`
+	Id        *string                             `json:"Id,omitempty" url:"-"`
+	MetaData  *PaymentmethodCreateRequestMetaData `json:"MetaData,omitempty" url:"-"`
+	Name      *string                             `json:"Name,omitempty" url:"-"`
+	SyncToken *string                             `json:"SyncToken,omitempty" url:"-"`
+	Type      *string                             `json:"Type,omitempty" url:"-"`
+	Domain    *string                             `json:"domain,omitempty" url:"-"`
+	Sparse    *bool                               `json:"sparse,omitempty" url:"-"`
 }
 
 type PaymentmethodCreateRequestMetaData struct {
