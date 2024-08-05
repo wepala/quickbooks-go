@@ -9,7 +9,6 @@ import (
 )
 
 type AccountCreateRequest struct {
-	Minorversion                  *string                          `json:"-" url:"minorversion,omitempty"`
 	AccountSubType                *string                          `json:"AccountSubType,omitempty" url:"-"`
 	AccountType                   *string                          `json:"AccountType,omitempty" url:"-"`
 	Active                        *bool                            `json:"Active,omitempty" url:"-"`
@@ -24,10 +23,6 @@ type AccountCreateRequest struct {
 	SyncToken                     *string                          `json:"SyncToken,omitempty" url:"-"`
 	Domain                        *string                          `json:"domain,omitempty" url:"-"`
 	Sparse                        *bool                            `json:"sparse,omitempty" url:"-"`
-}
-
-type AccountReadbyidRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
 }
 
 type AccountCreateRequestCurrencyRef struct {

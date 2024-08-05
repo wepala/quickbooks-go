@@ -81,7 +81,6 @@ func (c *Client) Readbyid(
 	ctx context.Context,
 	companyid string,
 	estimateId string,
-	request *api.EstimateReadbyidRequest,
 	opts ...option.RequestOption,
 ) error {
 	options := core.NewRequestOptions(opts...)
@@ -98,14 +97,6 @@ func (c *Client) Readbyid(
 		companyid,
 		estimateId,
 	)
-
-	queryParams, err := core.QueryValues(request)
-	if err != nil {
-		return err
-	}
-	if len(queryParams) > 0 {
-		endpointURL += "?" + queryParams.Encode()
-	}
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 

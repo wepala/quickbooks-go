@@ -9,7 +9,6 @@ import (
 )
 
 type AttachableCreateRequest struct {
-	Minorversion  *string                                     `json:"-" url:"minorversion,omitempty"`
 	Operation     *string                                     `json:"-" url:"operation,omitempty"`
 	AttachableRef []*AttachableCreateRequestAttachableRefItem `json:"AttachableRef,omitempty" url:"-"`
 	Id            *string                                     `json:"Id,omitempty" url:"-"`
@@ -18,10 +17,6 @@ type AttachableCreateRequest struct {
 	SyncToken     *string                                     `json:"SyncToken,omitempty" url:"-"`
 	Domain        *string                                     `json:"domain,omitempty" url:"-"`
 	Sparse        *bool                                       `json:"sparse,omitempty" url:"-"`
-}
-
-type AttachableReadbyidRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
 }
 
 type AttachableCreateRequestAttachableRefItem struct {

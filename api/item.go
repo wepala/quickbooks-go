@@ -9,7 +9,6 @@ import (
 )
 
 type ItemCreateRequest struct {
-	Minorversion       *string                             `json:"-" url:"minorversion,omitempty"`
 	Active             *bool                               `json:"Active,omitempty" url:"-"`
 	AssetAccountRef    *ItemCreateRequestAssetAccountRef   `json:"AssetAccountRef,omitempty" url:"-"`
 	ExpenseAccountRef  *ItemCreateRequestExpenseAccountRef `json:"ExpenseAccountRef,omitempty" url:"-"`
@@ -27,10 +26,6 @@ type ItemCreateRequest struct {
 	UnitPrice          *float64                            `json:"UnitPrice,omitempty" url:"-"`
 	Domain             *string                             `json:"domain,omitempty" url:"-"`
 	Sparse             *bool                               `json:"sparse,omitempty" url:"-"`
-}
-
-type ItemReadbyidRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
 }
 
 type ItemCreateRequestAssetAccountRef struct {

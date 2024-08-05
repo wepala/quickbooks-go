@@ -5,5 +5,4 @@ package api
 type ExchangerateGetdetailsRequest struct {
 	Sourcecurrencycode *string `json:"-" url:"sourcecurrencycode,omitempty"`
 	Asofdate           *string `json:"-" url:"asofdate,omitempty"`
-	Minorversion       *string `json:"-" url:"minorversion,omitempty"`
 }

@@ -39,10 +39,3 @@ func WithMaxAttempts(attempts uint) *core.MaxAttemptsOption {
 		MaxAttempts: attempts,
 	}
 }
-
-// WithUserAgent sets the userAgent request header.
-func WithUserAgent(userAgent *string) *core.UserAgentOption {
-	return &core.UserAgentOption{
-		UserAgent: userAgent,
-	}
-}

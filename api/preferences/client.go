@@ -35,7 +35,6 @@ func NewClient(opts ...option.RequestOption) *Client {
 func (c *Client) PreferenceRead(
 	ctx context.Context,
 	companyid string,
-	request *api.PreferenceReadRequest,
 	opts ...option.RequestOption,
 ) (*api.PreferenceReadResponse, error) {
 	options := core.NewRequestOptions(opts...)
@@ -48,14 +47,6 @@ func (c *Client) PreferenceRead(
 		baseURL = options.BaseURL
 	}
 	endpointURL := core.EncodeURL(baseURL+"/v3/company/%v/preferences", companyid)
-
-	queryParams, err := core.QueryValues(request)
-	if err != nil {
-		return nil, err
-	}
-	if len(queryParams) > 0 {
-		endpointURL += "?" + queryParams.Encode()
-	}
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
@@ -83,7 +74,7 @@ func (c *Client) PreferenceUpdate(
 	companyid string,
 	request *api.PreferenceUpdateRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.Preferences, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://quickbooks.api.intuit.com"
@@ -95,16 +86,9 @@ func (c *Client) PreferenceUpdate(
 	}
 	endpointURL := core.EncodeURL(baseURL+"/v3/company/%v/preferences", companyid)
 
-	queryParams, err := core.QueryValues(request)
-	if err != nil {
-		return err
-	}
-	if len(queryParams) > 0 {
-		endpointURL += "?" + queryParams.Encode()
-	}
-
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.Preferences
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -114,9 +98,10 @@ func (c *Client) PreferenceUpdate(
 			Headers:     headers,
 			Client:      options.HTTPClient,
 			Request:     request,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }

@@ -3,10 +3,5 @@
 package api
 
 type TaxagencyCreateRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
-	DisplayName  *string `json:"DisplayName,omitempty" url:"-"`
-}
-
-type TaxagencyReadbyidRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
+	DisplayName *string `json:"DisplayName,omitempty" url:"-"`
 }

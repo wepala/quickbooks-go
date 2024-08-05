@@ -3,12 +3,7 @@
 package api
 
 type InvoiceCreateRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
-	Operation    *string `json:"-" url:"operation,omitempty"`
-	Id           *string `json:"Id,omitempty" url:"-"`
-	SyncToken    *string `json:"SyncToken,omitempty" url:"-"`
-}
-
-type InvoiceReadbyidRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
+	Operation *string `json:"-" url:"operation,omitempty"`
+	Id        *string `json:"Id,omitempty" url:"-"`
+	SyncToken *string `json:"SyncToken,omitempty" url:"-"`
 }

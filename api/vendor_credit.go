@@ -3,6 +3,5 @@
 package api
 
 type AccountReadallRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
-	Query        *string `json:"-" url:"query,omitempty"`
+	Query *string `json:"-" url:"query,omitempty"`
 }

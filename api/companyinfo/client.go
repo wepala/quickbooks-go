@@ -4,7 +4,6 @@ package companyinfo
 
 import (
 	context "context"
-	api "github.com/wepala/quickbooks-go/api"
 	core "github.com/wepala/quickbooks-go/api/core"
 	option "github.com/wepala/quickbooks-go/api/option"
 	http "net/http"
@@ -35,7 +34,6 @@ func (c *Client) Readbyid(
 	ctx context.Context,
 	companyid string,
 	companyId string,
-	request *api.CompanyinfoReadbyidRequest,
 	opts ...option.RequestOption,
 ) error {
 	options := core.NewRequestOptions(opts...)
@@ -52,14 +50,6 @@ func (c *Client) Readbyid(
 		companyid,
 		companyId,
 	)
-
-	queryParams, err := core.QueryValues(request)
-	if err != nil {
-		return err
-	}
-	if len(queryParams) > 0 {
-		endpointURL += "?" + queryParams.Encode()
-	}
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 

@@ -9,7 +9,6 @@ import (
 )
 
 type VendorCreateRequest struct {
-	Minorversion     *string                              `json:"-" url:"minorversion,omitempty"`
 	AcctNum          *string                              `json:"AcctNum,omitempty" url:"-"`
 	Active           *bool                                `json:"Active,omitempty" url:"-"`
 	Balance          *float64                             `json:"Balance,omitempty" url:"-"`
@@ -32,10 +31,6 @@ type VendorCreateRequest struct {
 	WebAddr          *VendorCreateRequestWebAddr          `json:"WebAddr,omitempty" url:"-"`
 	Domain           *string                              `json:"domain,omitempty" url:"-"`
 	Sparse           *bool                                `json:"sparse,omitempty" url:"-"`
-}
-
-type VendorReadbyidRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
 }
 
 type VendorCreateRequestBillAddr struct {

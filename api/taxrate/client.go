@@ -4,7 +4,6 @@ package taxrate
 
 import (
 	context "context"
-	api "github.com/wepala/quickbooks-go/api"
 	core "github.com/wepala/quickbooks-go/api/core"
 	option "github.com/wepala/quickbooks-go/api/option"
 	http "net/http"
@@ -35,7 +34,7 @@ func NewClient(opts ...option.RequestOption) *Client {
 func (c *Client) Readbyid(
 	ctx context.Context,
 	companyid string,
-	request *api.TaxrateReadbyidRequest,
+	id string,
 	opts ...option.RequestOption,
 ) error {
 	options := core.NewRequestOptions(opts...)
@@ -47,15 +46,11 @@ func (c *Client) Readbyid(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := core.EncodeURL(baseURL+"/v3/company/%v/taxrate/1", companyid)
-
-	queryParams, err := core.QueryValues(request)
-	if err != nil {
-		return err
-	}
-	if len(queryParams) > 0 {
-		endpointURL += "?" + queryParams.Encode()
-	}
+	endpointURL := core.EncodeURL(
+		baseURL+"/v3/company/%v/taxrate/%v",
+		companyid,
+		id,
+	)
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 

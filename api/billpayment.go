@@ -9,7 +9,6 @@ import (
 )
 
 type BillpaymentCreateRequest struct {
-	Minorversion *string                               `json:"-" url:"minorversion,omitempty"`
 	Operation    *string                               `json:"-" url:"operation,omitempty"`
 	CheckPayment *BillpaymentCreateRequestCheckPayment `json:"CheckPayment,omitempty" url:"-"`
 	Line         []*BillpaymentCreateRequestLineItem   `json:"Line,omitempty" url:"-"`
@@ -17,10 +16,6 @@ type BillpaymentCreateRequest struct {
 	PrivateNote  *string                               `json:"PrivateNote,omitempty" url:"-"`
 	TotalAmt     *float64                              `json:"TotalAmt,omitempty" url:"-"`
 	VendorRef    *BillpaymentCreateRequestVendorRef    `json:"VendorRef,omitempty" url:"-"`
-}
-
-type BillpaymentReadbyidRequest struct {
-	Minorversion *string `json:"-" url:"minorversion,omitempty"`
 }
 
 type BillpaymentCreateRequestCheckPayment struct {

@@ -10,7 +10,6 @@ import (
 )
 
 type BatchRequest struct {
-	Minorversion     *string                             `json:"-" url:"minorversion,omitempty"`
 	BatchItemRequest []*BatchRequestBatchItemRequestItem `json:"BatchItemRequest,omitempty" url:"-"`
 }
 
@@ -3306,6 +3305,22 @@ type QueryResponse struct {
 	Class []*Class `json:"Class,omitempty" url:"Class,omitempty"`
 	// List of items in the query response.
 	Item []*Item `json:"Item,omitempty" url:"Item,omitempty"`
+	// List of accounts in the query response.
+	Account []*Account `json:"Account,omitempty" url:"Account,omitempty"`
+	// List of vendors in the query response.
+	Vendor []*Vendor `json:"Vendor,omitempty" url:"Vendor,omitempty"`
+	// List of customers in the query response.
+	Customer []*Customer `json:"Customer,omitempty" url:"Customer,omitempty"`
+	// List of bills in the query response.
+	Bill []*Bill `json:"Bill,omitempty" url:"Bill,omitempty"`
+	// List of payments in the query response.
+	Payment []*Payment `json:"Payment,omitempty" url:"Payment,omitempty"`
+	// List of invoices in the query response.
+	Invoice []*Invoice `json:"Invoice,omitempty" url:"Invoice,omitempty"`
+	// List of journal entries in the query response.
+	JournalEntry []*JournalEntry `json:"JournalEntry,omitempty" url:"JournalEntry,omitempty"`
+	// List of preferences in the query response.
+	Preferences []*Preferences `json:"Preferences,omitempty" url:"Preferences,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage
