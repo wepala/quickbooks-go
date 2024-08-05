@@ -3319,6 +3319,8 @@ type QueryResponse struct {
 	Invoice []*Invoice `json:"Invoice,omitempty" url:"Invoice,omitempty"`
 	// List of journal entries in the query response.
 	JournalEntry []*JournalEntry `json:"JournalEntry,omitempty" url:"JournalEntry,omitempty"`
+	// List of preferences in the query response.
+	Preferences []*Preferences `json:"Preferences,omitempty" url:"Preferences,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage

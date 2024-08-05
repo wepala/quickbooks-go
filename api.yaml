@@ -5657,6 +5657,11 @@ components:
           description: List of journal entries in the query response.
           items:
             $ref: '#/components/schemas/JournalEntry'
+        Preferences:
+          type: array
+          description: List of preferences in the query response.
+          items:
+            $ref: '#/components/schemas/Preferences'
     ProfitAndLoss:
       type: object
       properties:
