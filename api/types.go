@@ -3499,7 +3499,7 @@ type ReportColumnsColumnItem struct {
 	// The title of the column.
 	ColTitle *string `json:"ColTitle,omitempty" url:"ColTitle,omitempty"`
 	// The metadata of the column.
-	MetaData *ReportColumnsColumnItemMetaData `json:"MetaData,omitempty" url:"MetaData,omitempty"`
+	MetaData []*ReportColumnsColumnItemMetaDataItem `json:"MetaData,omitempty" url:"MetaData,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage
@@ -3539,36 +3539,27 @@ func (r *ReportColumnsColumnItem) String() string {
 	return fmt.Sprintf("%#v", r)
 }
 
-// The metadata of the column.
-type ReportColumnsColumnItemMetaData struct {
-	// The creation time of the column.
-	CreateTime *time.Time `json:"CreateTime,omitempty" url:"CreateTime,omitempty"`
-	// The last updated time of the column.
-	LastUpdatedTime *time.Time `json:"LastUpdatedTime,omitempty" url:"LastUpdatedTime,omitempty"`
+type ReportColumnsColumnItemMetaDataItem struct {
+	// The name of the column.
+	Name *string `json:"Name,omitempty" url:"Name,omitempty"`
+	// The value of the column.
+	Value *string `json:"Value,omitempty" url:"Value,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage
 }
 
-func (r *ReportColumnsColumnItemMetaData) GetExtraProperties() map[string]interface{} {
+func (r *ReportColumnsColumnItemMetaDataItem) GetExtraProperties() map[string]interface{} {
 	return r.extraProperties
 }
 
-func (r *ReportColumnsColumnItemMetaData) UnmarshalJSON(data []byte) error {
-	type embed ReportColumnsColumnItemMetaData
-	var unmarshaler = struct {
-		embed
-		CreateTime      *core.DateTime `json:"CreateTime,omitempty"`
-		LastUpdatedTime *core.DateTime `json:"LastUpdatedTime,omitempty"`
-	}{
-		embed: embed(*r),
-	}
-	if err := json.Unmarshal(data, &unmarshaler); err != nil {
+func (r *ReportColumnsColumnItemMetaDataItem) UnmarshalJSON(data []byte) error {
+	type unmarshaler ReportColumnsColumnItemMetaDataItem
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*r = ReportColumnsColumnItemMetaData(unmarshaler.embed)
-	r.CreateTime = unmarshaler.CreateTime.TimePtr()
-	r.LastUpdatedTime = unmarshaler.LastUpdatedTime.TimePtr()
+	*r = ReportColumnsColumnItemMetaDataItem(value)
 
 	extraProperties, err := core.ExtractExtraProperties(data, *r)
 	if err != nil {
@@ -3580,21 +3571,7 @@ func (r *ReportColumnsColumnItemMetaData) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (r *ReportColumnsColumnItemMetaData) MarshalJSON() ([]byte, error) {
-	type embed ReportColumnsColumnItemMetaData
-	var marshaler = struct {
-		embed
-		CreateTime      *core.DateTime `json:"CreateTime,omitempty"`
-		LastUpdatedTime *core.DateTime `json:"LastUpdatedTime,omitempty"`
-	}{
-		embed:           embed(*r),
-		CreateTime:      core.NewOptionalDateTime(r.CreateTime),
-		LastUpdatedTime: core.NewOptionalDateTime(r.LastUpdatedTime),
-	}
-	return json.Marshal(marshaler)
-}
-
-func (r *ReportColumnsColumnItemMetaData) String() string {
+func (r *ReportColumnsColumnItemMetaDataItem) String() string {
 	if len(r._rawJSON) > 0 {
 		if value, err := core.StringifyJSON(r._rawJSON); err == nil {
 			return value
