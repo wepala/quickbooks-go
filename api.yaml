@@ -3480,15 +3480,18 @@ paths:
         The information below provides a reference on how to access the account list detail report from the QuickBooks Online Report Service.
       parameters:
         - name: start_date
+          required: false
           in: query
           schema:
             type: string
         - name: end_date
+          required: false
           in: query
           schema:
             type: string
         - name: columns
           in: query
+          required: false
           schema:
             type: string
       operationId: reportAccountlist
@@ -3518,14 +3521,17 @@ paths:
       parameters:
         - name: start_date
           in: query
+          required: false
           schema:
             type: string
         - name: end_date
           in: query
+          required: false
           schema:
             type: string
         - name: columns
           in: query
+          required: false
           schema:
             type: string
       operationId: reportAgedpayabledetail
@@ -3549,14 +3555,17 @@ paths:
       parameters:
         - name: start_date
           in: query
+          required: false
           schema:
             type: string
         - name: end_date
           in: query
+          required: false
           schema:
             type: string
         - name: columns
           in: query
+          required: false
           schema:
             type: string
       summary: Report-AgedPayables
@@ -3585,14 +3594,17 @@ paths:
       parameters:
         - name: start_date
           in: query
+          required: false
           schema:
             type: string
         - name: end_date
           in: query
+          required: false
           schema:
             type: string
         - name: columns
           in: query
+          required: false
           schema:
             type: string
       summary: Report-AgedReceivableDetail
@@ -3622,14 +3634,17 @@ paths:
       parameters:
         - name: start_date
           in: query
+          required: false
           schema:
             type: string
         - name: end_date
           in: query
+          required: false
           schema:
             type: string
         - name: columns
           in: query
+          required: false
           schema:
             type: string
       summary: Report-AgedReceivables
@@ -3660,14 +3675,17 @@ paths:
       parameters:
         - name: start_date
           in: query
+          required: false
           schema:
             type: string
         - name: end_date
           in: query
+          required: false
           schema:
             type: string
         - name: columns
           in: query
+          required: false
           schema:
             type: string
       summary: Report-BalanceSheet
@@ -3697,14 +3715,17 @@ paths:
       parameters:
         - name: start_date
           in: query
+          required: false
           schema:
             type: string
         - name: end_date
           in: query
+          required: false
           schema:
             type: string
         - name: columns
           in: query
+          required: false
           schema:
             type: string
       summary: Report-CashFlow
@@ -3736,14 +3757,17 @@ paths:
       parameters:
         - name: start_date
           in: query
+          required: false
           schema:
             type: string
         - name: end_date
           in: query
+          required: false
           schema:
             type: string
         - name: columns
           in: query
+          required: false
           schema:
             type: string
       summary: Report-CashSales
@@ -3776,14 +3800,17 @@ paths:
       parameters:
         - name: start_date
           in: query
+          required: false
           schema:
             type: string
         - name: end_date
           in: query
+          required: false
           schema:
             type: string
         - name: columns
           in: query
+          required: false
           schema:
             type: string
       responses:
@@ -3813,14 +3840,17 @@ paths:
       parameters:
         - name: start_date
           in: query
+          required: false
           schema:
             type: string
         - name: end_date
           in: query
+          required: false
           schema:
             type: string
         - name: columns
           in: query
+          required: false
           schema:
             type: string
       responses:
@@ -3848,14 +3878,17 @@ paths:
       parameters:
         - name: start_date
           in: query
+          required: false
           schema:
             type: string
         - name: end_date
           in: query
+          required: false
           schema:
             type: string
         - name: columns
           in: query
+          required: false
           schema:
             type: string
       responses:
@@ -3883,14 +3916,17 @@ paths:
       parameters:
         - name: start_date
           in: query
+          required: false
           schema:
             type: string
         - name: end_date
           in: query
+          required: false
           schema:
             type: string
         - name: columns
           in: query
+          required: false
           schema:
             type: string
       responses:
@@ -3918,14 +3954,17 @@ paths:
       parameters:
         - name: start_date
           in: query
+          required: false
           schema:
             type: string
         - name: end_date
           in: query
+          required: false
           schema:
             type: string
         - name: columns
           in: query
+          required: false
           schema:
             type: string
       responses:
@@ -3955,14 +3994,17 @@ paths:
       parameters:
         - name: start_date
           in: query
+          required: false
           schema:
             type: string
         - name: end_date
           in: query
+          required: false
           schema:
             type: string
         - name: columns
           in: query
+          required: false
           schema:
             type: string
       responses:
@@ -3992,14 +4034,17 @@ paths:
       parameters:
         - name: start_date
           in: query
+          required: false
           schema:
             type: string
         - name: end_date
           in: query
+          required: false
           schema:
             type: string
         - name: columns
           in: query
+          required: false
           schema:
             type: string
       responses:
@@ -4029,14 +4074,17 @@ paths:
       parameters:
         - name: start_date
           in: query
+          required: false
           schema:
             type: string
         - name: end_date
           in: query
+          required: false
           schema:
             type: string
         - name: columns
           in: query
+          required: false
           schema:
             type: string
       responses:
@@ -4066,14 +4114,17 @@ paths:
       parameters:
         - name: start_date
           in: query
+          required: false
           schema:
             type: string
         - name: end_date
           in: query
+          required: false
           schema:
             type: string
         - name: columns
           in: query
+          required: false
           schema:
             type: string
       responses:
@@ -4104,14 +4155,17 @@ paths:
       parameters:
         - name: start_date
           in: query
+          required: false
           schema:
             type: string
         - name: end_date
           in: query
+          required: false
           schema:
             type: string
         - name: columns
           in: query
+          required: false
           schema:
             type: string
       responses:
@@ -4141,14 +4195,17 @@ paths:
       parameters:
         - name: start_date
           in: query
+          required: false
           schema:
             type: string
         - name: end_date
           in: query
+          required: false
           schema:
             type: string
         - name: columns
           in: query
+          required: false
           schema:
             type: string
       responses:
@@ -4178,14 +4235,17 @@ paths:
       parameters:
         - name: start_date
           in: query
+          required: false
           schema:
             type: string
         - name: end_date
           in: query
+          required: false
           schema:
             type: string
         - name: columns
           in: query
+          required: false
           schema:
             type: string
       responses:
@@ -4215,14 +4275,17 @@ paths:
       parameters:
         - name: start_date
           in: query
+          required: false
           schema:
             type: string
         - name: end_date
           in: query
+          required: false
           schema:
             type: string
         - name: columns
           in: query
+          required: false
           schema:
             type: string
       responses:
@@ -4252,14 +4315,17 @@ paths:
       parameters:
         - name: start_date
           in: query
+          required: false
           schema:
             type: string
         - name: end_date
           in: query
+          required: false
           schema:
             type: string
         - name: columns
           in: query
+          required: false
           schema:
             type: string
       responses:
@@ -4289,14 +4355,17 @@ paths:
       parameters:
         - name: start_date
           in: query
+          required: false
           schema:
             type: string
         - name: end_date
           in: query
+          required: false
           schema:
             type: string
         - name: columns
           in: query
+          required: false
           schema:
             type: string
       responses:
@@ -5785,18 +5854,17 @@ components:
                     type: string
                     description: The title of the column.
                   MetaData:
-                    type: object
+                    type: array
                     description: The metadata of the column.
-                    properties:
-                      CreateTime:
-                        type: string
-                        description: The creation time of the column.
-                        format: date-time
-                      LastUpdatedTime:
-                        type: string
-                        description: The last updated time of the column.
-                        format: date-time
-
+                    items:
+                      type: object
+                      properties:
+                        Name:
+                          type: string
+                          description: The name of the column.
+                        Value:
+                          type: string
+                          description: The value of the column.
     VendorResponse:
       type: object
       properties:
