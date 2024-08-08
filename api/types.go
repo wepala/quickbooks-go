@@ -2016,6 +2016,8 @@ type Item struct {
 	TrackQtyOnHand *bool `json:"TrackQtyOnHand,omitempty" url:"TrackQtyOnHand,omitempty"`
 	// Unit price of the item.
 	UnitPrice *float64 `json:"UnitPrice,omitempty" url:"UnitPrice,omitempty"`
+	// Descriptive information about the object. The MetaData values are set by Data Services and are read only for all applications.
+	MetaData *ItemMetaData `json:"MetaData,omitempty" url:"MetaData,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage
@@ -2158,6 +2160,51 @@ func (i *ItemBasedExpenseLineDetail) UnmarshalJSON(data []byte) error {
 }
 
 func (i *ItemBasedExpenseLineDetail) String() string {
+	if len(i._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(i._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(i); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", i)
+}
+
+// Descriptive information about the object. The MetaData values are set by Data Services and are read only for all applications.
+type ItemMetaData struct {
+	// Date and time when the item was created.
+	CreateTime *string `json:"CreateTime,omitempty" url:"CreateTime,omitempty"`
+	// Date and time when the item was last updated.
+	LastUpdatedTime *string `json:"LastUpdatedTime,omitempty" url:"LastUpdatedTime,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (i *ItemMetaData) GetExtraProperties() map[string]interface{} {
+	return i.extraProperties
+}
+
+func (i *ItemMetaData) UnmarshalJSON(data []byte) error {
+	type unmarshaler ItemMetaData
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*i = ItemMetaData(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *i)
+	if err != nil {
+		return err
+	}
+	i.extraProperties = extraProperties
+
+	i._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (i *ItemMetaData) String() string {
 	if len(i._rawJSON) > 0 {
 		if value, err := core.StringifyJSON(i._rawJSON); err == nil {
 			return value
