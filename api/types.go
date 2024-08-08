@@ -1998,6 +1998,8 @@ func (i *InvoiceResponse) String() string {
 }
 
 type Item struct {
+	// Unique identifier for this object. Sort order is ASC by default.
+	Id *string `json:"Id,omitempty" url:"Id,omitempty"`
 	// SKU of the item.
 	Sku *string `json:"Sku,omitempty" url:"Sku,omitempty"`
 	// Fully qualified name of the item.

@@ -5454,6 +5454,9 @@ components:
     Item:
       type: object
       properties:
+        Id:
+          type: string
+          description: Unique identifier for this object. Sort order is ASC by default.
         Sku:
           type: string
           description: SKU of the item.
