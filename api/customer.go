@@ -2,10 +2,148 @@
 
 package api
 
+import (
+	json "encoding/json"
+	fmt "fmt"
+	core "github.com/wepala/quickbooks-go/api/core"
+)
+
 type CustomerCreateRequest struct {
-	Active    *bool   `json:"Active,omitempty" url:"-"`
-	Id        *string `json:"Id,omitempty" url:"-"`
-	SyncToken *string `json:"SyncToken,omitempty" url:"-"`
-	Domain    *string `json:"domain,omitempty" url:"-"`
-	Sparse    *bool   `json:"sparse,omitempty" url:"-"`
+	DisplayName      *string                                `json:"DisplayName,omitempty" url:"-"`
+	Suffix           *string                                `json:"Suffix,omitempty" url:"-"`
+	Title            *string                                `json:"Title,omitempty" url:"-"`
+	MiddleName       *string                                `json:"MiddleName,omitempty" url:"-"`
+	FamilyName       *string                                `json:"FamilyName,omitempty" url:"-"`
+	GivenName        *string                                `json:"GivenName,omitempty" url:"-"`
+	PrimaryEmailAddr *CustomerCreateRequestPrimaryEmailAddr `json:"PrimaryEmailAddr,omitempty" url:"-"`
+	Notes            *string                                `json:"Notes,omitempty" url:"-"`
+	PrimaryPhone     *CustomerCreateRequestPrimaryPhone     `json:"PrimaryPhone,omitempty" url:"-"`
+	BillAddr         *CustomerCreateRequestBillAddr         `json:"BillAddr,omitempty" url:"-"`
+}
+
+type CustomerCreateRequestBillAddr struct {
+	Line1                  *string `json:"Line1,omitempty" url:"Line1,omitempty"`
+	City                   *string `json:"City,omitempty" url:"City,omitempty"`
+	Country                *string `json:"Country,omitempty" url:"Country,omitempty"`
+	CountrySubDivisionCode *string `json:"CountrySubDivisionCode,omitempty" url:"CountrySubDivisionCode,omitempty"`
+	PostalCode             *string `json:"PostalCode,omitempty" url:"PostalCode,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CustomerCreateRequestBillAddr) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CustomerCreateRequestBillAddr) UnmarshalJSON(data []byte) error {
+	type unmarshaler CustomerCreateRequestBillAddr
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CustomerCreateRequestBillAddr(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CustomerCreateRequestBillAddr) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+type CustomerCreateRequestPrimaryEmailAddr struct {
+	Address *string `json:"Address,omitempty" url:"Address,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CustomerCreateRequestPrimaryEmailAddr) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CustomerCreateRequestPrimaryEmailAddr) UnmarshalJSON(data []byte) error {
+	type unmarshaler CustomerCreateRequestPrimaryEmailAddr
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CustomerCreateRequestPrimaryEmailAddr(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CustomerCreateRequestPrimaryEmailAddr) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+type CustomerCreateRequestPrimaryPhone struct {
+	FreeFormNumber *string `json:"FreeFormNumber,omitempty" url:"FreeFormNumber,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CustomerCreateRequestPrimaryPhone) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CustomerCreateRequestPrimaryPhone) UnmarshalJSON(data []byte) error {
+	type unmarshaler CustomerCreateRequestPrimaryPhone
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CustomerCreateRequestPrimaryPhone(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CustomerCreateRequestPrimaryPhone) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
 }

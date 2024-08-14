@@ -1140,21 +1140,57 @@ paths:
             schema:
               type: object
               properties:
-                Active:
-                  type: boolean
-                  example: false
-                Id:
+                DisplayName:
                   type: string
-                  example: '67'
-                SyncToken:
+                  example: King's Groceries1
+                Suffix:
                   type: string
-                  example: '0'
-                domain:
+                  example: Jr.
+                Title:
                   type: string
-                  example: QBO
-                sparse:
-                  type: boolean
-                  example: true
+                  example: Mr.
+                MiddleName:
+                  type: string
+                  example: B
+                FamilyName:
+                  type: string
+                  example: Drew
+                GivenName:
+                  type: string
+                  example: John
+                PrimaryEmailAddr:
+                  type: object
+                  properties:
+                    Address:
+                      type: string
+                      example:
+                Notes:
+                  type: string
+                  example: Here are other details.
+                PrimaryPhone:
+                  type: object
+                  properties:
+                    FreeFormNumber:
+                      type: string
+                      example: (555) 555-5555
+                BillAddr:
+                  type: object
+                  properties:
+                    Line1:
+                      type: string
+                      example: 123 Main Street
+                    City:
+                      type: string
+                      example: Mountain View
+                    Country:
+                      type: string
+                      example: USA
+                    CountrySubDivisionCode:
+                      type: string
+                      example: CA
+                    PostalCode:
+                      type: string
+                      example: '94042'
             examples:
               Customer-Create:
                 value:
