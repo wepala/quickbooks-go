@@ -37,7 +37,7 @@ func (c *Client) Create(
 	companyid string,
 	request *api.ItemCreateRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.ItemResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://quickbooks.api.intuit.com"
@@ -51,6 +51,7 @@ func (c *Client) Create(
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.ItemResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -60,11 +61,12 @@ func (c *Client) Create(
 			Headers:     headers,
 			Client:      options.HTTPClient,
 			Request:     request,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }
 
 // Read an Item by Id

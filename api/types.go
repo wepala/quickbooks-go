@@ -2216,6 +2216,47 @@ func (i *ItemMetaData) String() string {
 	return fmt.Sprintf("%#v", i)
 }
 
+type ItemResponse struct {
+	Item *Item `json:"Item,omitempty" url:"Item,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (i *ItemResponse) GetExtraProperties() map[string]interface{} {
+	return i.extraProperties
+}
+
+func (i *ItemResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler ItemResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*i = ItemResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *i)
+	if err != nil {
+		return err
+	}
+	i.extraProperties = extraProperties
+
+	i._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (i *ItemResponse) String() string {
+	if len(i._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(i._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(i); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", i)
+}
+
 type JournalEntry struct {
 	// Unique identifier for this object. Sort order is ASC by default.
 	Id *string `json:"Id,omitempty" url:"Id,omitempty"`

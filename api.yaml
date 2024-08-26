@@ -2172,6 +2172,10 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemResponse'
     parameters:
       - name: companyid
         in: path
@@ -5487,6 +5491,11 @@ components:
         domain:
           type: string
           description: Domain of the class.
+    ItemResponse:
+      type: object
+      properties:
+        Item:
+          $ref: '#/components/schemas/Item'
     Item:
       type: object
       properties:
