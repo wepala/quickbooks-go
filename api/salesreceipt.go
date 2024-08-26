@@ -2,10 +2,25 @@
 
 package api
 
+import (
+	json "encoding/json"
+)
+
 type SalesreceiptCreateRequest struct {
-	Operation *string `json:"-" url:"operation,omitempty"`
-	Include   *string `json:"-" url:"include,omitempty"`
-	Id        *string `json:"Id,omitempty" url:"-"`
-	SyncToken *string `json:"SyncToken,omitempty" url:"-"`
-	Sparse    *bool   `json:"sparse,omitempty" url:"-"`
+	Operation *string  `json:"-" url:"operation,omitempty"`
+	Include   *string  `json:"-" url:"include,omitempty"`
+	Body      *Invoice `json:"-" url:"-"`
+}
+
+func (s *SalesreceiptCreateRequest) UnmarshalJSON(data []byte) error {
+	body := new(Invoice)
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	s.Body = body
+	return nil
+}
+
+func (s *SalesreceiptCreateRequest) MarshalJSON() ([]byte, error) {
+	return json.Marshal(s.Body)
 }
