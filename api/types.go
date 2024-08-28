@@ -2000,6 +2000,17 @@ func (i *InvoiceResponse) String() string {
 type Item struct {
 	// Unique identifier for this object. Sort order is ASC by default.
 	Id *string `json:"Id,omitempty" url:"Id,omitempty"`
+	// Quantity on hand of the item.
+	QtyOnHand *float64 `json:"QtyOnHand,omitempty" url:"QtyOnHand,omitempty"`
+	// Start date of the inventory.
+	InvStartDate     *string        `json:"InvStartDate,omitempty" url:"InvStartDate,omitempty"`
+	IncomeAccountRef *ReferenceType `json:"IncomeAccountRef,omitempty" url:"IncomeAccountRef,omitempty"`
+	// Type of the item.
+	Type              *string        `json:"Type,omitempty" url:"Type,omitempty"`
+	AssetAccountRef   *ReferenceType `json:"AssetAccountRef,omitempty" url:"AssetAccountRef,omitempty"`
+	ExpenseAccountRef *ReferenceType `json:"ExpenseAccountRef,omitempty" url:"ExpenseAccountRef,omitempty"`
+	// Version number of the object. It is used to lock the object for use by one app at a time.
+	SyncToken *string `json:"SyncToken,omitempty" url:"SyncToken,omitempty"`
 	// SKU of the item.
 	Sku *string `json:"Sku,omitempty" url:"Sku,omitempty"`
 	// Fully qualified name of the item.

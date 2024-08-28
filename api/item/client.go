@@ -35,7 +35,7 @@ func NewClient(opts ...option.RequestOption) *Client {
 func (c *Client) Create(
 	ctx context.Context,
 	companyid string,
-	request *api.ItemCreateRequest,
+	request *api.Item,
 	opts ...option.RequestOption,
 ) (*api.ItemResponse, error) {
 	options := core.NewRequestOptions(opts...)

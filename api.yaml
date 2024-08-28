@@ -1940,77 +1940,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                Active:
-                  type: boolean
-                  example: false
-                AssetAccountRef:
-                  type: object
-                  properties:
-                    name:
-                      type: string
-                      example: Inventory Asset
-                    value:
-                      type: string
-                      example: '81'
-                ExpenseAccountRef:
-                  type: object
-                  properties:
-                    name:
-                      type: string
-                      example: Cost of Goods Sold
-                    value:
-                      type: string
-                      example: '80'
-                FullyQualifiedName:
-                  type: string
-                  example: Garden Supplies-Updated
-                Id:
-                  type: string
-                  example: '20'
-                IncomeAccountRef:
-                  type: object
-                  properties:
-                    name:
-                      type: string
-                      example: Sales of Product Income
-                    value:
-                      type: string
-                      example: '79'
-                InvStartDate:
-                  type: string
-                  example: '2015-01-01'
-                Name:
-                  type: string
-                  example: Garden Supplies-Updated
-                PurchaseCost:
-                  type: number
-                  example: 0
-                QtyOnHand:
-                  type: number
-                  example: 10
-                SyncToken:
-                  type: string
-                  example: '0'
-                Taxable:
-                  type: boolean
-                  example: false
-                TrackQtyOnHand:
-                  type: boolean
-                  example: true
-                Type:
-                  type: string
-                  example: Inventory
-                UnitPrice:
-                  type: number
-                  example: 0
-                domain:
-                  type: string
-                  example: QBO
-                sparse:
-                  type: boolean
-                  example: false
+              $ref: '#/components/schemas/Item'
             examples:
               Item-Create:
                 value:
@@ -5331,6 +5261,24 @@ components:
         Id:
           type: string
           description: Unique identifier for this object. Sort order is ASC by default.
+        QtyOnHand:
+          type: number
+          description: Quantity on hand of the item.
+        InvStartDate:
+          type: string
+          description: Start date of the inventory.
+        IncomeAccountRef:
+          $ref: '#/components/schemas/ReferenceType'
+        Type:
+          type: string
+          description: Type of the item.
+        AssetAccountRef:
+            $ref: '#/components/schemas/ReferenceType'
+        ExpenseAccountRef:
+            $ref: '#/components/schemas/ReferenceType'
+        SyncToken:
+          type: string
+          description: Version number of the object. It is used to lock the object for use by one app at a time.
         Sku:
           type: string
           description: SKU of the item.
