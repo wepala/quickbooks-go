@@ -1936,78 +1936,18 @@ paths:
         Create an item object
         Method : POST
       operationId: itemCreate
+      parameters:
+        - name: minorversion
+          in: query
+          schema:
+            type: string
+            example: '1'
+            default: "73"
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/Item'
-            examples:
-              Item-Create:
-                value:
-                  AssetAccountRef:
-                    name: Inventory Asset
-                    value: '81'
-                  ExpenseAccountRef:
-                    name: Cost of Goods Sold
-                    value: '80'
-                  IncomeAccountRef:
-                    name: Sales of Product Income
-                    value: '79'
-                  InvStartDate: '2015-01-01'
-                  Name: Garden Supplies1
-                  QtyOnHand: 10
-                  TrackQtyOnHand: true
-                  Type: Inventory
-              Item-Delete:
-                value:
-                  Active: false
-                  AssetAccountRef:
-                    name: Inventory Asset
-                    value: '81'
-                  ExpenseAccountRef:
-                    name: Cost of Goods Sold
-                    value: '80'
-                  FullyQualifiedName: Garden Supplies-Updated
-                  Id: '20'
-                  IncomeAccountRef:
-                    name: Sales of Product Income
-                    value: '79'
-                  InvStartDate: '2015-01-01'
-                  Name: Garden Supplies-Updated
-                  PurchaseCost: 0
-                  QtyOnHand: 10
-                  SyncToken: '0'
-                  Taxable: false
-                  TrackQtyOnHand: true
-                  Type: Inventory
-                  UnitPrice: 0
-                  domain: QBO
-                  sparse: false
-              Item-Update:
-                value:
-                  Active: true
-                  AssetAccountRef:
-                    name: Inventory Asset
-                    value: '81'
-                  ExpenseAccountRef:
-                    name: Cost of Goods Sold
-                    value: '80'
-                  FullyQualifiedName: Garden Supplies-Updated
-                  Id: '20'
-                  IncomeAccountRef:
-                    name: Sales of Product Income
-                    value: '79'
-                  InvStartDate: '2015-01-01'
-                  Name: Garden Supplies-Updated
-                  PurchaseCost: 0
-                  QtyOnHand: 10
-                  SyncToken: '0'
-                  Taxable: false
-                  TrackQtyOnHand: true
-                  Type: Inventory
-                  UnitPrice: 0
-                  domain: QBO
-                  sparse: false
       responses:
         '200':
           description: ''

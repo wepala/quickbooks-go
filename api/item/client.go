@@ -35,7 +35,7 @@ func NewClient(opts ...option.RequestOption) *Client {
 func (c *Client) Create(
 	ctx context.Context,
 	companyid string,
-	request *api.Item,
+	request *api.ItemCreateRequest,
 	opts ...option.RequestOption,
 ) (*api.ItemResponse, error) {
 	options := core.NewRequestOptions(opts...)
@@ -48,6 +48,14 @@ func (c *Client) Create(
 		baseURL = options.BaseURL
 	}
 	endpointURL := core.EncodeURL(baseURL+"/v3/company/%v/item", companyid)
+
+	queryParams, err := core.QueryValues(request)
+	if err != nil {
+		return nil, err
+	}
+	if len(queryParams) > 0 {
+		endpointURL += "?" + queryParams.Encode()
+	}
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
