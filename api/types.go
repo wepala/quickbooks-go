@@ -4111,6 +4111,8 @@ type SalesItemLineDetail struct {
 	ItemRef   *ReferenceType `json:"ItemRef,omitempty" url:"ItemRef,omitempty"`
 	// A description of the line item.
 	Description *string `json:"Description,omitempty" url:"Description,omitempty"`
+	// The type of detail for the line item. Valid values include SalesItemLineDetail.
+	DetailType *SalesItemLineDetailDetailType `json:"DetailType,omitempty" url:"DetailType,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage
@@ -4148,6 +4150,38 @@ func (s *SalesItemLineDetail) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", s)
+}
+
+// The type of detail for the line item. Valid values include SalesItemLineDetail.
+type SalesItemLineDetailDetailType string
+
+const (
+	SalesItemLineDetailDetailTypeSalesItemLineDetail SalesItemLineDetailDetailType = "SalesItemLineDetail"
+	SalesItemLineDetailDetailTypeGroupLineDetail     SalesItemLineDetailDetailType = "GroupLineDetail"
+	SalesItemLineDetailDetailTypeDescriptionOnly     SalesItemLineDetailDetailType = "DescriptionOnly"
+	SalesItemLineDetailDetailTypeDiscountLineDetail  SalesItemLineDetailDetailType = "DiscountLineDetail"
+	SalesItemLineDetailDetailTypeSubTotalLineDetail  SalesItemLineDetailDetailType = "SubTotalLineDetail"
+)
+
+func NewSalesItemLineDetailDetailTypeFromString(s string) (SalesItemLineDetailDetailType, error) {
+	switch s {
+	case "SalesItemLineDetail":
+		return SalesItemLineDetailDetailTypeSalesItemLineDetail, nil
+	case "GroupLineDetail":
+		return SalesItemLineDetailDetailTypeGroupLineDetail, nil
+	case "DescriptionOnly":
+		return SalesItemLineDetailDetailTypeDescriptionOnly, nil
+	case "DiscountLineDetail":
+		return SalesItemLineDetailDetailTypeDiscountLineDetail, nil
+	case "SubTotalLineDetail":
+		return SalesItemLineDetailDetailTypeSubTotalLineDetail, nil
+	}
+	var t SalesItemLineDetailDetailType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (s SalesItemLineDetailDetailType) Ptr() *SalesItemLineDetailDetailType {
+	return &s
 }
 
 // Telephone number
