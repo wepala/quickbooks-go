@@ -7,8 +7,9 @@ import (
 )
 
 type InvoiceCreateRequest struct {
-	Operation *string  `json:"-" url:"operation,omitempty"`
-	Body      *Invoice `json:"-" url:"-"`
+	Operation    *string  `json:"-" url:"operation,omitempty"`
+	Minorversion *string  `json:"-" url:"minorversion,omitempty"`
+	Body         *Invoice `json:"-" url:"-"`
 }
 
 func (i *InvoiceCreateRequest) UnmarshalJSON(data []byte) error {
