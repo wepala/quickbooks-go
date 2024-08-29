@@ -6275,17 +6275,6 @@ components:
         Description:
           type: string
           description: A description of the line item.
-        DetailType:
-          type: string
-          description: >-
-            The type of detail for the line item. Valid values include
-            SalesItemLineDetail.
-          enum:
-            - SalesItemLineDetail
-            - GroupLineDetail
-            - DescriptionOnly
-            - DiscountLineDetail
-            - SubTotalLineDetail
 
     InvoiceLineItem:
       type: object
@@ -6300,6 +6289,17 @@ components:
         Description:
           type: string
           description: A description of the line item.
+        DetailType:
+          type: string
+          description: >-
+            The type of detail for the line item. Valid values include
+            SalesItemLineDetail.
+          enum:
+            - SalesItemLineDetail
+            - GroupLineDetail
+            - DescriptionOnly
+            - DiscountLineDetail
+            - SubTotalLineDetail
         SalesItemLineDetail:
           $ref: '#/components/schemas/SalesItemLineDetail'
     Invoice:

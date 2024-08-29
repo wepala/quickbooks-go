@@ -1915,8 +1915,10 @@ type InvoiceLineItem struct {
 	// The total amount of the line item. This is the quantity multiplied by the unit price.
 	Amount *float64 `json:"Amount,omitempty" url:"Amount,omitempty"`
 	// A description of the line item.
-	Description         *string              `json:"Description,omitempty" url:"Description,omitempty"`
-	SalesItemLineDetail *SalesItemLineDetail `json:"SalesItemLineDetail,omitempty" url:"SalesItemLineDetail,omitempty"`
+	Description *string `json:"Description,omitempty" url:"Description,omitempty"`
+	// The type of detail for the line item. Valid values include SalesItemLineDetail.
+	DetailType          *InvoiceLineItemDetailType `json:"DetailType,omitempty" url:"DetailType,omitempty"`
+	SalesItemLineDetail *SalesItemLineDetail       `json:"SalesItemLineDetail,omitempty" url:"SalesItemLineDetail,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage
@@ -1954,6 +1956,38 @@ func (i *InvoiceLineItem) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", i)
+}
+
+// The type of detail for the line item. Valid values include SalesItemLineDetail.
+type InvoiceLineItemDetailType string
+
+const (
+	InvoiceLineItemDetailTypeSalesItemLineDetail InvoiceLineItemDetailType = "SalesItemLineDetail"
+	InvoiceLineItemDetailTypeGroupLineDetail     InvoiceLineItemDetailType = "GroupLineDetail"
+	InvoiceLineItemDetailTypeDescriptionOnly     InvoiceLineItemDetailType = "DescriptionOnly"
+	InvoiceLineItemDetailTypeDiscountLineDetail  InvoiceLineItemDetailType = "DiscountLineDetail"
+	InvoiceLineItemDetailTypeSubTotalLineDetail  InvoiceLineItemDetailType = "SubTotalLineDetail"
+)
+
+func NewInvoiceLineItemDetailTypeFromString(s string) (InvoiceLineItemDetailType, error) {
+	switch s {
+	case "SalesItemLineDetail":
+		return InvoiceLineItemDetailTypeSalesItemLineDetail, nil
+	case "GroupLineDetail":
+		return InvoiceLineItemDetailTypeGroupLineDetail, nil
+	case "DescriptionOnly":
+		return InvoiceLineItemDetailTypeDescriptionOnly, nil
+	case "DiscountLineDetail":
+		return InvoiceLineItemDetailTypeDiscountLineDetail, nil
+	case "SubTotalLineDetail":
+		return InvoiceLineItemDetailTypeSubTotalLineDetail, nil
+	}
+	var t InvoiceLineItemDetailType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (i InvoiceLineItemDetailType) Ptr() *InvoiceLineItemDetailType {
+	return &i
 }
 
 type InvoiceResponse struct {
@@ -4111,8 +4145,6 @@ type SalesItemLineDetail struct {
 	ItemRef   *ReferenceType `json:"ItemRef,omitempty" url:"ItemRef,omitempty"`
 	// A description of the line item.
 	Description *string `json:"Description,omitempty" url:"Description,omitempty"`
-	// The type of detail for the line item. Valid values include SalesItemLineDetail.
-	DetailType *SalesItemLineDetailDetailType `json:"DetailType,omitempty" url:"DetailType,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage
@@ -4150,38 +4182,6 @@ func (s *SalesItemLineDetail) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", s)
-}
-
-// The type of detail for the line item. Valid values include SalesItemLineDetail.
-type SalesItemLineDetailDetailType string
-
-const (
-	SalesItemLineDetailDetailTypeSalesItemLineDetail SalesItemLineDetailDetailType = "SalesItemLineDetail"
-	SalesItemLineDetailDetailTypeGroupLineDetail     SalesItemLineDetailDetailType = "GroupLineDetail"
-	SalesItemLineDetailDetailTypeDescriptionOnly     SalesItemLineDetailDetailType = "DescriptionOnly"
-	SalesItemLineDetailDetailTypeDiscountLineDetail  SalesItemLineDetailDetailType = "DiscountLineDetail"
-	SalesItemLineDetailDetailTypeSubTotalLineDetail  SalesItemLineDetailDetailType = "SubTotalLineDetail"
-)
-
-func NewSalesItemLineDetailDetailTypeFromString(s string) (SalesItemLineDetailDetailType, error) {
-	switch s {
-	case "SalesItemLineDetail":
-		return SalesItemLineDetailDetailTypeSalesItemLineDetail, nil
-	case "GroupLineDetail":
-		return SalesItemLineDetailDetailTypeGroupLineDetail, nil
-	case "DescriptionOnly":
-		return SalesItemLineDetailDetailTypeDescriptionOnly, nil
-	case "DiscountLineDetail":
-		return SalesItemLineDetailDetailTypeDiscountLineDetail, nil
-	case "SubTotalLineDetail":
-		return SalesItemLineDetailDetailTypeSubTotalLineDetail, nil
-	}
-	var t SalesItemLineDetailDetailType
-	return "", fmt.Errorf("%s is not a valid %T", s, t)
-}
-
-func (s SalesItemLineDetailDetailType) Ptr() *SalesItemLineDetailDetailType {
-	return &s
 }
 
 // Telephone number
