@@ -1352,6 +1352,53 @@ func (c *CustomerTypeRefType) String() string {
 	return fmt.Sprintf("%#v", c)
 }
 
+type DiscountLineDetail struct {
+	ClassRef           *ReferenceType `json:"ClassRef,omitempty" url:"ClassRef,omitempty"`
+	TaxCodeRef         *ReferenceType `json:"TaxCodeRef,omitempty" url:"TaxCodeRef,omitempty"`
+	DiscountAccountRef *ReferenceType `json:"DiscountAccountRef,omitempty" url:"DiscountAccountRef,omitempty"`
+	// If true, the discount is a percentage of the total amount. If false, the discount is a fixed amount.
+	PercentBased *bool `json:"PercentBased,omitempty" url:"PercentBased,omitempty"`
+	// The percentage of the discount. This field is required if PercentBased is true.
+	DiscountPercent *float64 `json:"DiscountPercent,omitempty" url:"DiscountPercent,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (d *DiscountLineDetail) GetExtraProperties() map[string]interface{} {
+	return d.extraProperties
+}
+
+func (d *DiscountLineDetail) UnmarshalJSON(data []byte) error {
+	type unmarshaler DiscountLineDetail
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*d = DiscountLineDetail(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *d)
+	if err != nil {
+		return err
+	}
+	d.extraProperties = extraProperties
+
+	d._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (d *DiscountLineDetail) String() string {
+	if len(d._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(d._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(d); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", d)
+}
+
 // Email address
 type EmailAddress struct {
 	// An email address. The address format must follow the RFC 822 standard.
@@ -1919,6 +1966,7 @@ type InvoiceLineItem struct {
 	// The type of detail for the line item. Valid values include SalesItemLineDetail.
 	DetailType          *InvoiceLineItemDetailType `json:"DetailType,omitempty" url:"DetailType,omitempty"`
 	SalesItemLineDetail *SalesItemLineDetail       `json:"SalesItemLineDetail,omitempty" url:"SalesItemLineDetail,omitempty"`
+	DiscountLineDetail  *DiscountLineDetail        `json:"DiscountLineDetail,omitempty" url:"DiscountLineDetail,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage

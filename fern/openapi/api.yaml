@@ -6275,7 +6275,21 @@ components:
         Description:
           type: string
           description: A description of the line item.
-
+    DiscountLineDetail:
+      type: object
+      properties:
+        ClassRef:
+          $ref: '#/components/schemas/ReferenceType'
+        TaxCodeRef:
+          $ref: '#/components/schemas/ReferenceType'
+        DiscountAccountRef:
+          $ref: '#/components/schemas/ReferenceType'
+        PercentBased:
+          type: boolean
+          description: If true, the discount is a percentage of the total amount. If false, the discount is a fixed amount.
+        DiscountPercent:
+          type: number
+          description: The percentage of the discount. This field is required if PercentBased is true.
     InvoiceLineItem:
       type: object
       description: Reference type
@@ -6302,6 +6316,8 @@ components:
             - SubTotalLineDetail
         SalesItemLineDetail:
           $ref: '#/components/schemas/SalesItemLineDetail'
+        DiscountLineDetail:
+          $ref: '#/components/schemas/DiscountLineDetail'
     Invoice:
       type: object
       properties:
