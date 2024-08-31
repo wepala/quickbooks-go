@@ -6272,9 +6272,6 @@ components:
           description: The price of a single unit of the item.
         ItemRef:
           $ref: '#/components/schemas/ReferenceType'
-        Description:
-          type: string
-          description: A description of the line item.
     DiscountLineDetail:
       type: object
       properties:
