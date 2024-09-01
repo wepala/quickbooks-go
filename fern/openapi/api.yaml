@@ -7352,7 +7352,7 @@ components:
           type: number
           description: Indicates the amount that has not been applied to pay amounts owed for sales transactions.
         DepositToAccountRef:
-          type: object
+          $ref: '#/components/schemas/ReferenceType'
           description: Identifies the account to be used for this payment. Query the Account name list resource to determine the appropriate Account object for this reference, where Account.AccountType is Other Current Asset or Bank. Use Account.Id and Account.Name from that object for DepositToAccountRef.value and DepostiToAccountRef.name, respectively.
             If you do not specify this account, payment is applied to the Undeposited Funds account.
         ExchangeRate:
