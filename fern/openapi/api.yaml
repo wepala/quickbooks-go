@@ -4155,6 +4155,10 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SalesReceiptResponse'
     parameters:
       - name: companyid
         in: path
@@ -5834,6 +5838,11 @@ components:
         Balance:
           type: number
           description: Specifies the open balance amount or the amount unpaid by the customer. For the create operation, this represents the opening balance for the customer. When returned in response to the query request it represents the current open balance (unpaid amount) for that customer. Write-on-create, read-only otherwise.
+    SalesReceiptResponse:
+      type: object
+      properties:
+        SalesReceipt:
+          $ref: '#/components/schemas/Invoice'
     InvoiceResponse:
       type: object
       properties:

@@ -4230,6 +4230,47 @@ func (s *SalesItemLineDetail) String() string {
 	return fmt.Sprintf("%#v", s)
 }
 
+type SalesReceiptResponse struct {
+	SalesReceipt *Invoice `json:"SalesReceipt,omitempty" url:"SalesReceipt,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (s *SalesReceiptResponse) GetExtraProperties() map[string]interface{} {
+	return s.extraProperties
+}
+
+func (s *SalesReceiptResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler SalesReceiptResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*s = SalesReceiptResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *s)
+	if err != nil {
+		return err
+	}
+	s.extraProperties = extraProperties
+
+	s._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (s *SalesReceiptResponse) String() string {
+	if len(s._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(s._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(s); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", s)
+}
+
 // Telephone number
 type TelephoneNumber struct {
 	// Specifies the telephone number in free form.
