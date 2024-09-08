@@ -2725,6 +2725,15 @@ type JournalEntry struct {
 	CreateDate *string `json:"createDate,omitempty" url:"createDate,omitempty"`
 	// List of line items in the journal entry.
 	Line []*JournalEntryLineItem `json:"Line,omitempty" url:"Line,omitempty"`
+	// Document number of the journal entry.
+	DocNumber *string `json:"DocNumber,omitempty" url:"DocNumber,omitempty"`
+	// Private note of the journal entry.
+	PrivateNote *string `json:"PrivateNote,omitempty" url:"PrivateNote,omitempty"`
+	// Transaction date of the journal entry.
+	TxnDate    *string        `json:"TxnDate,omitempty" url:"TxnDate,omitempty"`
+	TaxRateRef *ReferenceType `json:"TaxRateRef,omitempty" url:"TaxRateRef,omitempty"`
+	// Total amount of the journal entry.
+	TotalAmt *float64 `json:"TotalAmt,omitempty" url:"TotalAmt,omitempty"`
 	// Descriptive information about the object. The MetaData values are set by Data Services and are read only for all applications.
 	MetaData *JournalEntryMetaData `json:"MetaData,omitempty" url:"MetaData,omitempty"`
 
@@ -2774,7 +2783,9 @@ type JournalEntryLineItem struct {
 	// Total amount of the line item.
 	Amount *float64 `json:"Amount,omitempty" url:"Amount,omitempty"`
 	// Detail type of the line item.
-	DetailType             *string                     `json:"DetailType,omitempty" url:"DetailType,omitempty"`
+	DetailType *string `json:"DetailType,omitempty" url:"DetailType,omitempty"`
+	// Line number of the line item.
+	LineNum                *float64                    `json:"LineNum,omitempty" url:"LineNum,omitempty"`
 	JournalEntryLineDetail *JournalEntryLineItemDetail `json:"JournalEntryLineDetail,omitempty" url:"JournalEntryLineDetail,omitempty"`
 
 	extraProperties map[string]interface{}
@@ -2817,8 +2828,14 @@ func (j *JournalEntryLineItem) String() string {
 
 type JournalEntryLineItemDetail struct {
 	// Posting type
-	PostingType *string        `json:"PostingType,omitempty" url:"PostingType,omitempty"`
-	AccountRef  *ReferenceType `json:"AccountRef,omitempty" url:"AccountRef,omitempty"`
+	PostingType   *string        `json:"PostingType,omitempty" url:"PostingType,omitempty"`
+	AccountRef    *ReferenceType `json:"AccountRef,omitempty" url:"AccountRef,omitempty"`
+	Entity        *ReferenceType `json:"Entity,omitempty" url:"Entity,omitempty"`
+	ClassRef      *ReferenceType `json:"ClassRef,omitempty" url:"ClassRef,omitempty"`
+	DepartmentRef *ReferenceType `json:"DepartmentRef,omitempty" url:"DepartmentRef,omitempty"`
+	TaxCodeRef    *ReferenceType `json:"TaxCodeRef,omitempty" url:"TaxCodeRef,omitempty"`
+	// Tax amount of the line item.
+	TaxAmount *float64 `json:"TaxAmount,omitempty" url:"TaxAmount,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage

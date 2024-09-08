@@ -5052,6 +5052,17 @@ components:
           description: Posting type
         AccountRef:
           $ref: '#/components/schemas/ReferenceType'
+        Entity:
+          $ref: '#/components/schemas/ReferenceType'
+        ClassRef:
+          $ref: '#/components/schemas/ReferenceType'
+        DepartmentRef:
+          $ref: '#/components/schemas/ReferenceType'
+        TaxCodeRef:
+          $ref: '#/components/schemas/ReferenceType'
+        TaxAmount:
+          type: number
+          description: Tax amount of the line item.
     JournalEntryLineItem:
       type: object
       properties:
@@ -5067,6 +5078,9 @@ components:
         DetailType:
           type: string
           description: Detail type of the line item.
+        LineNum:
+          type: number
+          description: Line number of the line item.
         JournalEntryLineDetail:
           $ref: '#/components/schemas/JournalEntryLineItemDetail'
     JournalEntry:
@@ -5086,6 +5100,20 @@ components:
           description: List of line items in the journal entry.
           items:
             $ref: '#/components/schemas/JournalEntryLineItem'
+        DocNumber:
+          type: string
+          description: Document number of the journal entry.
+        PrivateNote:
+          type: string
+          description: Private note of the journal entry.
+        TxnDate:
+          type: string
+          description: Transaction date of the journal entry.
+        TaxRateRef:
+          $ref: '#/components/schemas/ReferenceType'
+        TotalAmt:
+          type: number
+          description: Total amount of the journal entry.
         MetaData:
           type: object
           description: Descriptive information about the object. The MetaData values are set by Data Services and are read only for all applications.
