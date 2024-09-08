@@ -977,7 +977,7 @@ type CreditMemo struct {
 	// Unique identifier for this object. Sort order is ASC by default.
 	Id *string `json:"Id,omitempty" url:"Id,omitempty"`
 	// Transaction Date
-	TxnDate *time.Time `json:"TxnDate,omitempty" url:"TxnDate,omitempty"`
+	TxnDate *string `json:"TxnDate,omitempty" url:"TxnDate,omitempty"`
 	// Version number of the object. It is used to lock the object for use by one app at a time.
 	SyncToken *string `json:"SyncToken,omitempty" url:"SyncToken,omitempty"`
 	// Domain of the class.
@@ -1023,18 +1023,12 @@ func (c *CreditMemo) GetExtraProperties() map[string]interface{} {
 }
 
 func (c *CreditMemo) UnmarshalJSON(data []byte) error {
-	type embed CreditMemo
-	var unmarshaler = struct {
-		embed
-		TxnDate *core.DateTime `json:"TxnDate,omitempty"`
-	}{
-		embed: embed(*c),
-	}
-	if err := json.Unmarshal(data, &unmarshaler); err != nil {
+	type unmarshaler CreditMemo
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*c = CreditMemo(unmarshaler.embed)
-	c.TxnDate = unmarshaler.TxnDate.TimePtr()
+	*c = CreditMemo(value)
 
 	extraProperties, err := core.ExtractExtraProperties(data, *c)
 	if err != nil {
@@ -1044,18 +1038,6 @@ func (c *CreditMemo) UnmarshalJSON(data []byte) error {
 
 	c._rawJSON = json.RawMessage(data)
 	return nil
-}
-
-func (c *CreditMemo) MarshalJSON() ([]byte, error) {
-	type embed CreditMemo
-	var marshaler = struct {
-		embed
-		TxnDate *core.DateTime `json:"TxnDate,omitempty"`
-	}{
-		embed:   embed(*c),
-		TxnDate: core.NewOptionalDateTime(c.TxnDate),
-	}
-	return json.Marshal(marshaler)
 }
 
 func (c *CreditMemo) String() string {
@@ -3978,7 +3960,7 @@ type RefundReceipt struct {
 	Id                  *string        `json:"Id,omitempty" url:"Id,omitempty"`
 	DepositToAccountRef *ReferenceType `json:"DepositToAccountRef,omitempty" url:"DepositToAccountRef,omitempty"`
 	// Transaction Date
-	TxnDate *time.Time `json:"TxnDate,omitempty" url:"TxnDate,omitempty"`
+	TxnDate *string `json:"TxnDate,omitempty" url:"TxnDate,omitempty"`
 	// Version number of the object. It is used to lock the object for use by one app at a time.
 	SyncToken *string `json:"SyncToken,omitempty" url:"SyncToken,omitempty"`
 	// Domain of the class.
@@ -4026,18 +4008,12 @@ func (r *RefundReceipt) GetExtraProperties() map[string]interface{} {
 }
 
 func (r *RefundReceipt) UnmarshalJSON(data []byte) error {
-	type embed RefundReceipt
-	var unmarshaler = struct {
-		embed
-		TxnDate *core.DateTime `json:"TxnDate,omitempty"`
-	}{
-		embed: embed(*r),
-	}
-	if err := json.Unmarshal(data, &unmarshaler); err != nil {
+	type unmarshaler RefundReceipt
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
 		return err
 	}
-	*r = RefundReceipt(unmarshaler.embed)
-	r.TxnDate = unmarshaler.TxnDate.TimePtr()
+	*r = RefundReceipt(value)
 
 	extraProperties, err := core.ExtractExtraProperties(data, *r)
 	if err != nil {
@@ -4047,18 +4023,6 @@ func (r *RefundReceipt) UnmarshalJSON(data []byte) error {
 
 	r._rawJSON = json.RawMessage(data)
 	return nil
-}
-
-func (r *RefundReceipt) MarshalJSON() ([]byte, error) {
-	type embed RefundReceipt
-	var marshaler = struct {
-		embed
-		TxnDate *core.DateTime `json:"TxnDate,omitempty"`
-	}{
-		embed:   embed(*r),
-		TxnDate: core.NewOptionalDateTime(r.TxnDate),
-	}
-	return json.Marshal(marshaler)
 }
 
 func (r *RefundReceipt) String() string {

@@ -4899,7 +4899,6 @@ components:
         TxnDate:
           type: string
           description: Transaction Date
-          format: date-time
         SyncToken:
           type: string
           description: Version number of the object. It is used to lock the object for use by one app at a time.
@@ -5347,7 +5346,6 @@ components:
         TxnDate:
           type: string
           description: Transaction Date
-          format: date-time
         SyncToken:
           type: string
           description: Version number of the object. It is used to lock the object for use by one app at a time.
