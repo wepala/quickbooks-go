@@ -5075,6 +5075,9 @@ components:
         Id:
           type: string
           description: Unique identifier for this object. Sort order is ASC by default.
+        SyncToken:
+          type: string
+          description: Version number of the object. It is used to lock the object for use by one app at a time.
         createDate:
           type: string
           description: Date and time when the journal entry was created.

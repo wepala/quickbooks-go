@@ -2719,6 +2719,8 @@ func (i *ItemResponse) String() string {
 type JournalEntry struct {
 	// Unique identifier for this object. Sort order is ASC by default.
 	Id *string `json:"Id,omitempty" url:"Id,omitempty"`
+	// Version number of the object. It is used to lock the object for use by one app at a time.
+	SyncToken *string `json:"SyncToken,omitempty" url:"SyncToken,omitempty"`
 	// Date and time when the journal entry was created.
 	CreateDate *string `json:"createDate,omitempty" url:"createDate,omitempty"`
 	// List of line items in the journal entry.
