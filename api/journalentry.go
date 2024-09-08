@@ -2,8 +2,87 @@
 
 package api
 
+import (
+	json "encoding/json"
+	fmt "fmt"
+	core "github.com/wepala/quickbooks-go/api/core"
+	time "time"
+)
+
 type JournalentryCreateRequest struct {
-	Operation *string `json:"-" url:"operation,omitempty"`
-	Id        *string `json:"Id,omitempty" url:"-"`
-	SyncToken *string `json:"SyncToken,omitempty" url:"-"`
+	Operation *string       `json:"-" url:"operation,omitempty"`
+	Body      *JournalEntry `json:"-" url:"-"`
+}
+
+func (j *JournalentryCreateRequest) UnmarshalJSON(data []byte) error {
+	body := new(JournalEntry)
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	j.Body = body
+	return nil
+}
+
+func (j *JournalentryCreateRequest) MarshalJSON() ([]byte, error) {
+	return json.Marshal(j.Body)
+}
+
+type JournalentryCreateResponse struct {
+	Time         *time.Time    `json:"time,omitempty" url:"time,omitempty"`
+	JournalEntry *JournalEntry `json:"JournalEntry,omitempty" url:"JournalEntry,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (j *JournalentryCreateResponse) GetExtraProperties() map[string]interface{} {
+	return j.extraProperties
+}
+
+func (j *JournalentryCreateResponse) UnmarshalJSON(data []byte) error {
+	type embed JournalentryCreateResponse
+	var unmarshaler = struct {
+		embed
+		Time *core.DateTime `json:"time,omitempty"`
+	}{
+		embed: embed(*j),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
+		return err
+	}
+	*j = JournalentryCreateResponse(unmarshaler.embed)
+	j.Time = unmarshaler.Time.TimePtr()
+
+	extraProperties, err := core.ExtractExtraProperties(data, *j)
+	if err != nil {
+		return err
+	}
+	j.extraProperties = extraProperties
+
+	j._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (j *JournalentryCreateResponse) MarshalJSON() ([]byte, error) {
+	type embed JournalentryCreateResponse
+	var marshaler = struct {
+		embed
+		Time *core.DateTime `json:"time,omitempty"`
+	}{
+		embed: embed(*j),
+		Time:  core.NewOptionalDateTime(j.Time),
+	}
+	return json.Marshal(marshaler)
+}
+
+func (j *JournalentryCreateResponse) String() string {
+	if len(j._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(j._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(j); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", j)
 }

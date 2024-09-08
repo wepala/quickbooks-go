@@ -2,8 +2,67 @@
 
 package api
 
+import (
+	json "encoding/json"
+	fmt "fmt"
+	core "github.com/wepala/quickbooks-go/api/core"
+)
+
 type DepositCreateRequest struct {
-	Operation *string `json:"-" url:"operation,omitempty"`
-	Id        *string `json:"Id,omitempty" url:"-"`
-	SyncToken *string `json:"SyncToken,omitempty" url:"-"`
+	Operation *string  `json:"-" url:"operation,omitempty"`
+	Body      *Deposit `json:"-" url:"-"`
+}
+
+func (d *DepositCreateRequest) UnmarshalJSON(data []byte) error {
+	body := new(Deposit)
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	d.Body = body
+	return nil
+}
+
+func (d *DepositCreateRequest) MarshalJSON() ([]byte, error) {
+	return json.Marshal(d.Body)
+}
+
+type DepositCreateResponse struct {
+	Deposit *Deposit `json:"Deposit,omitempty" url:"Deposit,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (d *DepositCreateResponse) GetExtraProperties() map[string]interface{} {
+	return d.extraProperties
+}
+
+func (d *DepositCreateResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler DepositCreateResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*d = DepositCreateResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *d)
+	if err != nil {
+		return err
+	}
+	d.extraProperties = extraProperties
+
+	d._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (d *DepositCreateResponse) String() string {
+	if len(d._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(d._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(d); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", d)
 }

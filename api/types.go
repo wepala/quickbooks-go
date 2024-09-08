@@ -973,6 +973,146 @@ func (c *Class) String() string {
 	return fmt.Sprintf("%#v", c)
 }
 
+type CreditMemo struct {
+	// Unique identifier for this object. Sort order is ASC by default.
+	Id *string `json:"Id,omitempty" url:"Id,omitempty"`
+	// Transaction Date
+	TxnDate *time.Time `json:"TxnDate,omitempty" url:"TxnDate,omitempty"`
+	// Version number of the object. It is used to lock the object for use by one app at a time.
+	SyncToken *string `json:"SyncToken,omitempty" url:"SyncToken,omitempty"`
+	// Domain of the class.
+	Domain *string `json:"domain,omitempty" url:"domain,omitempty"`
+	// Print status of the credit memo.
+	PrintStatus *string `json:"PrintStatus,omitempty" url:"PrintStatus,omitempty"`
+	// Total amount of the credit memo.
+	TotalAmt     *float64       `json:"TotalAmt,omitempty" url:"TotalAmt,omitempty"`
+	ClassRef     *ReferenceType `json:"ClassRef,omitempty" url:"ClassRef,omitempty"`
+	SalesTermRef *ReferenceType `json:"SalesTermRef,omitempty" url:"SalesTermRef,omitempty"`
+	CustomerRef  *ReferenceType `json:"CustomerRef,omitempty" url:"CustomerRef,omitempty"`
+	// Document number of the credit memo.
+	DocNumber *string `json:"DocNumber,omitempty" url:"DocNumber,omitempty"`
+	// Private note of the credit memo.
+	PrivateNote *string `json:"PrivateNote,omitempty" url:"PrivateNote,omitempty"`
+	// Customer memo of the credit memo.
+	CustomerMemo     *CreditMemoCustomerMemo `json:"CustomerMemo,omitempty" url:"CustomerMemo,omitempty"`
+	PaymentMethodRef *ReferenceType          `json:"PaymentMethodRef,omitempty" url:"PaymentMethodRef,omitempty"`
+	ShipAddr         *PhysicalAddress        `json:"ShipAddr,omitempty" url:"ShipAddr,omitempty"`
+	DepartmentRef    *ReferenceType          `json:"DepartmentRef,omitempty" url:"DepartmentRef,omitempty"`
+	// Email status of the credit memo.
+	EmailStatus *string          `json:"EmailStatus,omitempty" url:"EmailStatus,omitempty"`
+	BillAddr    *PhysicalAddress `json:"BillAddr,omitempty" url:"BillAddr,omitempty"`
+	// Home balance of the credit memo.
+	HomeBalance *float64 `json:"HomeBalance,omitempty" url:"HomeBalance,omitempty"`
+	// Remaining credit of the credit memo.
+	RemainingCredit *float64       `json:"RemainingCredit,omitempty" url:"RemainingCredit,omitempty"`
+	RecurDataRef    *ReferenceType `json:"RecurDataRef,omitempty" url:"RecurDataRef,omitempty"`
+	TaxExemptionRef *ReferenceType `json:"TaxExemptionRef,omitempty" url:"TaxExemptionRef,omitempty"`
+	// Balance of the credit memo.
+	Balance *float64 `json:"Balance,omitempty" url:"Balance,omitempty"`
+	// Home total amount of the credit memo.
+	HomeTotalAmt *float64 `json:"HomeTotalAmt,omitempty" url:"HomeTotalAmt,omitempty"`
+	// Individual line items of a transaction. Valid Line types include SalesItemLine, GroupLine, DescriptionOnlyLine (also used for inline Subtotal lines), DiscountLine and SubTotalLine (used for the overall transaction)
+	Line []*InvoiceLineItem `json:"Line,omitempty" url:"Line,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CreditMemo) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CreditMemo) UnmarshalJSON(data []byte) error {
+	type embed CreditMemo
+	var unmarshaler = struct {
+		embed
+		TxnDate *core.DateTime `json:"TxnDate,omitempty"`
+	}{
+		embed: embed(*c),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
+		return err
+	}
+	*c = CreditMemo(unmarshaler.embed)
+	c.TxnDate = unmarshaler.TxnDate.TimePtr()
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CreditMemo) MarshalJSON() ([]byte, error) {
+	type embed CreditMemo
+	var marshaler = struct {
+		embed
+		TxnDate *core.DateTime `json:"TxnDate,omitempty"`
+	}{
+		embed:   embed(*c),
+		TxnDate: core.NewOptionalDateTime(c.TxnDate),
+	}
+	return json.Marshal(marshaler)
+}
+
+func (c *CreditMemo) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Customer memo of the credit memo.
+type CreditMemoCustomerMemo struct {
+	// Value of the customer memo.
+	Value *string `json:"value,omitempty" url:"value,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (c *CreditMemoCustomerMemo) GetExtraProperties() map[string]interface{} {
+	return c.extraProperties
+}
+
+func (c *CreditMemoCustomerMemo) UnmarshalJSON(data []byte) error {
+	type unmarshaler CreditMemoCustomerMemo
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = CreditMemoCustomerMemo(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+
+	c._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CreditMemoCustomerMemo) String() string {
+	if len(c._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(c._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
 // Currency reference type
 type CurrencyRefType struct {
 	// A three letter string representing the ISO 4217 code for the currency. For example, USD, AUD, EUR, and so on.
@@ -1350,6 +1490,232 @@ func (c *CustomerTypeRefType) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", c)
+}
+
+type Deposit struct {
+	// Unique identifier for this object. Sort order is ASC by default.
+	Id *string `json:"Id,omitempty" url:"Id,omitempty"`
+	// Individual line items of a transaction. Valid Line types include SalesItemLine, GroupLine, DescriptionOnlyLine (also used for inline Subtotal lines), DiscountLine and SubTotalLine (used for the overall transaction)
+	Line []*DepositLine `json:"Line,omitempty" url:"Line,omitempty"`
+	// Version number of the object. It is used to lock an object for use by one app at a time. As soon as an application modifies an object, its SyncToken is incremented. Attempts to modify an object specifying an older SyncToken fails. Only the latest version of the object is maintained by QuickBooks Online.
+	SyncToken *string `json:"SyncToken,omitempty" url:"SyncToken,omitempty"`
+	// Reference to the currency in which all amounts on the associated transaction are expressed. This must be defined if multicurrency is enabled for the company. Multicurrency is enabled for the company if Preferences.MultiCurrencyEnabled is set to true. Read more about multicurrency support here. Applicable if multicurrency is enabled for the company.
+	CurrencyRef         *CurrencyRefType `json:"CurrencyRef,omitempty" url:"CurrencyRef,omitempty"`
+	DepositToAccountRef *ReferenceType   `json:"DepositToAccountRef,omitempty" url:"DepositToAccountRef,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (d *Deposit) GetExtraProperties() map[string]interface{} {
+	return d.extraProperties
+}
+
+func (d *Deposit) UnmarshalJSON(data []byte) error {
+	type unmarshaler Deposit
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*d = Deposit(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *d)
+	if err != nil {
+		return err
+	}
+	d.extraProperties = extraProperties
+
+	d._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (d *Deposit) String() string {
+	if len(d._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(d._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(d); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", d)
+}
+
+type DepositLine struct {
+	// Unique identifier for this object. Sort order is ASC by default.
+	Id                *string                       `json:"Id,omitempty" url:"Id,omitempty"`
+	DetailType        *string                       `json:"DetailType,omitempty" url:"DetailType,omitempty"`
+	DepositLineDetail *DepositLineDepositLineDetail `json:"DepositLineDetail,omitempty" url:"DepositLineDetail,omitempty"`
+	// The amount of the deposit line.
+	Amount     *float64       `json:"Amount,omitempty" url:"Amount,omitempty"`
+	ProjectRef *ReferenceType `json:"ProjectRef,omitempty" url:"ProjectRef,omitempty"`
+	// A description of the deposit line
+	Description *string `json:"Description,omitempty" url:"Description,omitempty"`
+	// The line number of the deposit line.
+	LineNum *float64 `json:"LineNum,omitempty" url:"LineNum,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (d *DepositLine) GetExtraProperties() map[string]interface{} {
+	return d.extraProperties
+}
+
+func (d *DepositLine) UnmarshalJSON(data []byte) error {
+	type unmarshaler DepositLine
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*d = DepositLine(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *d)
+	if err != nil {
+		return err
+	}
+	d.extraProperties = extraProperties
+
+	d._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (d *DepositLine) String() string {
+	if len(d._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(d._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(d); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", d)
+}
+
+type DepositLineDepositLineDetail struct {
+	AccountRef       *ReferenceType `json:"AccountRef,omitempty" url:"AccountRef,omitempty"`
+	PaymentMethodRef *ReferenceType `json:"PaymentMethodRef,omitempty" url:"PaymentMethodRef,omitempty"`
+	ClassRef         *ReferenceType `json:"ClassRef,omitempty" url:"ClassRef,omitempty"`
+	// The check number of the deposit line.
+	CheckNum   *string        `json:"CheckNum,omitempty" url:"CheckNum,omitempty"`
+	TaxCodeRef *ReferenceType `json:"TaxCodeRef,omitempty" url:"TaxCodeRef,omitempty"`
+	// The type of transaction. Valid values include Payment, SalesReceipt, and JournalEntry.
+	TxnType *DepositLineDepositLineDetailTxnType `json:"TxnType,omitempty" url:"TxnType,omitempty"`
+	Entity  *ReferenceType                       `json:"Entity,omitempty" url:"Entity,omitempty"`
+	Project *ReferenceType                       `json:"Project,omitempty" url:"Project,omitempty"`
+	// A description of the deposit line
+	Description *string `json:"Description,omitempty" url:"Description,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (d *DepositLineDepositLineDetail) GetExtraProperties() map[string]interface{} {
+	return d.extraProperties
+}
+
+func (d *DepositLineDepositLineDetail) UnmarshalJSON(data []byte) error {
+	type unmarshaler DepositLineDepositLineDetail
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*d = DepositLineDepositLineDetail(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *d)
+	if err != nil {
+		return err
+	}
+	d.extraProperties = extraProperties
+
+	d._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (d *DepositLineDepositLineDetail) String() string {
+	if len(d._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(d._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(d); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", d)
+}
+
+// The type of transaction. Valid values include Payment, SalesReceipt, and JournalEntry.
+type DepositLineDepositLineDetailTxnType string
+
+const (
+	DepositLineDepositLineDetailTxnTypeApCreditCard        DepositLineDepositLineDetailTxnType = "APCreditCard"
+	DepositLineDepositLineDetailTxnTypeArRefundCreditCard  DepositLineDepositLineDetailTxnType = "ARRefundCreditCard"
+	DepositLineDepositLineDetailTxnTypeBill                DepositLineDepositLineDetailTxnType = "Bill"
+	DepositLineDepositLineDetailTxnTypeBillPaymentCheck    DepositLineDepositLineDetailTxnType = "BillPaymentCheck"
+	DepositLineDepositLineDetailTxnTypeBuildAssembly       DepositLineDepositLineDetailTxnType = "BuildAssembly"
+	DepositLineDepositLineDetailTxnTypeCarryOver           DepositLineDepositLineDetailTxnType = "CarryOver"
+	DepositLineDepositLineDetailTxnTypeCharge              DepositLineDepositLineDetailTxnType = "Charge"
+	DepositLineDepositLineDetailTxnTypeCheck               DepositLineDepositLineDetailTxnType = "Check"
+	DepositLineDepositLineDetailTxnTypeCreditMemo          DepositLineDepositLineDetailTxnType = "CreditMemo"
+	DepositLineDepositLineDetailTxnTypeDeposit             DepositLineDepositLineDetailTxnType = "Deposit"
+	DepositLineDepositLineDetailTxnTypeEfpLiabilityCheck   DepositLineDepositLineDetailTxnType = "EFPLiabilityCheck"
+	DepositLineDepositLineDetailTxnTypeEftBillPayment      DepositLineDepositLineDetailTxnType = "EFTBillPayment"
+	DepositLineDepositLineDetailTxnTypeEftRefund           DepositLineDepositLineDetailTxnType = "EFTRefund"
+	DepositLineDepositLineDetailTxnTypeEstimate            DepositLineDepositLineDetailTxnType = "Estimate"
+	DepositLineDepositLineDetailTxnTypeInventoryAdjustment DepositLineDepositLineDetailTxnType = "InventoryAdjustment"
+	DepositLineDepositLineDetailTxnTypeInventoryTransfer   DepositLineDepositLineDetailTxnType = "InventoryTransfer"
+	DepositLineDepositLineDetailTxnTypeInvoice             DepositLineDepositLineDetailTxnType = "Invoice"
+	DepositLineDepositLineDetailTxnTypeItemReceipt         DepositLineDepositLineDetailTxnType = "ItemReceipt"
+	DepositLineDepositLineDetailTxnTypeJournalEntry        DepositLineDepositLineDetailTxnType = "JournalEntry"
+)
+
+func NewDepositLineDepositLineDetailTxnTypeFromString(s string) (DepositLineDepositLineDetailTxnType, error) {
+	switch s {
+	case "APCreditCard":
+		return DepositLineDepositLineDetailTxnTypeApCreditCard, nil
+	case "ARRefundCreditCard":
+		return DepositLineDepositLineDetailTxnTypeArRefundCreditCard, nil
+	case "Bill":
+		return DepositLineDepositLineDetailTxnTypeBill, nil
+	case "BillPaymentCheck":
+		return DepositLineDepositLineDetailTxnTypeBillPaymentCheck, nil
+	case "BuildAssembly":
+		return DepositLineDepositLineDetailTxnTypeBuildAssembly, nil
+	case "CarryOver":
+		return DepositLineDepositLineDetailTxnTypeCarryOver, nil
+	case "Charge":
+		return DepositLineDepositLineDetailTxnTypeCharge, nil
+	case "Check":
+		return DepositLineDepositLineDetailTxnTypeCheck, nil
+	case "CreditMemo":
+		return DepositLineDepositLineDetailTxnTypeCreditMemo, nil
+	case "Deposit":
+		return DepositLineDepositLineDetailTxnTypeDeposit, nil
+	case "EFPLiabilityCheck":
+		return DepositLineDepositLineDetailTxnTypeEfpLiabilityCheck, nil
+	case "EFTBillPayment":
+		return DepositLineDepositLineDetailTxnTypeEftBillPayment, nil
+	case "EFTRefund":
+		return DepositLineDepositLineDetailTxnTypeEftRefund, nil
+	case "Estimate":
+		return DepositLineDepositLineDetailTxnTypeEstimate, nil
+	case "InventoryAdjustment":
+		return DepositLineDepositLineDetailTxnTypeInventoryAdjustment, nil
+	case "InventoryTransfer":
+		return DepositLineDepositLineDetailTxnTypeInventoryTransfer, nil
+	case "Invoice":
+		return DepositLineDepositLineDetailTxnTypeInvoice, nil
+	case "ItemReceipt":
+		return DepositLineDepositLineDetailTxnTypeItemReceipt, nil
+	case "JournalEntry":
+		return DepositLineDepositLineDetailTxnTypeJournalEntry, nil
+	}
+	var t DepositLineDepositLineDetailTxnType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (d DepositLineDepositLineDetailTxnType) Ptr() *DepositLineDepositLineDetailTxnType {
+	return &d
 }
 
 type DiscountLineDetail struct {
@@ -3577,6 +3943,149 @@ func (r *ReferenceType) UnmarshalJSON(data []byte) error {
 }
 
 func (r *ReferenceType) String() string {
+	if len(r._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(r._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(r); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", r)
+}
+
+type RefundReceipt struct {
+	// Unique identifier for this object. Sort order is ASC by default.
+	Id                  *string        `json:"Id,omitempty" url:"Id,omitempty"`
+	DepositToAccountRef *ReferenceType `json:"DepositToAccountRef,omitempty" url:"DepositToAccountRef,omitempty"`
+	// Transaction Date
+	TxnDate *time.Time `json:"TxnDate,omitempty" url:"TxnDate,omitempty"`
+	// Version number of the object. It is used to lock the object for use by one app at a time.
+	SyncToken *string `json:"SyncToken,omitempty" url:"SyncToken,omitempty"`
+	// Domain of the class.
+	Domain *string `json:"domain,omitempty" url:"domain,omitempty"`
+	// Payment reference number of the refund receipt.
+	PaymentRefNum *string `json:"PaymentRefNum,omitempty" url:"PaymentRefNum,omitempty"`
+	// Print status of the credit memo.
+	PrintStatus *string `json:"PrintStatus,omitempty" url:"PrintStatus,omitempty"`
+	// Total amount of the credit memo.
+	TotalAmt     *float64       `json:"TotalAmt,omitempty" url:"TotalAmt,omitempty"`
+	ClassRef     *ReferenceType `json:"ClassRef,omitempty" url:"ClassRef,omitempty"`
+	SalesTermRef *ReferenceType `json:"SalesTermRef,omitempty" url:"SalesTermRef,omitempty"`
+	CustomerRef  *ReferenceType `json:"CustomerRef,omitempty" url:"CustomerRef,omitempty"`
+	// Document number of the credit memo.
+	DocNumber *string `json:"DocNumber,omitempty" url:"DocNumber,omitempty"`
+	// Private note of the credit memo.
+	PrivateNote *string `json:"PrivateNote,omitempty" url:"PrivateNote,omitempty"`
+	// Customer memo of the credit memo.
+	CustomerMemo     *RefundReceiptCustomerMemo `json:"CustomerMemo,omitempty" url:"CustomerMemo,omitempty"`
+	PaymentMethodRef *ReferenceType             `json:"PaymentMethodRef,omitempty" url:"PaymentMethodRef,omitempty"`
+	ShipAddr         *PhysicalAddress           `json:"ShipAddr,omitempty" url:"ShipAddr,omitempty"`
+	DepartmentRef    *ReferenceType             `json:"DepartmentRef,omitempty" url:"DepartmentRef,omitempty"`
+	// Email status of the credit memo.
+	EmailStatus *string          `json:"EmailStatus,omitempty" url:"EmailStatus,omitempty"`
+	BillAddr    *PhysicalAddress `json:"BillAddr,omitempty" url:"BillAddr,omitempty"`
+	// Home balance of the credit memo.
+	HomeBalance *float64 `json:"HomeBalance,omitempty" url:"HomeBalance,omitempty"`
+	// Remaining credit of the credit memo.
+	RemainingCredit *float64       `json:"RemainingCredit,omitempty" url:"RemainingCredit,omitempty"`
+	RecurDataRef    *ReferenceType `json:"RecurDataRef,omitempty" url:"RecurDataRef,omitempty"`
+	TaxExemptionRef *ReferenceType `json:"TaxExemptionRef,omitempty" url:"TaxExemptionRef,omitempty"`
+	// Balance of the credit memo.
+	Balance *float64 `json:"Balance,omitempty" url:"Balance,omitempty"`
+	// Home total amount of the credit memo.
+	HomeTotalAmt *float64 `json:"HomeTotalAmt,omitempty" url:"HomeTotalAmt,omitempty"`
+	// Individual line items of a transaction. Valid Line types include SalesItemLine, GroupLine, DescriptionOnlyLine (also used for inline Subtotal lines), DiscountLine and SubTotalLine (used for the overall transaction)
+	Line []*InvoiceLineItem `json:"Line,omitempty" url:"Line,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (r *RefundReceipt) GetExtraProperties() map[string]interface{} {
+	return r.extraProperties
+}
+
+func (r *RefundReceipt) UnmarshalJSON(data []byte) error {
+	type embed RefundReceipt
+	var unmarshaler = struct {
+		embed
+		TxnDate *core.DateTime `json:"TxnDate,omitempty"`
+	}{
+		embed: embed(*r),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
+		return err
+	}
+	*r = RefundReceipt(unmarshaler.embed)
+	r.TxnDate = unmarshaler.TxnDate.TimePtr()
+
+	extraProperties, err := core.ExtractExtraProperties(data, *r)
+	if err != nil {
+		return err
+	}
+	r.extraProperties = extraProperties
+
+	r._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (r *RefundReceipt) MarshalJSON() ([]byte, error) {
+	type embed RefundReceipt
+	var marshaler = struct {
+		embed
+		TxnDate *core.DateTime `json:"TxnDate,omitempty"`
+	}{
+		embed:   embed(*r),
+		TxnDate: core.NewOptionalDateTime(r.TxnDate),
+	}
+	return json.Marshal(marshaler)
+}
+
+func (r *RefundReceipt) String() string {
+	if len(r._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(r._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(r); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", r)
+}
+
+// Customer memo of the credit memo.
+type RefundReceiptCustomerMemo struct {
+	// Value of the customer memo.
+	Value *string `json:"value,omitempty" url:"value,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (r *RefundReceiptCustomerMemo) GetExtraProperties() map[string]interface{} {
+	return r.extraProperties
+}
+
+func (r *RefundReceiptCustomerMemo) UnmarshalJSON(data []byte) error {
+	type unmarshaler RefundReceiptCustomerMemo
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*r = RefundReceiptCustomerMemo(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *r)
+	if err != nil {
+		return err
+	}
+	r.extraProperties = extraProperties
+
+	r._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (r *RefundReceiptCustomerMemo) String() string {
 	if len(r._rawJSON) > 0 {
 		if value, err := core.StringifyJSON(r._rawJSON); err == nil {
 			return value

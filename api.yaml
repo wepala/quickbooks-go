@@ -1007,95 +1007,18 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                Id:
-                  type: string
-                  example: '160'
-                SyncToken:
-                  type: string
-                  example: '2'
-            examples:
-              CreditMemo-Create:
-                value:
-                  CustomerRef:
-                    name: CoolCars
-                    value: '3'
-                  Line:
-                    - Amount: 50
-                      DetailType: SalesItemLineDetail
-                      SalesItemLineDetail:
-                        ItemRef:
-                          name: Concrete
-                          value: '3'
-              CreditMemo-Delete:
-                value:
-                  Id: '160'
-                  SyncToken: '2'
-              CreditMemo-Update:
-                value:
-                  ApplyTaxAfterDiscount: false
-                  Balance: 50
-                  BillAddr:
-                    City: Half Moon Bay
-                    CountrySubDivisionCode: CA
-                    Id: '4'
-                    Lat: '37.4300318'
-                    Line1: 65 Ocean Dr.
-                    Long: '-122.4336537'
-                    PostalCode: '94213'
-                  CurrencyRef:
-                    name: United States Dollar
-                    value: USD
-                  CustomField:
-                    - DefinitionId: '1'
-                      Name: 'Crew #'
-                      Type: StringType
-                  CustomerRef:
-                    name: Cool Cars
-                    value: '3'
-                  DocNumber: 1040-Updated
-                  EmailStatus: NotSet
-                  ExchangeRate: 1
-                  HomeTotalAmt: 50
-                  Id: '160'
-                  Line:
-                    - Amount: 50
-                      DetailType: SalesItemLineDetail
-                      Id: '1'
-                      LineNum: 1
-                      SalesItemLineDetail:
-                        ItemRef:
-                          name: Concrete
-                          value: '3'
-                        TaxCodeRef:
-                          value: NON
-                    - Amount: 50
-                      DetailType: SubTotalLineDetail
-                      SubTotalLineDetail: { }
-                  MetaData:
-                    CreateTime: '2016-08-18T13:09:52-07:00'
-                    LastUpdatedTime: '2016-08-18T13:09:52-07:00'
-                  PrintStatus: NeedToPrint
-                  RemainingCredit: 50
-                  ShipAddr:
-                    City: Half Moon Bay
-                    CountrySubDivisionCode: CA
-                    Id: '4'
-                    Lat: '37.4300318'
-                    Line1: 65 Ocean Dr.
-                    Long: '-122.4336537'
-                    PostalCode: '94213'
-                  SyncToken: '0'
-                  TotalAmt: 50
-                  TxnDate: '2016-08-18'
-                  TxnTaxDetail:
-                    TotalTax: 0
-                  domain: QBO
-                  sparse: false
+              $ref: '#/components/schemas/CreditMemo'
+
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  CreditMemo:
+                    $ref: '#/components/schemas/CreditMemo'
     parameters:
       - name: companyid
         in: path
@@ -1401,58 +1324,17 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                Id:
-                  type: string
-                  example: '162'
-                SyncToken:
-                  type: string
-                  example: '1'
-            examples:
-              Deposit-Create:
-                value:
-                  DepositToAccountRef:
-                    name: Checking
-                    value: '35'
-                  Line:
-                    - Amount: 20
-                      DepositLineDetail:
-                        AccountRef:
-                          name: Unapplied Cash Payment Income
-                          value: '87'
-                      DetailType: DepositLineDetail
-              Deposit-Delete:
-                value:
-                  Id: '162'
-                  SyncToken: '1'
-              Deposit-Update:
-                value:
-                  CurrencyRef:
-                    name: United States Dollar
-                    value: USD
-                  DepositToAccountRef:
-                    name: Checking
-                    value: '35'
-                  ExchangeRate: 1
-                  Id: '162'
-                  Line:
-                    - Amount: 205
-                      DepositLineDetail:
-                        AccountRef:
-                          name: Unapplied Cash Payment Income
-                          value: '87'
-                      DetailType: DepositLineDetail
-                      Id: '1'
-                      LineNum: 1
-                  SyncToken: '0'
-                  TotalAmt: 205
-                  TxnDate: '2016-08-18'
-                  domain: QBO
-                  sparse: false
+              $ref: '#/components/schemas/Deposit'
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Deposit:
+                    $ref: '#/components/schemas/Deposit'
     parameters:
       - name: companyid
         in: path
@@ -2015,78 +1897,22 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                Id:
-                  type: string
-                  example: '167'
-                SyncToken:
-                  type: string
-                  example: '0'
-            examples:
-              JournalEntry-Create:
-                value:
-                  Line:
-                    - Amount: 100
-                      Description: nov portion of rider insurance
-                      DetailType: JournalEntryLineDetail
-                      Id: '0'
-                      JournalEntryLineDetail:
-                        AccountRef:
-                          name: Opening Bal Equity
-                          value: '39'
-                        PostingType: Debit
-                    - Amount: 100
-                      Description: nov portion of rider insurance
-                      DetailType: JournalEntryLineDetail
-                      JournalEntryLineDetail:
-                        AccountRef:
-                          name: Notes Payable
-                          value: '44'
-                        PostingType: Credit
-              JournalEntry-Delete:
-                value:
-                  Id: '167'
-                  SyncToken: '0'
-              JournalEntry-Update:
-                value:
-                  Adjustment: false
-                  CurrencyRef:
-                    name: United States Dollar
-                    value: USD
-                  ExchangeRate: 1
-                  Id: '167'
-                  Line:
-                    - Amount: 100
-                      Description: nov portion of rider insurance-updated
-                      DetailType: JournalEntryLineDetail
-                      Id: '0'
-                      JournalEntryLineDetail:
-                        AccountRef:
-                          name: Truck:Depreciation
-                          value: '39'
-                        PostingType: Debit
-                    - Amount: 100
-                      Description: nov portion of rider insurance-updated
-                      DetailType: JournalEntryLineDetail
-                      Id: '1'
-                      JournalEntryLineDetail:
-                        AccountRef:
-                          name: Notes Payable
-                          value: '44'
-                        PostingType: Credit
-                  SyncToken: '0'
-                  TxnDate: '2016-08-19'
-                  TxnTaxDetail: { }
-                  domain: QBO
-                  sparse: false
+              $ref: '#/components/schemas/JournalEntry'
+
       responses:
         '200':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/JournalEntry'
+                type: object
+                properties:
+                  time:
+                    type: string
+                    example: '2016-08-18T16:04:16-07:00'
+                    format: date-time
+                  JournalEntry:
+                    $ref: '#/components/schemas/JournalEntry'
     parameters:
       - name: companyid
         in: path
@@ -3116,77 +2942,17 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                Id:
-                  type: string
-                  example: '180'
-                SyncToken:
-                  type: string
-                  example: '1'
-            examples:
-              RefundReceipt-Create:
-                value:
-                  DepositToAccountRef:
-                    name: Checking
-                    value: '35'
-                  Line:
-                    - Amount: 420
-                      DetailType: SalesItemLineDetail
-                      SalesItemLineDetail:
-                        ItemRef:
-                          value: '2'
-              RefundReceipt-Delete:
-                value:
-                  Id: '180'
-                  SyncToken: '1'
-              RefundReceipt-Update:
-                value:
-                  ApplyTaxAfterDiscount: false
-                  Balance: 0
-                  CurrencyRef:
-                    name: United States Dollar
-                    value: USD
-                  CustomField:
-                    - DefinitionId: '1'
-                      Name: 'Crew #'
-                      Type: StringType
-                  DepositToAccountRef:
-                    name: Checking
-                    value: '35'
-                  DocNumber: 1044-Updated
-                  ExchangeRate: 1
-                  HomeTotalAmt: 420
-                  Id: '180'
-                  Line:
-                    - Amount: 420
-                      DetailType: SalesItemLineDetail
-                      Id: '1'
-                      LineNum: 1
-                      SalesItemLineDetail:
-                        ItemRef:
-                          name: Hours
-                          value: '2'
-                        TaxCodeRef:
-                          value: NON
-                    - Amount: 420
-                      DetailType: SubTotalLineDetail
-                      SubTotalLineDetail: { }
-                  MetaData:
-                    CreateTime: '2016-08-23T23:38:22-07:00'
-                    LastUpdatedTime: '2016-08-23T23:38:22-07:00'
-                  PaymentRefNum: To Print
-                  PrintStatus: NeedToPrint
-                  SyncToken: '0'
-                  TotalAmt: 420
-                  TxnDate: '2016-08-23'
-                  TxnTaxDetail:
-                    TotalTax: 0
-                  domain: QBO
-                  sparse: false
+              $ref: '#/components/schemas/RefundReceipt'
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                    RefundReceipt:
+                        $ref: '#/components/schemas/RefundReceipt'
     parameters:
       - name: companyid
         in: path
@@ -5124,6 +4890,83 @@ components:
         domain:
           type: string
           description: Domain of the class.
+    CreditMemo:
+      type: object
+      properties:
+        Id:
+          type: string
+          description: Unique identifier for this object. Sort order is ASC by default.
+        TxnDate:
+          type: string
+          description: Transaction Date
+          format: date-time
+        SyncToken:
+          type: string
+          description: Version number of the object. It is used to lock the object for use by one app at a time.
+        domain:
+          type: string
+          description: Domain of the class.
+        PrintStatus:
+          type: string
+          description: Print status of the credit memo.
+        TotalAmt:
+          type: number
+          description: Total amount of the credit memo.
+        ClassRef:
+          $ref: '#/components/schemas/ReferenceType'
+        SalesTermRef:
+          $ref: '#/components/schemas/ReferenceType'
+        CustomerRef:
+          $ref: '#/components/schemas/ReferenceType'
+        DocNumber:
+          type: string
+          description: Document number of the credit memo.
+        PrivateNote:
+          type: string
+          description: Private note of the credit memo.
+        CustomerMemo:
+          type: object
+          description: Customer memo of the credit memo.
+          properties:
+            value:
+              type: string
+              description: Value of the customer memo.
+        PaymentMethodRef:
+          $ref: '#/components/schemas/ReferenceType'
+        ShipAddr:
+          $ref: '#/components/schemas/PhysicalAddress'
+        DepartmentRef:
+          $ref: '#/components/schemas/ReferenceType'
+        EmailStatus:
+          type: string
+          description: Email status of the credit memo.
+        BillAddr:
+          $ref: '#/components/schemas/PhysicalAddress'
+        HomeBalance:
+          type: number
+          description: Home balance of the credit memo.
+        RemainingCredit:
+          type: number
+          description: Remaining credit of the credit memo.
+        RecurDataRef:
+          $ref: '#/components/schemas/ReferenceType'
+        TaxExemptionRef:
+          $ref: '#/components/schemas/ReferenceType'
+        Balance:
+          type: number
+          description: Balance of the credit memo.
+        HomeTotalAmt:
+          type: number
+          description: Home total amount of the credit memo.
+        Line:
+          type: array
+          description: >-
+            Individual line items of a transaction. Valid Line types include
+            SalesItemLine, GroupLine, DescriptionOnlyLine (also used for inline
+            Subtotal lines), DiscountLine and SubTotalLine (used for the overall
+            transaction)
+          items:
+            $ref: '#/components/schemas/InvoiceLineItem'
     ItemResponse:
       type: object
       properties:
@@ -5462,6 +5305,88 @@ components:
           $ref: '#/components/schemas/ProfitAndLossItem'
         income:
           $ref: '#/components/schemas/ProfitAndLossItem'
+    RefundReceipt:
+      type: object
+      properties:
+        Id:
+          type: string
+          description: Unique identifier for this object. Sort order is ASC by default.
+        DepositToAccountRef:
+          $ref: '#/components/schemas/ReferenceType'
+        TxnDate:
+          type: string
+          description: Transaction Date
+          format: date-time
+        SyncToken:
+          type: string
+          description: Version number of the object. It is used to lock the object for use by one app at a time.
+        domain:
+          type: string
+          description: Domain of the class.
+        PaymentRefNum:
+          type: string
+          description: Payment reference number of the refund receipt.
+        PrintStatus:
+          type: string
+          description: Print status of the credit memo.
+        TotalAmt:
+          type: number
+          description: Total amount of the credit memo.
+        ClassRef:
+          $ref: '#/components/schemas/ReferenceType'
+        SalesTermRef:
+          $ref: '#/components/schemas/ReferenceType'
+        CustomerRef:
+          $ref: '#/components/schemas/ReferenceType'
+        DocNumber:
+          type: string
+          description: Document number of the credit memo.
+        PrivateNote:
+          type: string
+          description: Private note of the credit memo.
+        CustomerMemo:
+          type: object
+          description: Customer memo of the credit memo.
+          properties:
+            value:
+              type: string
+              description: Value of the customer memo.
+        PaymentMethodRef:
+          $ref: '#/components/schemas/ReferenceType'
+        ShipAddr:
+          $ref: '#/components/schemas/PhysicalAddress'
+        DepartmentRef:
+          $ref: '#/components/schemas/ReferenceType'
+        EmailStatus:
+          type: string
+          description: Email status of the credit memo.
+        BillAddr:
+          $ref: '#/components/schemas/PhysicalAddress'
+        HomeBalance:
+          type: number
+          description: Home balance of the credit memo.
+        RemainingCredit:
+          type: number
+          description: Remaining credit of the credit memo.
+        RecurDataRef:
+          $ref: '#/components/schemas/ReferenceType'
+        TaxExemptionRef:
+          $ref: '#/components/schemas/ReferenceType'
+        Balance:
+          type: number
+          description: Balance of the credit memo.
+        HomeTotalAmt:
+          type: number
+          description: Home total amount of the credit memo.
+        Line:
+          type: array
+          description: >-
+            Individual line items of a transaction. Valid Line types include
+            SalesItemLine, GroupLine, DescriptionOnlyLine (also used for inline
+            Subtotal lines), DiscountLine and SubTotalLine (used for the overall
+            transaction)
+          items:
+            $ref: '#/components/schemas/InvoiceLineItem'
     Report:
       type: object
       properties:
@@ -6193,6 +6118,107 @@ components:
       required:
         - "Line"
         - "CustomerRef"
+    Deposit:
+      type: object
+      properties:
+        Id:
+          type: string
+          description: Unique identifier for this object. Sort order is ASC by default.
+        Line:
+          type: array
+          description: >-
+            Individual line items of a transaction. Valid Line types include
+            SalesItemLine, GroupLine, DescriptionOnlyLine (also used for inline
+            Subtotal lines), DiscountLine and SubTotalLine (used for the overall
+            transaction)
+          items:
+            $ref: '#/components/schemas/DepositLine'
+        SyncToken:
+          type: string
+          description: >-
+            Version number of the object. It is used to lock an object for use
+            by one app at a time. As soon as an application modifies an object,
+            its SyncToken is incremented. Attempts to modify an object
+            specifying an older SyncToken fails. Only the latest version of the
+            object is maintained by QuickBooks Online.
+        CurrencyRef:
+          type: object
+          description: >-
+            Reference to the currency in which all amounts on the associated
+            transaction are expressed. This must be defined if multicurrency is
+            enabled for the company. Multicurrency is enabled for the company if
+            Preferences.MultiCurrencyEnabled is set to true. Read more about
+            multicurrency support here. Applicable if multicurrency is enabled
+            for the company.
+          $ref: '#/components/schemas/CurrencyRefType'
+        DepositToAccountRef:
+          $ref: '#/components/schemas/ReferenceType'
+    DepositLine:
+      type: object
+      properties:
+        Id:
+          type: string
+          description: Unique identifier for this object. Sort order is ASC by default.
+        DetailType:
+          type: string
+          enum:
+            - DepositLineDetail
+        DepositLineDetail:
+          type: object
+          properties:
+            AccountRef:
+              $ref: '#/components/schemas/ReferenceType'
+            PaymentMethodRef:
+              $ref: '#/components/schemas/ReferenceType'
+            ClassRef:
+              $ref: '#/components/schemas/ReferenceType'
+            CheckNum:
+              type: string
+              description: The check number of the deposit line.
+            TaxCodeRef:
+              $ref: '#/components/schemas/ReferenceType'
+            TxnType:
+              type: string
+              description: The type of transaction. Valid values include Payment, SalesReceipt, and JournalEntry.
+              enum:
+                - APCreditCard
+                - ARRefundCreditCard
+                - Bill
+                - BillPaymentCheck
+                - BuildAssembly
+                - CarryOver
+                - Charge
+                - Check
+                - CreditMemo
+                - Deposit
+                - EFPLiabilityCheck
+                - EFTBillPayment
+                - EFTRefund
+                - Estimate
+                - InventoryAdjustment
+                - InventoryTransfer
+                - Invoice
+                - ItemReceipt
+                - JournalEntry
+            Entity:
+              $ref: '#/components/schemas/ReferenceType'
+            Project:
+              $ref: '#/components/schemas/ReferenceType'
+            Description:
+              type: string
+              description: A description of the deposit line
+        Amount:
+          type: number
+          description: The amount of the deposit line.
+        ProjectRef:
+          $ref: '#/components/schemas/ReferenceType'
+        Description:
+          type: string
+          description: A description of the deposit line
+        LineNum:
+          type: number
+          description: The line number of the deposit line.
+
 
     SalesItemLineDetail:
       type: object

@@ -37,7 +37,7 @@ func (c *Client) Create(
 	companyid string,
 	request *api.JournalentryCreateRequest,
 	opts ...option.RequestOption,
-) (*api.JournalEntry, error) {
+) (*api.JournalentryCreateResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://quickbooks.api.intuit.com"
@@ -59,7 +59,7 @@ func (c *Client) Create(
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
-	var response *api.JournalEntry
+	var response *api.JournalentryCreateResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{

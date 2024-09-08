@@ -2,8 +2,67 @@
 
 package api
 
+import (
+	json "encoding/json"
+	fmt "fmt"
+	core "github.com/wepala/quickbooks-go/api/core"
+)
+
 type RefundreceiptCreateRequest struct {
-	Operation *string `json:"-" url:"operation,omitempty"`
-	Id        *string `json:"Id,omitempty" url:"-"`
-	SyncToken *string `json:"SyncToken,omitempty" url:"-"`
+	Operation *string        `json:"-" url:"operation,omitempty"`
+	Body      *RefundReceipt `json:"-" url:"-"`
+}
+
+func (r *RefundreceiptCreateRequest) UnmarshalJSON(data []byte) error {
+	body := new(RefundReceipt)
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+	r.Body = body
+	return nil
+}
+
+func (r *RefundreceiptCreateRequest) MarshalJSON() ([]byte, error) {
+	return json.Marshal(r.Body)
+}
+
+type RefundreceiptCreateResponse struct {
+	RefundReceipt *RefundReceipt `json:"RefundReceipt,omitempty" url:"RefundReceipt,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (r *RefundreceiptCreateResponse) GetExtraProperties() map[string]interface{} {
+	return r.extraProperties
+}
+
+func (r *RefundreceiptCreateResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler RefundreceiptCreateResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*r = RefundreceiptCreateResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *r)
+	if err != nil {
+		return err
+	}
+	r.extraProperties = extraProperties
+
+	r._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (r *RefundreceiptCreateResponse) String() string {
+	if len(r._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(r._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(r); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", r)
 }
