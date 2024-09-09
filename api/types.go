@@ -1535,6 +1535,8 @@ type DepositLine struct {
 	Description *string `json:"Description,omitempty" url:"Description,omitempty"`
 	// The line number of the deposit line.
 	LineNum *float64 `json:"LineNum,omitempty" url:"LineNum,omitempty"`
+	// Zero or more related transactions to this Deposit object. The following linked relationships are supported- Links to Estimate and TimeActivity objects can be established directly to this Deposit object with UI or with the API. Create, Read, Update, and Query operations are avaialble at the API level for these types of links. Only one link can be made to an Estimate. Progress Invoicing is not supported via the API. Links to expenses incurred on behalf of the customer are returned in the response with LinkedTxn.TxnType set to ReimburseCharge, ChargeCredit or StatementCharge corresponding to billable customer expenses of type Cash, Delayed Credit, and Delayed Charge, respectively. Links to these types of transactions are established within the QuickBooks UI, only, and are available as read-only at the API level. Links to payments applied to an Deposit object are returned in the response with LinkedTxn.TxnType set to Payment. Links to Payment transactions are established within the QuickBooks UI, only, and are available as read-only at the API level. Use LinkedTxn.TxnId as the ID in a separate read request for the specific resource to retrieve details of the linked object.
+	LinkedTxn []*LinkedTxn `json:"LinkedTxn,omitempty" url:"LinkedTxn,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage
