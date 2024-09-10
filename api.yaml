@@ -1057,118 +1057,18 @@ paths:
         Create a customer
         Method : POST
       operationId: customerCreate
+      parameters:
+        - name: operation
+          in: query
+          required: false
+          schema:
+            type: string
+            example: delete
       requestBody:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                DisplayName:
-                  type: string
-                  example: King's Groceries1
-                Suffix:
-                  type: string
-                  example: Jr.
-                Title:
-                  type: string
-                  example: Mr.
-                MiddleName:
-                  type: string
-                  example: B
-                FamilyName:
-                  type: string
-                  example: Drew
-                GivenName:
-                  type: string
-                  example: John
-                PrimaryEmailAddr:
-                  type: object
-                  properties:
-                    Address:
-                      type: string
-                      example:
-                Notes:
-                  type: string
-                  example: Here are other details.
-                PrimaryPhone:
-                  type: object
-                  properties:
-                    FreeFormNumber:
-                      type: string
-                      example: (555) 555-5555
-                BillAddr:
-                  type: object
-                  properties:
-                    Line1:
-                      type: string
-                      example: 123 Main Street
-                    City:
-                      type: string
-                      example: Mountain View
-                    Country:
-                      type: string
-                      example: USA
-                    CountrySubDivisionCode:
-                      type: string
-                      example: CA
-                    PostalCode:
-                      type: string
-                      example: '94042'
-            examples:
-              Customer-Create:
-                value:
-                  BillAddr:
-                    City: Mountain View
-                    Country: USA
-                    CountrySubDivisionCode: CA
-                    Line1: 123 Main Street
-                    PostalCode: '94042'
-                  DisplayName: King's Groceries1
-                  Notes: Here are other details.
-                  PrimaryEmailAddr:
-                    Address: jdrew@myemail.com
-                  PrimaryPhone:
-                    FreeFormNumber: (555) 555-5555
-              Customer-Delete:
-                value:
-                  Active: false
-                  Id: '67'
-                  SyncToken: '0'
-                  domain: QBO
-                  sparse: true
-              Customer-Update:
-                value:
-                  Active: true
-                  Balance: 0
-                  BalanceWithJobs: 0
-                  BillAddr:
-                    City: Mountain View
-                    Country: USA
-                    CountrySubDivisionCode: CA
-                    Id: '100'
-                    Line1: 123 Main Street
-                    PostalCode: '94042'
-                  BillWithParent: false
-                  CurrencyRef:
-                    name: United States Dollar
-                    value: USD
-                  DefaultTaxCodeRef:
-                    value: '2'
-                  DisplayName: King's Groceries-Updated
-                  FullyQualifiedName: King's Groceries-Updated
-                  Id: '63'
-                  Job: false
-                  Notes: Here are other details.
-                  PreferredDeliveryMethod: Print
-                  PrimaryEmailAddr:
-                    Address: jdrew@myemail.com
-                  PrimaryPhone:
-                    FreeFormNumber: (555) 555-5555
-                  PrintOnCheckName: King's Groceries1
-                  SyncToken: '2'
-                  Taxable: true
-                  domain: QBO
-                  sparse: false
+                $ref: '#/components/schemas/Customer'
       responses:
         '200':
           description: ''
@@ -1831,6 +1731,12 @@ paths:
             type: string
             example: '1'
             default: "73"
+        - name: operation
+          in: query
+          required: false
+          schema:
+            type: string
+            example: delete
       requestBody:
         content:
           application/json:

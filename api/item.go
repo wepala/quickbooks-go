@@ -8,6 +8,7 @@ import (
 
 type ItemCreateRequest struct {
 	Minorversion *string `json:"-" url:"minorversion,omitempty"`
+	Operation    *string `json:"-" url:"operation,omitempty"`
 	Body         *Item   `json:"-" url:"-"`
 }
 
