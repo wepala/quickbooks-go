@@ -1482,8 +1482,10 @@ type Deposit struct {
 	// Version number of the object. It is used to lock an object for use by one app at a time. As soon as an application modifies an object, its SyncToken is incremented. Attempts to modify an object specifying an older SyncToken fails. Only the latest version of the object is maintained by QuickBooks Online.
 	SyncToken *string `json:"SyncToken,omitempty" url:"SyncToken,omitempty"`
 	// Reference to the currency in which all amounts on the associated transaction are expressed. This must be defined if multicurrency is enabled for the company. Multicurrency is enabled for the company if Preferences.MultiCurrencyEnabled is set to true. Read more about multicurrency support here. Applicable if multicurrency is enabled for the company.
-	CurrencyRef         *CurrencyRefType `json:"CurrencyRef,omitempty" url:"CurrencyRef,omitempty"`
-	DepositToAccountRef *ReferenceType   `json:"DepositToAccountRef,omitempty" url:"DepositToAccountRef,omitempty"`
+	CurrencyRef *CurrencyRefType `json:"CurrencyRef,omitempty" url:"CurrencyRef,omitempty"`
+	// User entered, organization-private note about the transaction. This note does not appear on the invoice to the customer. This field maps to the Statement Memo field on the Invoice form in the QuickBooks Online UI.
+	PrivateNote         *string        `json:"PrivateNote,omitempty" url:"PrivateNote,omitempty"`
+	DepositToAccountRef *ReferenceType `json:"DepositToAccountRef,omitempty" url:"DepositToAccountRef,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage
