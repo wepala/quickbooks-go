@@ -4935,6 +4935,19 @@ components:
             LastUpdatedTime:
               type: string
               description: Date and time when the item was last updated.
+    EntityType:
+      type: object
+      description: Entity type
+      properties:
+        Type:
+          type: string
+          description: Type of the entity.
+          enum:
+            - Vendor
+            - Employee
+            - Customer
+        EntityRef:
+          $ref: '#/components/schemas/ReferenceType'
     ReferenceType:
       type: object
       description: Reference type
@@ -4958,7 +4971,7 @@ components:
         AccountRef:
           $ref: '#/components/schemas/ReferenceType'
         Entity:
-            $ref: '#/components/schemas/ReferenceType'
+            $ref: '#/components/schemas/EntityType'
         ClassRef:
             $ref: '#/components/schemas/ReferenceType'
         DepartmentRef:

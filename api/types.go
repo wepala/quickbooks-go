@@ -1794,6 +1794,76 @@ func (e *EmailAddress) String() string {
 	return fmt.Sprintf("%#v", e)
 }
 
+// Entity type
+type EntityType struct {
+	// Type of the entity.
+	Type      *EntityTypeType `json:"Type,omitempty" url:"Type,omitempty"`
+	EntityRef *ReferenceType  `json:"EntityRef,omitempty" url:"EntityRef,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (e *EntityType) GetExtraProperties() map[string]interface{} {
+	return e.extraProperties
+}
+
+func (e *EntityType) UnmarshalJSON(data []byte) error {
+	type unmarshaler EntityType
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = EntityType(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+
+	e._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *EntityType) String() string {
+	if len(e._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(e._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
+// Type of the entity.
+type EntityTypeType string
+
+const (
+	EntityTypeTypeVendor   EntityTypeType = "Vendor"
+	EntityTypeTypeEmployee EntityTypeType = "Employee"
+	EntityTypeTypeCustomer EntityTypeType = "Customer"
+)
+
+func NewEntityTypeTypeFromString(s string) (EntityTypeType, error) {
+	switch s {
+	case "Vendor":
+		return EntityTypeTypeVendor, nil
+	case "Employee":
+		return EntityTypeTypeEmployee, nil
+	case "Customer":
+		return EntityTypeTypeCustomer, nil
+	}
+	var t EntityTypeType
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (e EntityTypeType) Ptr() *EntityTypeType {
+	return &e
+}
+
 type Estimate struct {
 	// Unique identifier for this object. Sort order is ASC by default.
 	Id *string `json:"Id,omitempty" url:"Id,omitempty"`
@@ -2816,7 +2886,7 @@ type JournalEntryLineItemDetail struct {
 	// Posting type
 	PostingType   *string        `json:"PostingType,omitempty" url:"PostingType,omitempty"`
 	AccountRef    *ReferenceType `json:"AccountRef,omitempty" url:"AccountRef,omitempty"`
-	Entity        *ReferenceType `json:"Entity,omitempty" url:"Entity,omitempty"`
+	Entity        *EntityType    `json:"Entity,omitempty" url:"Entity,omitempty"`
 	ClassRef      *ReferenceType `json:"ClassRef,omitempty" url:"ClassRef,omitempty"`
 	DepartmentRef *ReferenceType `json:"DepartmentRef,omitempty" url:"DepartmentRef,omitempty"`
 	TaxCodeRef    *ReferenceType `json:"TaxCodeRef,omitempty" url:"TaxCodeRef,omitempty"`
