@@ -238,6 +238,30 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/Class'
+                      Invoice:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Invoice'
+                      SalesReceipt:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Invoice'
+                      Customer:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Customer'
+                      Payment:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Payment'
+                      RefundReceipt:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/RefundReceipt'
+                      Vendor:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Vendor'
     parameters:
       - name: companyid
         in: path
@@ -4801,7 +4825,7 @@ components:
           type: string
           description: Name of the class.
         SubClass:
-          type: string
+          type: boolean
           description: Subclass of the class.
         FullyQualifiedName:
           type: string

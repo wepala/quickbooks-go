@@ -927,7 +927,7 @@ type Class struct {
 	// Name of the class.
 	Name *string `json:"Name,omitempty" url:"Name,omitempty"`
 	// Subclass of the class.
-	SubClass *string `json:"SubClass,omitempty" url:"SubClass,omitempty"`
+	SubClass *bool `json:"SubClass,omitempty" url:"SubClass,omitempty"`
 	// Fully qualified name of the class.
 	FullyQualifiedName *string `json:"FullyQualifiedName,omitempty" url:"FullyQualifiedName,omitempty"`
 	// Whether the class is active.
@@ -5816,8 +5816,14 @@ func (p *PreferenceUpdateRequestVendorAndPurchasesPrefsPoCustomFieldItemCustomFi
 }
 
 type AccountReadallResponseQueryResponse struct {
-	Account []*AccountResponse `json:"Account,omitempty" url:"Account,omitempty"`
-	Class   []*Class           `json:"Class,omitempty" url:"Class,omitempty"`
+	Account       []*AccountResponse `json:"Account,omitempty" url:"Account,omitempty"`
+	Class         []*Class           `json:"Class,omitempty" url:"Class,omitempty"`
+	Invoice       []*Invoice         `json:"Invoice,omitempty" url:"Invoice,omitempty"`
+	SalesReceipt  []*Invoice         `json:"SalesReceipt,omitempty" url:"SalesReceipt,omitempty"`
+	Customer      []*Customer        `json:"Customer,omitempty" url:"Customer,omitempty"`
+	Payment       []*Payment         `json:"Payment,omitempty" url:"Payment,omitempty"`
+	RefundReceipt []*RefundReceipt   `json:"RefundReceipt,omitempty" url:"RefundReceipt,omitempty"`
+	Vendor        []*Vendor          `json:"Vendor,omitempty" url:"Vendor,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage

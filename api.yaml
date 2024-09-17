@@ -4825,7 +4825,7 @@ components:
           type: string
           description: Name of the class.
         SubClass:
-          type: string
+          type: boolean
           description: Subclass of the class.
         FullyQualifiedName:
           type: string
