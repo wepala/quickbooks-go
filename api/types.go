@@ -4757,6 +4757,7 @@ type SalesItemLineDetail struct {
 	// The price of a single unit of the item.
 	UnitPrice *float64       `json:"UnitPrice,omitempty" url:"UnitPrice,omitempty"`
 	ItemRef   *ReferenceType `json:"ItemRef,omitempty" url:"ItemRef,omitempty"`
+	ClassRef  *ReferenceType `json:"ClassRef,omitempty" url:"ClassRef,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage
