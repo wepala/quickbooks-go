@@ -222,6 +222,46 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  QueryResponse:
+                    type: object
+                    properties:
+                      Account:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/AccountResponse'
+                      Class:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Class'
+                      Invoice:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Invoice'
+                      SalesReceipt:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Invoice'
+                      Customer:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Customer'
+                      Payment:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Payment'
+                      RefundReceipt:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/RefundReceipt'
+                      Vendor:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Vendor'
     parameters:
       - name: companyid
         in: path
@@ -1068,7 +1108,7 @@ paths:
         content:
           application/json:
             schema:
-                $ref: '#/components/schemas/Customer'
+              $ref: '#/components/schemas/Customer'
       responses:
         '200':
           description: ''
@@ -2857,8 +2897,8 @@ paths:
               schema:
                 type: object
                 properties:
-                    RefundReceipt:
-                        $ref: '#/components/schemas/RefundReceipt'
+                  RefundReceipt:
+                    $ref: '#/components/schemas/RefundReceipt'
     parameters:
       - name: companyid
         in: path
@@ -4971,13 +5011,13 @@ components:
         AccountRef:
           $ref: '#/components/schemas/ReferenceType'
         Entity:
-            $ref: '#/components/schemas/EntityType'
+          $ref: '#/components/schemas/EntityType'
         ClassRef:
-            $ref: '#/components/schemas/ReferenceType'
+          $ref: '#/components/schemas/ReferenceType'
         DepartmentRef:
-            $ref: '#/components/schemas/ReferenceType'
+          $ref: '#/components/schemas/ReferenceType'
         TaxCodeRef:
-            $ref: '#/components/schemas/ReferenceType'
+          $ref: '#/components/schemas/ReferenceType'
         TaxAmount:
           type: number
           description: Tax amount of the line item.
@@ -6176,24 +6216,24 @@ components:
         LinkedTxn:
           type: array
           description: >-
-              Zero or more related transactions to this Deposit object. The
-              following linked relationships are supported- Links to Estimate and
-              TimeActivity objects can be established directly to this Deposit
-              object with UI or with the API. Create, Read, Update, and Query
-              operations are avaialble at the API level for these types of links.
-              Only one link can be made to an Estimate. Progress Invoicing is not
-              supported via the API. Links to expenses incurred on behalf of the
-              customer are returned in the response with LinkedTxn.TxnType set to
-              ReimburseCharge, ChargeCredit or StatementCharge corresponding to
-              billable customer expenses of type Cash, Delayed Credit, and Delayed
-              Charge, respectively. Links to these types of transactions are
-              established within the QuickBooks UI, only, and are available as
-              read-only at the API level. Links to payments applied to an Deposit
-              object are returned in the response with LinkedTxn.TxnType set to
-              Payment. Links to Payment transactions are established within the
-              QuickBooks UI, only, and are available as read-only at the API
-              level. Use LinkedTxn.TxnId as the ID in a separate read request for
-              the specific resource to retrieve details of the linked object.
+            Zero or more related transactions to this Deposit object. The
+            following linked relationships are supported- Links to Estimate and
+            TimeActivity objects can be established directly to this Deposit
+            object with UI or with the API. Create, Read, Update, and Query
+            operations are avaialble at the API level for these types of links.
+            Only one link can be made to an Estimate. Progress Invoicing is not
+            supported via the API. Links to expenses incurred on behalf of the
+            customer are returned in the response with LinkedTxn.TxnType set to
+            ReimburseCharge, ChargeCredit or StatementCharge corresponding to
+            billable customer expenses of type Cash, Delayed Credit, and Delayed
+            Charge, respectively. Links to these types of transactions are
+            established within the QuickBooks UI, only, and are available as
+            read-only at the API level. Links to payments applied to an Deposit
+            object are returned in the response with LinkedTxn.TxnType set to
+            Payment. Links to Payment transactions are established within the
+            QuickBooks UI, only, and are available as read-only at the API
+            level. Use LinkedTxn.TxnId as the ID in a separate read request for
+            the specific resource to retrieve details of the linked object.
 
 
           items:

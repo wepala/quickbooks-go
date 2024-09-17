@@ -37,7 +37,7 @@ func (c *Client) AccountReadall(
 	companyid string,
 	request *api.AccountReadallRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.AccountReadallResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://quickbooks.api.intuit.com"
@@ -51,7 +51,7 @@ func (c *Client) AccountReadall(
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
@@ -59,6 +59,7 @@ func (c *Client) AccountReadall(
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.AccountReadallResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -67,9 +68,10 @@ func (c *Client) AccountReadall(
 			MaxAttempts: options.MaxAttempts,
 			Headers:     headers,
 			Client:      options.HTTPClient,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return response, nil
 }

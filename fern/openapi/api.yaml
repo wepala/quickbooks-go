@@ -222,6 +222,22 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  QueryResponse:
+                    type: object
+                    properties:
+                      Account:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/AccountResponse'
+                      Class:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Class'
     parameters:
       - name: companyid
         in: path

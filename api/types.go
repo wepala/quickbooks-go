@@ -5814,3 +5814,45 @@ func (p *PreferenceUpdateRequestVendorAndPurchasesPrefsPoCustomFieldItemCustomFi
 	}
 	return fmt.Sprintf("%#v", p)
 }
+
+type AccountReadallResponseQueryResponse struct {
+	Account []*AccountResponse `json:"Account,omitempty" url:"Account,omitempty"`
+	Class   []*Class           `json:"Class,omitempty" url:"Class,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (a *AccountReadallResponseQueryResponse) GetExtraProperties() map[string]interface{} {
+	return a.extraProperties
+}
+
+func (a *AccountReadallResponseQueryResponse) UnmarshalJSON(data []byte) error {
+	type unmarshaler AccountReadallResponseQueryResponse
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*a = AccountReadallResponseQueryResponse(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *a)
+	if err != nil {
+		return err
+	}
+	a.extraProperties = extraProperties
+
+	a._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (a *AccountReadallResponseQueryResponse) String() string {
+	if len(a._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(a._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(a); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", a)
+}
