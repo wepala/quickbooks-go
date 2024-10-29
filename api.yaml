@@ -5193,6 +5193,45 @@ components:
                 value:
                   type: string
                   description: The value of the default terms.
+            ETransactionAttachPDF:
+              type: boolean
+              description: Whether to attach PDF in e-transaction.
+        OtherPrefs:
+          type: object
+          properties:
+            NameValue:
+              type: array
+              description: List of name value pairs.
+              items:
+                type: object
+                properties:
+                  Name:
+                    type: string
+                    description: Name of the preference.
+                  Value:
+                    type: string
+                    description: Value of the preference.
+        TaxPrefs:
+          type: object
+          properties:
+            UsingSalesTax:
+              type: boolean
+              description: Whether to use sales tax.
+            TaxGroupCodeRef:
+              $ref: '#/components/schemas/ReferenceType'
+            PartnerTaxEnabled:
+              type: boolean
+              description: Partner tax refers to the automated sales tax engine that provides sales tax compliance. All QuickBooks Online companies created after November 10, 2017 are enabled by default.
+        VendorAndPurchasesPrefs:
+          type: object
+          properties:
+            BillableExpenseTracking:
+              type: boolean
+              description: Whether to track billable expenses.
+            TrackingByCustomer:
+              type: boolean
+              description: Whether to track by customer.
+
     ProfitAndLossItemAccount:
       type: object
       properties:

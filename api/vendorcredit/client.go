@@ -30,14 +30,14 @@ func NewClient(opts ...option.RequestOption) *Client {
 	}
 }
 
-// Create a vendorcredit object
-// Method : POST
-func (c *Client) Create(
+// Get all customer records using generic 'Query' endpoint.
+// Method - POST
+func (c *Client) AccountReadall(
 	ctx context.Context,
 	companyid string,
-	request *api.VendorcreditCreateRequest,
+	request *api.AccountReadallRequest,
 	opts ...option.RequestOption,
-) error {
+) (*api.AccountReadallResponse, error) {
 	options := core.NewRequestOptions(opts...)
 
 	baseURL := "https://quickbooks.api.intuit.com"
@@ -47,11 +47,11 @@ func (c *Client) Create(
 	if options.BaseURL != "" {
 		baseURL = options.BaseURL
 	}
-	endpointURL := core.EncodeURL(baseURL+"/v3/company/%v/vendorcredit", companyid)
+	endpointURL := core.EncodeURL(baseURL+"/v3/company/%v/query", companyid)
 
 	queryParams, err := core.QueryValues(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if len(queryParams) > 0 {
 		endpointURL += "?" + queryParams.Encode()
@@ -59,6 +59,7 @@ func (c *Client) Create(
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 
+	var response *api.AccountReadallResponse
 	if err := c.caller.Call(
 		ctx,
 		&core.CallParams{
@@ -67,51 +68,10 @@ func (c *Client) Create(
 			MaxAttempts: options.MaxAttempts,
 			Headers:     headers,
 			Client:      options.HTTPClient,
-			Request:     request,
+			Response:    &response,
 		},
 	); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
-}
-
-// Read a vendorcredit object by Id
-// Method : GET
-// Please change the VendorCredit it from 165 to a valid VendorCredit objectId which exists in your QBO account
-func (c *Client) Readbyid(
-	ctx context.Context,
-	companyid string,
-	id string,
-	opts ...option.RequestOption,
-) error {
-	options := core.NewRequestOptions(opts...)
-
-	baseURL := "https://quickbooks.api.intuit.com"
-	if c.baseURL != "" {
-		baseURL = c.baseURL
-	}
-	if options.BaseURL != "" {
-		baseURL = options.BaseURL
-	}
-	endpointURL := core.EncodeURL(
-		baseURL+"/v3/company/%v/vendorcredit/%v",
-		companyid,
-		id,
-	)
-
-	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
-
-	if err := c.caller.Call(
-		ctx,
-		&core.CallParams{
-			URL:         endpointURL,
-			Method:      http.MethodGet,
-			MaxAttempts: options.MaxAttempts,
-			Headers:     headers,
-			Client:      options.HTTPClient,
-		},
-	); err != nil {
-		return err
-	}
-	return nil
+	return response, nil
 }
