@@ -35,6 +35,7 @@ func NewClient(opts ...option.RequestOption) *Client {
 func (c *Client) PreferenceRead(
 	ctx context.Context,
 	companyid string,
+	request *api.PreferenceReadRequest,
 	opts ...option.RequestOption,
 ) (*api.PreferenceReadResponse, error) {
 	options := core.NewRequestOptions(opts...)
@@ -47,6 +48,14 @@ func (c *Client) PreferenceRead(
 		baseURL = options.BaseURL
 	}
 	endpointURL := core.EncodeURL(baseURL+"/v3/company/%v/preferences", companyid)
+
+	queryParams, err := core.QueryValues(request)
+	if err != nil {
+		return nil, err
+	}
+	if len(queryParams) > 0 {
+		endpointURL += "?" + queryParams.Encode()
+	}
 
 	headers := core.MergeHeaders(c.header.Clone(), options.ToHeader())
 

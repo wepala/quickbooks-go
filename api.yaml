@@ -2065,6 +2065,19 @@ paths:
         Read the preference object
         Method : POST
       operationId: preferenceRead
+      parameters:
+        - name: operation
+          required: false
+          in: query
+          schema:
+            type: string
+            example: delete
+        - name: minorversion
+          in: query
+          schema:
+            type: string
+            example: '1'
+            default: "73"
       responses:
         '200':
           description: ''
