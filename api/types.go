@@ -1486,6 +1486,11 @@ type Deposit struct {
 	// User entered, organization-private note about the transaction. This note does not appear on the invoice to the customer. This field maps to the Statement Memo field on the Invoice form in the QuickBooks Online UI.
 	PrivateNote         *string        `json:"PrivateNote,omitempty" url:"PrivateNote,omitempty"`
 	DepositToAccountRef *ReferenceType `json:"DepositToAccountRef,omitempty" url:"DepositToAccountRef,omitempty"`
+	// The date entered by the user when this transaction occurred. yyyy/MM/dd is the valid date format. For posting transactions, this is the posting date that affects the financial statements. If the date is not supplied, the current date on the server is used. Sort order is ASC by default.
+	TxnDate *string `json:"TxnDate,omitempty" url:"TxnDate,omitempty"`
+	// Used internally to specify originating source of a credit card transaction.
+	TxnSource     *string        `json:"TxnSource,omitempty" url:"TxnSource,omitempty"`
+	DepartmentRef *ReferenceType `json:"DepartmentRef,omitempty" url:"DepartmentRef,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage

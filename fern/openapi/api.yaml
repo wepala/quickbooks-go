@@ -6200,6 +6200,21 @@ components:
             Online UI.
         DepositToAccountRef:
           $ref: '#/components/schemas/ReferenceType'
+        TxnDate:
+          type: string
+          description: >-
+            The date entered by the user when this transaction occurred.
+            yyyy/MM/dd is the valid date format. For posting transactions, this
+            is the posting date that affects the financial statements. If the
+            date is not supplied, the current date on the server is used. Sort
+            order is ASC by default.
+        TxnSource:
+          type: string
+          description: >-
+            Used internally to specify originating source of a credit card
+            transaction.
+        DepartmentRef:
+          $ref: '#/components/schemas/ReferenceType'
     DepositLine:
       type: object
       properties:
