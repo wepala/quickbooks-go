@@ -6384,6 +6384,15 @@ components:
             reference. Use Customer.Id and Customer.DisplayName from that object
             for CustomerRef.value and CustomerRef.name, respectively.
           $ref: '#/components/schemas/ReferenceType'
+        PaymentMethodRef:
+          type: object
+          description: >-
+            Reference to the payment method associated with the transaction.
+            Query the PaymentMethod name list resource to determine the
+            appropriate PaymentMethod object for this reference. Use
+            PaymentMethod.Id and PaymentMethod.Name from that object for
+            PaymentMethodRef.value and PaymentMethodRef.name, respectively.
+          $ref: '#/components/schemas/ReferenceType'
         SyncToken:
           type: string
           description: >-

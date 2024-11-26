@@ -2141,6 +2141,8 @@ type Invoice struct {
 	Line []*InvoiceLineItem `json:"Line,omitempty" url:"Line,omitempty"`
 	// Reference to a customer or job. Query the Customer name list resource to determine the appropriate Customer object for this reference. Use Customer.Id and Customer.DisplayName from that object for CustomerRef.value and CustomerRef.name, respectively.
 	CustomerRef *ReferenceType `json:"CustomerRef,omitempty" url:"CustomerRef,omitempty"`
+	// Reference to the payment method associated with the transaction. Query the PaymentMethod name list resource to determine the appropriate PaymentMethod object for this reference. Use PaymentMethod.Id and PaymentMethod.Name from that object for PaymentMethodRef.value and PaymentMethodRef.name, respectively.
+	PaymentMethodRef *ReferenceType `json:"PaymentMethodRef,omitempty" url:"PaymentMethodRef,omitempty"`
 	// Version number of the object. It is used to lock an object for use by one app at a time. As soon as an application modifies an object, its SyncToken is incremented. Attempts to modify an object specifying an older SyncToken fails. Only the latest version of the object is maintained by QuickBooks Online.
 	SyncToken *string `json:"SyncToken,omitempty" url:"SyncToken,omitempty"`
 	// Reference to the currency in which all amounts on the associated transaction are expressed. This must be defined if multicurrency is enabled for the company. Multicurrency is enabled for the company if Preferences.MultiCurrencyEnabled is set to true. Read more about multicurrency support here. Applicable if multicurrency is enabled for the company.
