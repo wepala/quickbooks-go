@@ -3372,6 +3372,462 @@ func (p *PaymentLineItem) Accept(visitor PaymentLineItemVisitor) error {
 	return fmt.Errorf("type %T does not include a non-empty union type", p)
 }
 
+type PaymentMethod struct {
+	// Unique identifier for this object. Sort order is ASC by default.
+	Id *string `json:"Id,omitempty" url:"Id,omitempty"`
+	// Name of the payment method.
+	Name *string `json:"Name,omitempty" url:"Name,omitempty"`
+	// Whether the payment method is active.
+	Active *bool `json:"Active,omitempty" url:"Active,omitempty"`
+	// Domain of the payment method.
+	Domain *string `json:"domain,omitempty" url:"domain,omitempty"`
+	// Type of the payment method.
+	Type *string `json:"Type,omitempty" url:"Type,omitempty"`
+	// Version number of the object. It is used to lock the object for use by one app at a time.
+	SyncToken               *string                               `json:"SyncToken,omitempty" url:"SyncToken,omitempty"`
+	AccountingInfoPrefs     *PaymentMethodAccountingInfoPrefs     `json:"AccountingInfoPrefs,omitempty" url:"AccountingInfoPrefs,omitempty"`
+	ProductAndServicesPrefs *PaymentMethodProductAndServicesPrefs `json:"ProductAndServicesPrefs,omitempty" url:"ProductAndServicesPrefs,omitempty"`
+	SalesFormsPrefs         *PaymentMethodSalesFormsPrefs         `json:"SalesFormsPrefs,omitempty" url:"SalesFormsPrefs,omitempty"`
+	OtherPrefs              *PaymentMethodOtherPrefs              `json:"OtherPrefs,omitempty" url:"OtherPrefs,omitempty"`
+	TaxPrefs                *PaymentMethodTaxPrefs                `json:"TaxPrefs,omitempty" url:"TaxPrefs,omitempty"`
+	VendorAndPurchasesPrefs *PaymentMethodVendorAndPurchasesPrefs `json:"VendorAndPurchasesPrefs,omitempty" url:"VendorAndPurchasesPrefs,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PaymentMethod) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PaymentMethod) UnmarshalJSON(data []byte) error {
+	type unmarshaler PaymentMethod
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PaymentMethod(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PaymentMethod) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PaymentMethodAccountingInfoPrefs struct {
+	// The first month of the fiscal year.
+	FirstMonthOfFiscalYear *string `json:"FirstMonthOfFiscalYear,omitempty" url:"FirstMonthOfFiscalYear,omitempty"`
+	// Whether to use account numbers.
+	UseAccountNumbers *bool `json:"UseAccountNumbers,omitempty" url:"UseAccountNumbers,omitempty"`
+	// The start month of the tax year.
+	TaxYearMonth *string `json:"TaxYearMonth,omitempty" url:"TaxYearMonth,omitempty"`
+	// Whether to track classes per transaction.
+	ClassTrackingPerTxn *bool `json:"ClassTrackingPerTxn,omitempty" url:"ClassTrackingPerTxn,omitempty"`
+	// Whether to track departments.
+	TrackDepartments *bool `json:"TrackDepartments,omitempty" url:"TrackDepartments,omitempty"`
+	// The customer terminology.
+	CustomerTerminology *string `json:"CustomerTerminology,omitempty" url:"CustomerTerminology,omitempty"`
+	// The book close date.
+	BookCloseDate *string `json:"BookCloseDate,omitempty" url:"BookCloseDate,omitempty"`
+	// The department terminology.
+	DepartmentTerminology *string `json:"DepartmentTerminology,omitempty" url:"DepartmentTerminology,omitempty"`
+	// Whether to track classes per transaction line.
+	ClassTrackingPerTxnLine *bool `json:"ClassTrackingPerTxnLine,omitempty" url:"ClassTrackingPerTxnLine,omitempty"`
+	// The tax form.
+	TaxForm *string `json:"TaxForm,omitempty" url:"TaxForm,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PaymentMethodAccountingInfoPrefs) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PaymentMethodAccountingInfoPrefs) UnmarshalJSON(data []byte) error {
+	type unmarshaler PaymentMethodAccountingInfoPrefs
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PaymentMethodAccountingInfoPrefs(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PaymentMethodAccountingInfoPrefs) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PaymentMethodOtherPrefs struct {
+	// List of name value pairs.
+	NameValue []*PaymentMethodOtherPrefsNameValueItem `json:"NameValue,omitempty" url:"NameValue,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PaymentMethodOtherPrefs) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PaymentMethodOtherPrefs) UnmarshalJSON(data []byte) error {
+	type unmarshaler PaymentMethodOtherPrefs
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PaymentMethodOtherPrefs(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PaymentMethodOtherPrefs) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PaymentMethodOtherPrefsNameValueItem struct {
+	// Name of the preference.
+	Name *string `json:"Name,omitempty" url:"Name,omitempty"`
+	// Value of the preference.
+	Value *string `json:"Value,omitempty" url:"Value,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PaymentMethodOtherPrefsNameValueItem) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PaymentMethodOtherPrefsNameValueItem) UnmarshalJSON(data []byte) error {
+	type unmarshaler PaymentMethodOtherPrefsNameValueItem
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PaymentMethodOtherPrefsNameValueItem(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PaymentMethodOtherPrefsNameValueItem) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PaymentMethodProductAndServicesPrefs struct {
+	// Whether to show quantity with price.
+	QuantityWithPrice *bool `json:"QuantityWithPrice,omitempty" url:"QuantityWithPrice,omitempty"`
+	// Whether to show quantity on hand.
+	QuantityOnHand *bool `json:"QuantityOnHand,omitempty" url:"QuantityOnHand,omitempty"`
+	// Whether the product and services are for sales.
+	ForSales *bool `json:"ForSales,omitempty" url:"ForSales,omitempty"`
+	// Whether the product and services are for purchase.
+	ForPurchase *bool `json:"ForPurchase,omitempty" url:"ForPurchase,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PaymentMethodProductAndServicesPrefs) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PaymentMethodProductAndServicesPrefs) UnmarshalJSON(data []byte) error {
+	type unmarshaler PaymentMethodProductAndServicesPrefs
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PaymentMethodProductAndServicesPrefs(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PaymentMethodProductAndServicesPrefs) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PaymentMethodSalesFormsPrefs struct {
+	// Whether e-transaction payment is enabled.
+	ETransactionPaymentEnabled *bool `json:"ETransactionPaymentEnabled,omitempty" url:"ETransactionPaymentEnabled,omitempty"`
+	// Whether custom transaction numbers are enabled.
+	CustomTxnNumbers *bool `json:"CustomTxnNumbers,omitempty" url:"CustomTxnNumbers,omitempty"`
+	// Whether shipping is allowed.
+	AllowShipping *bool `json:"AllowShipping,omitempty" url:"AllowShipping,omitempty"`
+	// Whether service date is allowed.
+	AllowServiceDate *bool `json:"AllowServiceDate,omitempty" url:"AllowServiceDate,omitempty"`
+	// The e-transaction enabled status.
+	ETransactionEnabledStatus *string `json:"ETransactionEnabledStatus,omitempty" url:"ETransactionEnabledStatus,omitempty"`
+	// The default customer message.
+	DefaultCustomerMessage *string `json:"DefaultCustomerMessage,omitempty" url:"DefaultCustomerMessage,omitempty"`
+	// Whether to email a copy to the company.
+	EmailCopyToCompany *bool `json:"EmailCopyToCompany,omitempty" url:"EmailCopyToCompany,omitempty"`
+	// Whether deposit is allowed.
+	AllowDeposit *bool `json:"AllowDeposit,omitempty" url:"AllowDeposit,omitempty"`
+	// Whether discount is allowed.
+	AllowDiscount *bool `json:"AllowDiscount,omitempty" url:"AllowDiscount,omitempty"`
+	// The default discount account.
+	DefaultDiscountAccount *string `json:"DefaultDiscountAccount,omitempty" url:"DefaultDiscountAccount,omitempty"`
+	// Whether to auto apply credit.
+	AutoApplyCredit *bool `json:"AutoApplyCredit,omitempty" url:"AutoApplyCredit,omitempty"`
+	// Whether to auto apply payments.
+	AutoApplyPayments *bool `json:"AutoApplyPayments,omitempty" url:"AutoApplyPayments,omitempty"`
+	// Whether estimates are allowed.
+	AllowEstimates *bool `json:"AllowEstimates,omitempty" url:"AllowEstimates,omitempty"`
+	// Whether IPN support is enabled.
+	IpnSupportEnabled *bool `json:"IPNSupportEnabled,omitempty" url:"IPNSupportEnabled,omitempty"`
+	// The default terms.
+	DefaultTerms *PaymentMethodSalesFormsPrefsDefaultTerms `json:"DefaultTerms,omitempty" url:"DefaultTerms,omitempty"`
+	// Whether to attach PDF in e-transaction.
+	ETransactionAttachPdf *bool `json:"ETransactionAttachPDF,omitempty" url:"ETransactionAttachPDF,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PaymentMethodSalesFormsPrefs) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PaymentMethodSalesFormsPrefs) UnmarshalJSON(data []byte) error {
+	type unmarshaler PaymentMethodSalesFormsPrefs
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PaymentMethodSalesFormsPrefs(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PaymentMethodSalesFormsPrefs) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+// The default terms.
+type PaymentMethodSalesFormsPrefsDefaultTerms struct {
+	// The value of the default terms.
+	Value *string `json:"value,omitempty" url:"value,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PaymentMethodSalesFormsPrefsDefaultTerms) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PaymentMethodSalesFormsPrefsDefaultTerms) UnmarshalJSON(data []byte) error {
+	type unmarshaler PaymentMethodSalesFormsPrefsDefaultTerms
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PaymentMethodSalesFormsPrefsDefaultTerms(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PaymentMethodSalesFormsPrefsDefaultTerms) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PaymentMethodTaxPrefs struct {
+	// Whether to use sales tax.
+	UsingSalesTax   *bool          `json:"UsingSalesTax,omitempty" url:"UsingSalesTax,omitempty"`
+	TaxGroupCodeRef *ReferenceType `json:"TaxGroupCodeRef,omitempty" url:"TaxGroupCodeRef,omitempty"`
+	// Partner tax refers to the automated sales tax engine that provides sales tax compliance. All QuickBooks Online companies created after November 10, 2017 are enabled by default.
+	PartnerTaxEnabled *bool `json:"PartnerTaxEnabled,omitempty" url:"PartnerTaxEnabled,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PaymentMethodTaxPrefs) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PaymentMethodTaxPrefs) UnmarshalJSON(data []byte) error {
+	type unmarshaler PaymentMethodTaxPrefs
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PaymentMethodTaxPrefs(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PaymentMethodTaxPrefs) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+type PaymentMethodVendorAndPurchasesPrefs struct {
+	// Whether to track billable expenses.
+	BillableExpenseTracking *bool `json:"BillableExpenseTracking,omitempty" url:"BillableExpenseTracking,omitempty"`
+	// Whether to track by customer.
+	TrackingByCustomer *bool `json:"TrackingByCustomer,omitempty" url:"TrackingByCustomer,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (p *PaymentMethodVendorAndPurchasesPrefs) GetExtraProperties() map[string]interface{} {
+	return p.extraProperties
+}
+
+func (p *PaymentMethodVendorAndPurchasesPrefs) UnmarshalJSON(data []byte) error {
+	type unmarshaler PaymentMethodVendorAndPurchasesPrefs
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*p = PaymentMethodVendorAndPurchasesPrefs(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.extraProperties = extraProperties
+
+	p._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PaymentMethodVendorAndPurchasesPrefs) String() string {
+	if len(p._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
 type PaymentResponse struct {
 	Payment *Payment `json:"Payment,omitempty" url:"Payment,omitempty"`
 
@@ -3479,13 +3935,7 @@ func (p *PhysicalAddress) String() string {
 }
 
 type Preferences struct {
-	ReportPrefs             *PreferencesReportPrefs             `json:"ReportPrefs,omitempty" url:"ReportPrefs,omitempty"`
-	AccountingInfoPrefs     *PreferencesAccountingInfoPrefs     `json:"AccountingInfoPrefs,omitempty" url:"AccountingInfoPrefs,omitempty"`
-	ProductAndServicesPrefs *PreferencesProductAndServicesPrefs `json:"ProductAndServicesPrefs,omitempty" url:"ProductAndServicesPrefs,omitempty"`
-	SalesFormsPrefs         *PreferencesSalesFormsPrefs         `json:"SalesFormsPrefs,omitempty" url:"SalesFormsPrefs,omitempty"`
-	OtherPrefs              *PreferencesOtherPrefs              `json:"OtherPrefs,omitempty" url:"OtherPrefs,omitempty"`
-	TaxPrefs                *PreferencesTaxPrefs                `json:"TaxPrefs,omitempty" url:"TaxPrefs,omitempty"`
-	VendorAndPurchasesPrefs *PreferencesVendorAndPurchasesPrefs `json:"VendorAndPurchasesPrefs,omitempty" url:"VendorAndPurchasesPrefs,omitempty"`
+	ReportPrefs *PreferencesReportPrefs `json:"ReportPrefs,omitempty" url:"ReportPrefs,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage
@@ -3514,200 +3964,6 @@ func (p *Preferences) UnmarshalJSON(data []byte) error {
 }
 
 func (p *Preferences) String() string {
-	if len(p._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := core.StringifyJSON(p); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", p)
-}
-
-type PreferencesAccountingInfoPrefs struct {
-	// The first month of the fiscal year.
-	FirstMonthOfFiscalYear *string `json:"FirstMonthOfFiscalYear,omitempty" url:"FirstMonthOfFiscalYear,omitempty"`
-	// Whether to use account numbers.
-	UseAccountNumbers *bool `json:"UseAccountNumbers,omitempty" url:"UseAccountNumbers,omitempty"`
-	// The start month of the tax year.
-	TaxYearMonth *string `json:"TaxYearMonth,omitempty" url:"TaxYearMonth,omitempty"`
-	// Whether to track classes per transaction.
-	ClassTrackingPerTxn *bool `json:"ClassTrackingPerTxn,omitempty" url:"ClassTrackingPerTxn,omitempty"`
-	// Whether to track departments.
-	TrackDepartments *bool `json:"TrackDepartments,omitempty" url:"TrackDepartments,omitempty"`
-	// The customer terminology.
-	CustomerTerminology *string `json:"CustomerTerminology,omitempty" url:"CustomerTerminology,omitempty"`
-	// The book close date.
-	BookCloseDate *string `json:"BookCloseDate,omitempty" url:"BookCloseDate,omitempty"`
-	// The department terminology.
-	DepartmentTerminology *string `json:"DepartmentTerminology,omitempty" url:"DepartmentTerminology,omitempty"`
-	// Whether to track classes per transaction line.
-	ClassTrackingPerTxnLine *bool `json:"ClassTrackingPerTxnLine,omitempty" url:"ClassTrackingPerTxnLine,omitempty"`
-	// The tax form.
-	TaxForm *string `json:"TaxForm,omitempty" url:"TaxForm,omitempty"`
-
-	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
-}
-
-func (p *PreferencesAccountingInfoPrefs) GetExtraProperties() map[string]interface{} {
-	return p.extraProperties
-}
-
-func (p *PreferencesAccountingInfoPrefs) UnmarshalJSON(data []byte) error {
-	type unmarshaler PreferencesAccountingInfoPrefs
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*p = PreferencesAccountingInfoPrefs(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *p)
-	if err != nil {
-		return err
-	}
-	p.extraProperties = extraProperties
-
-	p._rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (p *PreferencesAccountingInfoPrefs) String() string {
-	if len(p._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := core.StringifyJSON(p); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", p)
-}
-
-type PreferencesOtherPrefs struct {
-	// List of name value pairs.
-	NameValue []*PreferencesOtherPrefsNameValueItem `json:"NameValue,omitempty" url:"NameValue,omitempty"`
-
-	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
-}
-
-func (p *PreferencesOtherPrefs) GetExtraProperties() map[string]interface{} {
-	return p.extraProperties
-}
-
-func (p *PreferencesOtherPrefs) UnmarshalJSON(data []byte) error {
-	type unmarshaler PreferencesOtherPrefs
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*p = PreferencesOtherPrefs(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *p)
-	if err != nil {
-		return err
-	}
-	p.extraProperties = extraProperties
-
-	p._rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (p *PreferencesOtherPrefs) String() string {
-	if len(p._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := core.StringifyJSON(p); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", p)
-}
-
-type PreferencesOtherPrefsNameValueItem struct {
-	// Name of the preference.
-	Name *string `json:"Name,omitempty" url:"Name,omitempty"`
-	// Value of the preference.
-	Value *string `json:"Value,omitempty" url:"Value,omitempty"`
-
-	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
-}
-
-func (p *PreferencesOtherPrefsNameValueItem) GetExtraProperties() map[string]interface{} {
-	return p.extraProperties
-}
-
-func (p *PreferencesOtherPrefsNameValueItem) UnmarshalJSON(data []byte) error {
-	type unmarshaler PreferencesOtherPrefsNameValueItem
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*p = PreferencesOtherPrefsNameValueItem(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *p)
-	if err != nil {
-		return err
-	}
-	p.extraProperties = extraProperties
-
-	p._rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (p *PreferencesOtherPrefsNameValueItem) String() string {
-	if len(p._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := core.StringifyJSON(p); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", p)
-}
-
-type PreferencesProductAndServicesPrefs struct {
-	// Whether to show quantity with price.
-	QuantityWithPrice *bool `json:"QuantityWithPrice,omitempty" url:"QuantityWithPrice,omitempty"`
-	// Whether to show quantity on hand.
-	QuantityOnHand *bool `json:"QuantityOnHand,omitempty" url:"QuantityOnHand,omitempty"`
-	// Whether the product and services are for sales.
-	ForSales *bool `json:"ForSales,omitempty" url:"ForSales,omitempty"`
-	// Whether the product and services are for purchase.
-	ForPurchase *bool `json:"ForPurchase,omitempty" url:"ForPurchase,omitempty"`
-
-	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
-}
-
-func (p *PreferencesProductAndServicesPrefs) GetExtraProperties() map[string]interface{} {
-	return p.extraProperties
-}
-
-func (p *PreferencesProductAndServicesPrefs) UnmarshalJSON(data []byte) error {
-	type unmarshaler PreferencesProductAndServicesPrefs
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*p = PreferencesProductAndServicesPrefs(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *p)
-	if err != nil {
-		return err
-	}
-	p.extraProperties = extraProperties
-
-	p._rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (p *PreferencesProductAndServicesPrefs) String() string {
 	if len(p._rawJSON) > 0 {
 		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
 			return value
@@ -3752,210 +4008,6 @@ func (p *PreferencesReportPrefs) UnmarshalJSON(data []byte) error {
 }
 
 func (p *PreferencesReportPrefs) String() string {
-	if len(p._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := core.StringifyJSON(p); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", p)
-}
-
-type PreferencesSalesFormsPrefs struct {
-	// Whether e-transaction payment is enabled.
-	ETransactionPaymentEnabled *bool `json:"ETransactionPaymentEnabled,omitempty" url:"ETransactionPaymentEnabled,omitempty"`
-	// Whether custom transaction numbers are enabled.
-	CustomTxnNumbers *bool `json:"CustomTxnNumbers,omitempty" url:"CustomTxnNumbers,omitempty"`
-	// Whether shipping is allowed.
-	AllowShipping *bool `json:"AllowShipping,omitempty" url:"AllowShipping,omitempty"`
-	// Whether service date is allowed.
-	AllowServiceDate *bool `json:"AllowServiceDate,omitempty" url:"AllowServiceDate,omitempty"`
-	// The e-transaction enabled status.
-	ETransactionEnabledStatus *string `json:"ETransactionEnabledStatus,omitempty" url:"ETransactionEnabledStatus,omitempty"`
-	// The default customer message.
-	DefaultCustomerMessage *string `json:"DefaultCustomerMessage,omitempty" url:"DefaultCustomerMessage,omitempty"`
-	// Whether to email a copy to the company.
-	EmailCopyToCompany *bool `json:"EmailCopyToCompany,omitempty" url:"EmailCopyToCompany,omitempty"`
-	// Whether deposit is allowed.
-	AllowDeposit *bool `json:"AllowDeposit,omitempty" url:"AllowDeposit,omitempty"`
-	// Whether discount is allowed.
-	AllowDiscount *bool `json:"AllowDiscount,omitempty" url:"AllowDiscount,omitempty"`
-	// The default discount account.
-	DefaultDiscountAccount *string `json:"DefaultDiscountAccount,omitempty" url:"DefaultDiscountAccount,omitempty"`
-	// Whether to auto apply credit.
-	AutoApplyCredit *bool `json:"AutoApplyCredit,omitempty" url:"AutoApplyCredit,omitempty"`
-	// Whether to auto apply payments.
-	AutoApplyPayments *bool `json:"AutoApplyPayments,omitempty" url:"AutoApplyPayments,omitempty"`
-	// Whether estimates are allowed.
-	AllowEstimates *bool `json:"AllowEstimates,omitempty" url:"AllowEstimates,omitempty"`
-	// Whether IPN support is enabled.
-	IpnSupportEnabled *bool `json:"IPNSupportEnabled,omitempty" url:"IPNSupportEnabled,omitempty"`
-	// The default terms.
-	DefaultTerms *PreferencesSalesFormsPrefsDefaultTerms `json:"DefaultTerms,omitempty" url:"DefaultTerms,omitempty"`
-	// Whether to attach PDF in e-transaction.
-	ETransactionAttachPdf *bool `json:"ETransactionAttachPDF,omitempty" url:"ETransactionAttachPDF,omitempty"`
-
-	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
-}
-
-func (p *PreferencesSalesFormsPrefs) GetExtraProperties() map[string]interface{} {
-	return p.extraProperties
-}
-
-func (p *PreferencesSalesFormsPrefs) UnmarshalJSON(data []byte) error {
-	type unmarshaler PreferencesSalesFormsPrefs
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*p = PreferencesSalesFormsPrefs(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *p)
-	if err != nil {
-		return err
-	}
-	p.extraProperties = extraProperties
-
-	p._rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (p *PreferencesSalesFormsPrefs) String() string {
-	if len(p._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := core.StringifyJSON(p); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", p)
-}
-
-// The default terms.
-type PreferencesSalesFormsPrefsDefaultTerms struct {
-	// The value of the default terms.
-	Value *string `json:"value,omitempty" url:"value,omitempty"`
-
-	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
-}
-
-func (p *PreferencesSalesFormsPrefsDefaultTerms) GetExtraProperties() map[string]interface{} {
-	return p.extraProperties
-}
-
-func (p *PreferencesSalesFormsPrefsDefaultTerms) UnmarshalJSON(data []byte) error {
-	type unmarshaler PreferencesSalesFormsPrefsDefaultTerms
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*p = PreferencesSalesFormsPrefsDefaultTerms(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *p)
-	if err != nil {
-		return err
-	}
-	p.extraProperties = extraProperties
-
-	p._rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (p *PreferencesSalesFormsPrefsDefaultTerms) String() string {
-	if len(p._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := core.StringifyJSON(p); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", p)
-}
-
-type PreferencesTaxPrefs struct {
-	// Whether to use sales tax.
-	UsingSalesTax   *bool          `json:"UsingSalesTax,omitempty" url:"UsingSalesTax,omitempty"`
-	TaxGroupCodeRef *ReferenceType `json:"TaxGroupCodeRef,omitempty" url:"TaxGroupCodeRef,omitempty"`
-	// Partner tax refers to the automated sales tax engine that provides sales tax compliance. All QuickBooks Online companies created after November 10, 2017 are enabled by default.
-	PartnerTaxEnabled *bool `json:"PartnerTaxEnabled,omitempty" url:"PartnerTaxEnabled,omitempty"`
-
-	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
-}
-
-func (p *PreferencesTaxPrefs) GetExtraProperties() map[string]interface{} {
-	return p.extraProperties
-}
-
-func (p *PreferencesTaxPrefs) UnmarshalJSON(data []byte) error {
-	type unmarshaler PreferencesTaxPrefs
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*p = PreferencesTaxPrefs(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *p)
-	if err != nil {
-		return err
-	}
-	p.extraProperties = extraProperties
-
-	p._rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (p *PreferencesTaxPrefs) String() string {
-	if len(p._rawJSON) > 0 {
-		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
-			return value
-		}
-	}
-	if value, err := core.StringifyJSON(p); err == nil {
-		return value
-	}
-	return fmt.Sprintf("%#v", p)
-}
-
-type PreferencesVendorAndPurchasesPrefs struct {
-	// Whether to track billable expenses.
-	BillableExpenseTracking *bool `json:"BillableExpenseTracking,omitempty" url:"BillableExpenseTracking,omitempty"`
-	// Whether to track by customer.
-	TrackingByCustomer *bool `json:"TrackingByCustomer,omitempty" url:"TrackingByCustomer,omitempty"`
-
-	extraProperties map[string]interface{}
-	_rawJSON        json.RawMessage
-}
-
-func (p *PreferencesVendorAndPurchasesPrefs) GetExtraProperties() map[string]interface{} {
-	return p.extraProperties
-}
-
-func (p *PreferencesVendorAndPurchasesPrefs) UnmarshalJSON(data []byte) error {
-	type unmarshaler PreferencesVendorAndPurchasesPrefs
-	var value unmarshaler
-	if err := json.Unmarshal(data, &value); err != nil {
-		return err
-	}
-	*p = PreferencesVendorAndPurchasesPrefs(value)
-
-	extraProperties, err := core.ExtractExtraProperties(data, *p)
-	if err != nil {
-		return err
-	}
-	p.extraProperties = extraProperties
-
-	p._rawJSON = json.RawMessage(data)
-	return nil
-}
-
-func (p *PreferencesVendorAndPurchasesPrefs) String() string {
 	if len(p._rawJSON) > 0 {
 		if value, err := core.StringifyJSON(p._rawJSON); err == nil {
 			return value
@@ -4132,6 +4184,8 @@ type QueryResponse struct {
 	JournalEntry []*JournalEntry `json:"JournalEntry,omitempty" url:"JournalEntry,omitempty"`
 	// List of preferences in the query response.
 	Preferences []*Preferences `json:"Preferences,omitempty" url:"Preferences,omitempty"`
+	// List of payment methods in the query response.
+	PaymentMethod []*PaymentMethod `json:"PaymentMethod,omitempty" url:"PaymentMethod,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage

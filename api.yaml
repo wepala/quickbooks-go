@@ -5106,6 +5106,28 @@ components:
             CalcAgingReportFromTxnDate:
               type: boolean
               description: Whether to calculate aging report from transaction date.
+    PaymentMethod:
+      type: object
+      properties:
+        Id:
+          type: string
+          description: Unique identifier for this object. Sort order is ASC by default.
+        Name:
+          type: string
+          description: Name of the payment method.
+        Active:
+          type: boolean
+          description: Whether the payment method is active.
+        domain:
+          type: string
+          description: Domain of the payment method.
+        Type:
+          type: string
+          description: Type of the payment method.
+        SyncToken:
+          type: string
+          description: Version number of the object. It is used to lock the object for use by one app at a time.
+
 
         AccountingInfoPrefs:
           type: object
@@ -5324,6 +5346,11 @@ components:
           description: List of preferences in the query response.
           items:
             $ref: '#/components/schemas/Preferences'
+        PaymentMethod:
+          type: array
+          description: List of payment methods in the query response.
+          items:
+            $ref: '#/components/schemas/PaymentMethod'
     ProfitAndLoss:
       type: object
       properties:
