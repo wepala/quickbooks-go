@@ -3162,6 +3162,46 @@ paths:
           required: false
           schema:
             type: string
+        - name: summarize_column_by
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: department
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: vendor
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: class
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: accounting_method
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: qzurl
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: customer
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: department
+          in: query
+          required: false
+          schema:
+            type: string
       summary: Report-BalanceSheet
       description: |+
         Report - BalanceSheet
@@ -3198,6 +3238,36 @@ paths:
           schema:
             type: string
         - name: columns
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: summarize_column_by
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: department
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: vendor
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: class
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: item
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: customer
           in: query
           required: false
           schema:
@@ -3601,6 +3671,41 @@ paths:
           required: false
           schema:
             type: string
+        - name: summarize_column_by
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: department
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: vendor
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: class
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: accounting_method
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: qzurl
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: customer
+          in: query
+          required: false
+          schema:
+            type: string
       responses:
         '200':
           description: ''
@@ -3638,6 +3743,51 @@ paths:
           schema:
             type: string
         - name: columns
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: summarize_column_by
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: department
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: vendor
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: class
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: accounting_method
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: qzurl
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: customer
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: payment_method
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: account
           in: query
           required: false
           schema:

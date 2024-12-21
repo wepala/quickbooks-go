@@ -33,15 +33,28 @@ type ReportAgedreceivablesRequest struct {
 }
 
 type ReportBalancesheetRequest struct {
-	StartDate *string `json:"-" url:"start_date,omitempty"`
-	EndDate   *string `json:"-" url:"end_date,omitempty"`
-	Columns   *string `json:"-" url:"columns,omitempty"`
+	StartDate         *string `json:"-" url:"start_date,omitempty"`
+	EndDate           *string `json:"-" url:"end_date,omitempty"`
+	Columns           *string `json:"-" url:"columns,omitempty"`
+	SummarizeColumnBy *string `json:"-" url:"summarize_column_by,omitempty"`
+	Department        *string `json:"-" url:"department,omitempty"`
+	Vendor            *string `json:"-" url:"vendor,omitempty"`
+	Class             *string `json:"-" url:"class,omitempty"`
+	AccountingMethod  *string `json:"-" url:"accounting_method,omitempty"`
+	Qzurl             *string `json:"-" url:"qzurl,omitempty"`
+	Customer          *string `json:"-" url:"customer,omitempty"`
 }
 
 type ReportCashflowRequest struct {
-	StartDate *string `json:"-" url:"start_date,omitempty"`
-	EndDate   *string `json:"-" url:"end_date,omitempty"`
-	Columns   *string `json:"-" url:"columns,omitempty"`
+	StartDate         *string `json:"-" url:"start_date,omitempty"`
+	EndDate           *string `json:"-" url:"end_date,omitempty"`
+	Columns           *string `json:"-" url:"columns,omitempty"`
+	SummarizeColumnBy *string `json:"-" url:"summarize_column_by,omitempty"`
+	Department        *string `json:"-" url:"department,omitempty"`
+	Vendor            *string `json:"-" url:"vendor,omitempty"`
+	Class             *string `json:"-" url:"class,omitempty"`
+	Item              *string `json:"-" url:"item,omitempty"`
+	Customer          *string `json:"-" url:"customer,omitempty"`
 }
 
 type ReportCashsalesRequest struct {
@@ -99,15 +112,31 @@ type ReportItemsalesRequest struct {
 }
 
 type ReportProfitandlossRequest struct {
-	StartDate *string `json:"-" url:"start_date,omitempty"`
-	EndDate   *string `json:"-" url:"end_date,omitempty"`
-	Columns   *string `json:"-" url:"columns,omitempty"`
+	StartDate         *string `json:"-" url:"start_date,omitempty"`
+	EndDate           *string `json:"-" url:"end_date,omitempty"`
+	Columns           *string `json:"-" url:"columns,omitempty"`
+	SummarizeColumnBy *string `json:"-" url:"summarize_column_by,omitempty"`
+	Department        *string `json:"-" url:"department,omitempty"`
+	Vendor            *string `json:"-" url:"vendor,omitempty"`
+	Class             *string `json:"-" url:"class,omitempty"`
+	AccountingMethod  *string `json:"-" url:"accounting_method,omitempty"`
+	Qzurl             *string `json:"-" url:"qzurl,omitempty"`
+	Customer          *string `json:"-" url:"customer,omitempty"`
 }
 
 type ReportProfitandlossdetailRequest struct {
-	StartDate *string `json:"-" url:"start_date,omitempty"`
-	EndDate   *string `json:"-" url:"end_date,omitempty"`
-	Columns   *string `json:"-" url:"columns,omitempty"`
+	StartDate         *string `json:"-" url:"start_date,omitempty"`
+	EndDate           *string `json:"-" url:"end_date,omitempty"`
+	Columns           *string `json:"-" url:"columns,omitempty"`
+	SummarizeColumnBy *string `json:"-" url:"summarize_column_by,omitempty"`
+	Department        *string `json:"-" url:"department,omitempty"`
+	Vendor            *string `json:"-" url:"vendor,omitempty"`
+	Class             *string `json:"-" url:"class,omitempty"`
+	AccountingMethod  *string `json:"-" url:"accounting_method,omitempty"`
+	Qzurl             *string `json:"-" url:"qzurl,omitempty"`
+	Customer          *string `json:"-" url:"customer,omitempty"`
+	PaymentMethod     *string `json:"-" url:"payment_method,omitempty"`
+	Account           *string `json:"-" url:"account,omitempty"`
 }
 
 type ReportTransactionlistRequest struct {
