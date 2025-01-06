@@ -6509,6 +6509,23 @@ components:
         DiscountPercent:
           type: number
           description: The percentage of the discount. This field is required if PercentBased is true.
+    GroupLineDetail:
+      type: object
+      properties:
+        Quantity:
+          type: number
+          description: The quantity of the item.
+        Line:
+          type: array
+          description: >-
+            Individual line items of a transaction. Valid Line types include
+            SalesItemLine, GroupLine, DescriptionOnlyLine (also used for inline
+            Subtotal lines), DiscountLine and SubTotalLine (used for the overall
+            transaction)
+          items:
+            $ref: '#/components/schemas/InvoiceLineItem'
+        GroupItemRef:
+          $ref: '#/components/schemas/ReferenceType'
     InvoiceLineItem:
       type: object
       description: Reference type
@@ -6533,6 +6550,8 @@ components:
             - DescriptionOnly
             - DiscountLineDetail
             - SubTotalLineDetail
+        GroupLineDetail:
+          $ref: '#/components/schemas/GroupLineDetail'
         SalesItemLineDetail:
           $ref: '#/components/schemas/SalesItemLineDetail'
         DiscountLineDetail:

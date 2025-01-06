@@ -2134,6 +2134,51 @@ func (e *EstimateResponse) String() string {
 	return fmt.Sprintf("%#v", e)
 }
 
+type GroupLineDetail struct {
+	// The quantity of the item.
+	Quantity *float64 `json:"Quantity,omitempty" url:"Quantity,omitempty"`
+	// Individual line items of a transaction. Valid Line types include SalesItemLine, GroupLine, DescriptionOnlyLine (also used for inline Subtotal lines), DiscountLine and SubTotalLine (used for the overall transaction)
+	Line         []*InvoiceLineItem `json:"Line,omitempty" url:"Line,omitempty"`
+	GroupItemRef *ReferenceType     `json:"GroupItemRef,omitempty" url:"GroupItemRef,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (g *GroupLineDetail) GetExtraProperties() map[string]interface{} {
+	return g.extraProperties
+}
+
+func (g *GroupLineDetail) UnmarshalJSON(data []byte) error {
+	type unmarshaler GroupLineDetail
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*g = GroupLineDetail(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *g)
+	if err != nil {
+		return err
+	}
+	g.extraProperties = extraProperties
+
+	g._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (g *GroupLineDetail) String() string {
+	if len(g._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(g._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(g); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", g)
+}
+
 type Invoice struct {
 	// Unique identifier for this object. Sort order is ASC by default.
 	Id *string `json:"Id,omitempty" url:"Id,omitempty"`
@@ -2394,6 +2439,7 @@ type InvoiceLineItem struct {
 	Description *string `json:"Description,omitempty" url:"Description,omitempty"`
 	// The type of detail for the line item. Valid values include SalesItemLineDetail.
 	DetailType          *InvoiceLineItemDetailType `json:"DetailType,omitempty" url:"DetailType,omitempty"`
+	GroupLineDetail     *GroupLineDetail           `json:"GroupLineDetail,omitempty" url:"GroupLineDetail,omitempty"`
 	SalesItemLineDetail *SalesItemLineDetail       `json:"SalesItemLineDetail,omitempty" url:"SalesItemLineDetail,omitempty"`
 	DiscountLineDetail  *DiscountLineDetail        `json:"DiscountLineDetail,omitempty" url:"DiscountLineDetail,omitempty"`
 
