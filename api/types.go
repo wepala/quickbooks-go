@@ -4910,7 +4910,10 @@ func (r *ReportRowsRowItemRows) String() string {
 
 type ReportRowsRowItemRowsRowItem struct {
 	// The header of the row.
-	Header *ReportRowsRowItemRowsRowItemHeader `json:"Header,omitempty" url:"Header,omitempty"`
+	Header  *ReportRowsRowItemRowsRowItemHeader        `json:"Header,omitempty" url:"Header,omitempty"`
+	ColData []*ReportRowsRowItemRowsRowItemColDataItem `json:"ColData,omitempty" url:"ColData,omitempty"`
+	// The type of the row.
+	Type *string `json:"type,omitempty" url:"type,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage
@@ -4939,6 +4942,52 @@ func (r *ReportRowsRowItemRowsRowItem) UnmarshalJSON(data []byte) error {
 }
 
 func (r *ReportRowsRowItemRowsRowItem) String() string {
+	if len(r._rawJSON) > 0 {
+		if value, err := core.StringifyJSON(r._rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := core.StringifyJSON(r); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", r)
+}
+
+type ReportRowsRowItemRowsRowItemColDataItem struct {
+	// The value of the column.
+	Value *string `json:"value,omitempty" url:"value,omitempty"`
+	// The ID of the column.
+	Id *string `json:"id,omitempty" url:"id,omitempty"`
+	// The type of the column.
+	Type *string `json:"type,omitempty" url:"type,omitempty"`
+
+	extraProperties map[string]interface{}
+	_rawJSON        json.RawMessage
+}
+
+func (r *ReportRowsRowItemRowsRowItemColDataItem) GetExtraProperties() map[string]interface{} {
+	return r.extraProperties
+}
+
+func (r *ReportRowsRowItemRowsRowItemColDataItem) UnmarshalJSON(data []byte) error {
+	type unmarshaler ReportRowsRowItemRowsRowItemColDataItem
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*r = ReportRowsRowItemRowsRowItemColDataItem(value)
+
+	extraProperties, err := core.ExtractExtraProperties(data, *r)
+	if err != nil {
+		return err
+	}
+	r.extraProperties = extraProperties
+
+	r._rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (r *ReportRowsRowItemRowsRowItemColDataItem) String() string {
 	if len(r._rawJSON) > 0 {
 		if value, err := core.StringifyJSON(r._rawJSON); err == nil {
 			return value

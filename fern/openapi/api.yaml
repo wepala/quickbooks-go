@@ -5688,6 +5688,23 @@ components:
                                       type:
                                         type: string
                                         description: The type of the column.
+                            ColData:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  value:
+                                    type: string
+                                    description: The value of the column.
+                                  id:
+                                    type: string
+                                    description: The ID of the column.
+                                  type:
+                                    type: string
+                                    description: The type of the column.
+                            type:
+                              type: string
+                              description: The type of the row.
         Columns:
           type: object
           description: The columns of the report.
