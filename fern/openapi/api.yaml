@@ -5500,6 +5500,11 @@ components:
           description: List of payment methods in the query response.
           items:
             $ref: '#/components/schemas/PaymentMethod'
+        SalesReceipt:
+          type: array
+          description: List of sales receipts in the query response.
+          items:
+            $ref: '#/components/schemas/Invoice'
     ProfitAndLoss:
       type: object
       properties:

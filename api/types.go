@@ -4232,6 +4232,8 @@ type QueryResponse struct {
 	Preferences []*Preferences `json:"Preferences,omitempty" url:"Preferences,omitempty"`
 	// List of payment methods in the query response.
 	PaymentMethod []*PaymentMethod `json:"PaymentMethod,omitempty" url:"PaymentMethod,omitempty"`
+	// List of sales receipts in the query response.
+	SalesReceipt []*Invoice `json:"SalesReceipt,omitempty" url:"SalesReceipt,omitempty"`
 
 	extraProperties map[string]interface{}
 	_rawJSON        json.RawMessage
